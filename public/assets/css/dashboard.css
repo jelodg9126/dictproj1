@@ -1,0 +1,81 @@
+.dboard-layout{
+   display: grid;
+   background-color: rgb(245, 245, 245);
+   grid-template-columns: repeat(12, 1fr);
+   grid-template-rows: 80px 170px 250px 280px;
+   padding: 2rem;
+   grid-template-areas: 
+     "header header header header "
+     "track1 track2 track3 track4"
+     "graph1 graph2 graph3 ."
+     "table1 table2 . .";
+
+     gap: 1rem;
+   height: 100vh;
+   width: 80%;
+   overflow-y: auto;
+ }
+
+  .box2, .box3, .box4, .box5, .box6, .box7, .box8, .box9, .box10{
+      border: 1px solid rgb(220, 217, 217);
+     border-radius: 10px;
+       padding: 1rem;
+       background-color: white;
+ }
+
+ .box1{
+  border: 18x solid black;
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  
+  grid-column: 1 / span 12;
+ }
+
+ .box2{
+    grid-area: track1;
+    grid-column: 1/ span 3;
+
+ }
+
+ .box3{
+     grid-area: track2;
+      grid-column: 4/ span 3;
+ }
+ .box4{
+     grid-area: track3;
+     grid-column: 7/ span 3;
+ }
+
+ .box5{
+      grid-area: track4;
+      grid-column: 10/ span 3; 
+ }
+ 
+ .box6{
+      grid-area: graph1;
+      grid-column: 1/ span 4;
+ }
+
+ .box7{
+    grid-area: graph2;
+     grid-column: 5/ span 4;
+ }
+
+ .box8{
+  grid-area: graph3;
+    grid-column: 9/ span 4;
+ }
+
+  .box9{
+  grid-area: table1;
+  grid-column: 1/ span 6;
+ }
+
+  .box10{
+  grid-area: table2;
+  grid-column: 7/ span 6;
+ }
+
