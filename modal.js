@@ -1,18 +1,41 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const formBtn = document.querySelector("#form-btn");
-    const modal = document.querySelector("#modal");
-    const closeBtn = document.querySelector("#close-btn");
+function initializeModals() {
+    const modal = document.getElementById('formModal');
+    const detailsModal = document.getElementById('detailsModal');
+    const openModalBtn = document.getElementById('openFormModal');
+    const closeModalBtns = document.querySelectorAll('.close');
+    const cancelFormBtn = document.getElementById('cancelForm');
 
-    function toggleModal(event) {
-        event.preventDefault(); // Prevent form submission if it's a submit button
-        modal.classList.toggle("hidden");
-        modal.classList.toggle("flex");
+    // Open form modal
+    if (openModalBtn) {
+        openModalBtn.onclick = function() {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
     }
 
-    if (formBtn) {
-        formBtn.addEventListener("click", toggleModal);
+    // Close modal function
+    function closeModal(modalElement) {
+        modalElement.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restore scrolling
     }
-    if (closeBtn) {
-        closeBtn.addEventListener("click", toggleModal);
+
+    // Close modals when clicking X
+    closeModalBtns.forEach(btn => {
+        btn.onclick = function() {
+            const modalToClose = this.closest('.modal');
+            closeModal(modalToClose);
+        }
+    });
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            closeModal(event.target);
+        }
     }
-}); 
+}
+
+// Initialize modals when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeModals();
+});
