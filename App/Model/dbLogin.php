@@ -26,9 +26,12 @@
         exit();
     }
     } else {
-        $message = "Invalid username or password";
+        ?>
+        <script>
+            window.alert("Invalid username or password");
+        </script>
+        <?php
         header("Location: ../Views/Pages/Login.php");
-        echo "<script type='text/javascript'>alert('$message');</script>";
         exit();
     }
     
