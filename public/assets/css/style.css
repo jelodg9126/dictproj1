@@ -340,7 +340,7 @@ tbody tr:hover {
 }
 
 .btn:not(.btn-secondary) {
-    background: linear-gradient(135deg, #667eea 0%, #17468F 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
 }
 
