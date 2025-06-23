@@ -8,8 +8,8 @@
     <title>Document</title>
 </head>
 <body>
-    <form onSubmit={handleSubmit} className="bg-white flex flex-col border border-gray-300 w-full max-w-lg p-8 gap-6 items-center rounded-xl shadow-lg">
-            <div className="flex justify-between items-center w-full mb-4">
+    <form onSubmit={handleSubmit} class="bg-white flex flex-col border border-gray-300 w-full max-w-lg p-8 gap-6 items-center rounded-xl shadow-lg">
+            <div class="flex justify-between items-center w-full mb-4">
                 <h1 className="text-2xl font-bold">Sender Form</h1>
                 <button 
                     type="button"
@@ -20,7 +20,7 @@
                 </button>
             </div>
 
-            <div className="">
+            <div class="">
                 <Input label="First Name" type="text" />
                 <Input label="Last Name" type="text" />
                 <Input label="File Type" type="text" />
@@ -28,7 +28,9 @@
                 <Input label ="Label" type="text" />
             </div>
 
-            <button type="submit" className="btn btn-wide bg-blue-500 text-white mt-6">Submit</button>
+            <button type="submit" class="btn btn-wide bg-blue-500 text-white mt-6">Submit</button>
         </form>
+        
+
 </body>
 </html>
