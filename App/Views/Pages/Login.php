@@ -9,6 +9,7 @@
 </head>
 <body>
     <form action="../../Model/dbLogin.php" method="POST">
+        
              <div class="login-container h-screen w-full flex items-center justify-center">
            <div class="login-card p-12 pr-6 border border-gray-400 rounded-sm ">
             <div class="login-header-wrapper flex items-center">
