@@ -34,7 +34,6 @@ if ($result_outgoing && $result_outgoing->num_rows > 0) {
     $outgoing_count = $row_outgoing['outgoing_count'];
 }
 
-// Query to get the count of received documents
 $sql_received = "SELECT COUNT(*) as received_count FROM maindoc WHERE status = 'received'";
 $result_received = $conn->query($sql_received);
 $received_count = 0;
@@ -56,7 +55,7 @@ include __DIR__ . '/../components/Sidebar.php';
 
              <div class="box2">
                <h2 class="text-lg font-semibold pl-1.5">Total Received</h2>
-               <p class="text-2xl font-bold text-gray-800 pl-1.5 text-center"><?php echo $received_count;?></p>
+               <p class="text-sm text-gray-600 pl-1.5"><?php echo $received_count;?></p>
                
             </div>
 

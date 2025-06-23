@@ -20,6 +20,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $courierName = trim($_POST['courierName'] ?? '');
     $dateAndTime = date("Y-m-d H:i:s");
     
+    // Signature extraction and decoding
+    $signatureData = $_POST['signature'] ?? '';
+    $signatureBlob = null;
+    if (!empty($signatureData) && strpos($signatureData, 'data:image/png;base64,') === 0) {
+        $signatureBlob = base64_decode(str_replace('data:image/png;base64,', '', $signatureData));
+    }
+    $status = 'Pending';
+    $filetype = '';
+    
     // Validation
     $errors = [];
     
@@ -100,18 +109,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     try {
-        // Prepare the SQL statement
+        // Prepare the SQL statement with correct column order
         $stmt = $conn->prepare("INSERT INTO maindoc
-            (officeName, senderName, emailAdd, addressTo, modeOfDel, courierName, dateAndTime) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)");
+            (officeName, senderName, emailAdd, signature, addressTo, modeOfDel, courierName, dateAndTime, status, filetype)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
         
-        // Bind parameters
-        $stmt->bind_param("sssssss", 
-            $office, $sname, $email, $addressTo, $modeOfDel, $courierName, $dateAndTime
+        // Bind parameters (s = string, b = blob)
+        $stmt->bind_param("ssssssssss", 
+            $office, $sname, $email, $signatureBlob, $addressTo, $modeOfDel, $courierName, $dateAndTime, $status, $filetype
         );
         
         // Execute the statement
