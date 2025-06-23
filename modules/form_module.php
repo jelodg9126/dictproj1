@@ -59,6 +59,18 @@ if (!defined('FORM_MODULE_INCLUDED')) {
             </div>
         </div>
         
+        <div class="form-section">
+            <h3>Signature</h3>
+            <div class="form-group">
+                <label for="signaturePad">Please sign below:</label>
+                <br>
+                <canvas id="signaturePad" width="350" height="220" style="border:1px solid #ccc; background:#fff;"></canvas>
+                <br>
+                <button type="button" class="btn btn-secondary" id="clearSignature">Clear Signature</button>
+                <input type="hidden" name="signature" id="signatureInput">
+            </div>
+        </div>
+        
         <div class="submit-section">
             <button type="submit" class="btn">Submit Document</button>
             <button type="button" class="btn btn-secondary" id="cancelForm">Cancel</button>
@@ -101,5 +113,85 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Signature Pad
+    const canvas = document.getElementById('signaturePad');
+    const signatureInput = document.getElementById('signatureInput');
+    const clearBtn = document.getElementById('clearSignature');
+    if (canvas && signatureInput) {
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        function draw(e) {
+            if (!drawing) return;
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#222';
+            let x, y;
+            if (e.touches) {
+                x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+                y = e.touches[0].clientY - canvas.getBoundingClientRect().top;
+            } else {
+                x = e.offsetX;
+                y = e.offsetY;
+            }
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => {
+            drawing = false;
+            ctx.beginPath();
+        });
+        canvas.addEventListener('mouseout', () => {
+            drawing = false;
+            ctx.beginPath();
+        });
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            drawing = true;
+            ctx.beginPath();
+            let x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+            let y = e.touches[0].clientY - canvas.getBoundingClientRect().top;
+            ctx.moveTo(x, y);
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            draw(e);
+        });
+        canvas.addEventListener('touchend', () => {
+            drawing = false;
+            ctx.beginPath();
+        });
+        // Clear signature
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                signatureInput.value = '';
+            });
+        }
+        // On form submit, save signature as base64
+        const form = document.getElementById('documentForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Only save if something is drawn
+                if (!ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(channel => channel !== 0)) {
+                    signatureInput.value = '';
+                } else {
+                    signatureInput.value = canvas.toDataURL('image/png');
+                }
+            });
+        }
+    }
 });
-</script> 
+    </script> 
