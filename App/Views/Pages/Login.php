@@ -14,7 +14,7 @@
            <div class="login-card p-12 pr-6 border border-gray-400 rounded-sm ">
             <div class="login-header-wrapper flex items-center">
                 <h1 class="text-3xl font-bold">Log in</h1> 
-                <img src="dictproj1/public/assets/images/dictStandard.png" class="h-38 min-w-auto object-cover" alt="dict logo"/>
+                <img src="../public/assets/images/dictStandard.png" class="h-38 min-w-auto object-cover" alt="dict logo"/>
             </div>
             <label>Username</label>
              <input type="text" name="uNameLogin"class="border"/>
