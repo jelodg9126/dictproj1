@@ -12,7 +12,39 @@
 <body>
    <div class="app-container">
 
-<?php include __DIR__ . '/../components/Sidebar.php'; ?>
+<?php
+// Include database connection
+include __DIR__ . '/../../Model/connect.php';
+
+// Query to get the count of pending documents
+$sql_pending = "SELECT COUNT(*) as pending_count FROM maindoc WHERE status = 'pending'";
+$result_pending = $conn->query($sql_pending);
+$pending_count = 0;
+if ($result_pending && $result_pending->num_rows > 0) {
+    $row_pending = $result_pending->fetch_assoc();
+    $pending_count = $row_pending['pending_count'];
+}
+
+// Query to get the count of outgoing documents
+$sql_outgoing = "SELECT COUNT(*) as outgoing_count FROM maindoc WHERE fileType = 'outgoing'";
+$result_outgoing = $conn->query($sql_outgoing);
+$outgoing_count = 0;
+if ($result_outgoing && $result_outgoing->num_rows > 0) {
+    $row_outgoing = $result_outgoing->fetch_assoc();
+    $outgoing_count = $row_outgoing['outgoing_count'];
+}
+
+// Query to get the count of received documents
+$sql_received = "SELECT COUNT(*) as received_count FROM maindoc WHERE status = 'received'";
+$result_received = $conn->query($sql_received);
+$received_count = 0;
+if ($result_received && $result_received->num_rows > 0) {
+    $row_received = $result_received->fetch_assoc();
+    $received_count = $row_received['received_count'];
+}
+
+include __DIR__ . '/../components/Sidebar.php';
+?>
      <div class="dboard-layout">
 
              <div class="box1">
@@ -24,16 +56,19 @@
 
              <div class="box2">
                <h2 class="text-lg font-semibold pl-1.5">Total Received</h2>
+               <p class="text-2xl font-bold text-gray-800 pl-1.5 text-center"><?php echo $received_count;?></p>
                
             </div>
 
             
              <div class="box3">
                <h2 class="text-lg font-semibold pl-1.5">Pending</h2>
+               <p class="text-2xl font-bold text-gray-800 pl-1.5 text-center"><?php echo $pending_count; ?></p>
             </div>
 
              <div class="box4">
                <h2 class="text-lg font-semibold pl-1.5">Total Sent</h2>
+               <p class="text-2xl font-bold text-gray-800 pl-1.5 text-center"><?php echo $outgoing_count; ?></p>
             </div>
 
              <div class="box5">

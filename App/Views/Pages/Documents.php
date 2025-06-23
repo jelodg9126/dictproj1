@@ -148,6 +148,8 @@ if ($statuses_result) {
     <link rel="stylesheet" href="/dictproj1/src/input.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/modal.css">
+    <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
+
     <title>Document</title>
 </head>
 <body>
