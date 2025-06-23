@@ -26,8 +26,10 @@
         exit();
     }
     } else {
-        // echo "Invalid username or password";
         $message = "Invalid username or password";
+        header("Location: ../Views/Pages/Login.php");
+        echo "<script type='text/javascript'>alert('$message');</script>";
+        exit();
     }
     
     // Close Conection
