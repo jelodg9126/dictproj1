@@ -20,10 +20,9 @@
                     <h1 class="text-3xl font-bold text-blue-800">Documents</h1>
                     <p class="text-gray-600 mt-2">Manage and track all incoming documents</p>
                    </div>
-                    <button class="border border-gray-400 flex gap-1 p-3 cursor-pointer rounded-2xl bg-white" onClick={toggleModal}>
-              <IconFileSpreadsheet stroke={1.75} class="text-gray-600" />
+          <button class="border border-gray-400 flex gap-1 p-3 cursor-pointer rounded-2xl bg-white" id="form-btn">
               Sent Form
-              </button>
+          </button>
                 </div>
 
               
@@ -31,17 +30,16 @@
                     <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div class="flex items-center gap-4 flex-1">
                             <div class="relative flex-1 max-w-md">
-                                <IconSearch class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                       
                                 <input
                                     type="text"
                                     placeholder="Search documents, sender, or recipient..."
                                     class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    value={searchTerm}
                               
                                 />
                             </div>
                             <div class="flex items-center gap-2">
-                                <IconFilter size={20} class="text-gray-400" />
+                            
                                 <select
                                     class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     value="">
@@ -56,7 +54,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-sm text-gray-600">
-                                {filteredDocuments.length} of {documents.length} documents
+                              1 of 1 documents
                             </span>
                         </div>
                     </div>
@@ -93,23 +91,23 @@
                                     <tr key={doc.id} class="hover:bg-gray-50 transition-colors">
                                         <td class ="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">
-                                                {doc.office}
+                                                doc.office
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {doc.senderName}
+                                            doc.senderName
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {doc.email}
+                                            doc.email
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {doc.deliveryMode}
+                                            doc.deliveryMode
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {doc.courierName}
+                                            doc.courierName
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {new Date(doc.dateTime).toLocaleString()}
+                                            new Datedoc.dateTime.toLocaleString
                                         </td>
                                     </tr>
                             
@@ -128,6 +126,48 @@
         </div>
                     </div>
 
-       
+    <!-- Modal -->
+    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <form action="" class="bg-white flex flex-col border border-gray-300 w-full max-w-lg p-8 gap-6 items-center rounded-xl shadow-lg">
+            <div class="flex justify-between items-center w-full mb-4">
+                <h1 class="text-2xl font-bold">Sender Form</h1>
+                <button 
+                    type="button"
+                    id="close-btn"
+                    class="text-gray-500 hover:text-gray-700 text-2xl px-2"
+                >
+                    ✕
+                </button>
+            </div>
+
+            <div class="w-full space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                    <input type="text" class="border w-full p-2 rounded-lg" placeholder="Enter first name" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                    <input type="text" class="border w-full p-2 rounded-lg" placeholder="Enter last name" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">File Type</label>
+                    <input type="text" class="border w-full p-2 rounded-lg" placeholder="Enter file type" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Delivery Mode</label>
+                    <select name="delivery-mode" class="border w-full p-2 rounded-lg">
+                        <option value="" disabled>--Select--</option>
+                        <option value="Courier">Courier</option>
+                        <option value="In-Person">In-Person</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white mt-6 py-2 rounded-lg">Submit</button>
+        </form>
+    </div>
+
+    <script src="/dictproj1/modal.js"></script>
+    
 </body>
 </html>

@@ -14,9 +14,10 @@
                 <h1 class="text-3xl font-bold">Log in</h1> 
                 <img src="dictproj1/public/assets/images/dictStandard.png" class="h-38 min-w-auto object-cover" alt="dict logo"/>
             </div>
-            
-             <Input label="Username"/>
-             <Input label="Password" type="password"/>
+            <label>Username</label>
+             <input type="text" class="border"/>
+            <label>Password</label>
+             <input type="password" class="border"/>
               <button class="btn btn-wide mt-4 bg-blue-900 text-white">Submit</button>
            </div>
         </div>
