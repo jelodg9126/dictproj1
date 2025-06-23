@@ -11,7 +11,7 @@ include_once '../Model/connect.php';
     while($row = $result->fetch_assoc()) {
         $_SESSION['uNameLogin'] = $row["username"];
         $_SESSION['pNameLogin'] = $row["password"];
-        header("Location: ../Views/Pages/Documents.php");
+        header("Location: ../Views/Pages/Dashboard.php");
         exit();
     }
     } else {
