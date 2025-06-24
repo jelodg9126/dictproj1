@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
+  <link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
   <link rel="stylesheet" href="/dictproj1/src/input.css">
 
     <title>Document</title>
@@ -73,12 +73,19 @@ include __DIR__ . '/../components/Sidebar.php';
              <div class="box5">
                <h2 class="text-lg font-semibold pl-1.5">Daily Sent</h2>
             </div>
-             <div class="box6">
-               <h2 class="text-lg font-semibold pl-1.5">Sent per PO</h2>
-               
-            </div>
 
-            <div class="box7">
+             <div class="box6">
+            <h2 class="text-lg font-semibold pl-1.5">Sent per PO</h2>
+            <div class="chart-container">
+                <div class="chartWrapper">
+                    <canvas id="papersChart" width="80" height="140"></canvas>
+                </div>
+                <div id="chartLegend" class="chart-legend"></div>
+            </div>
+            <div id="errorMessage" class="error" style="display: none;"></div>
+             </div>
+
+        <div class="box7">
                <h2 class="text-lg font-semibold pl-1.5">Delivery</h2>
                
             </div>
@@ -96,5 +103,9 @@ include __DIR__ . '/../components/Sidebar.php';
             </div>
         </div>
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="Scripts/chart_scripts.js"></script>
 </body>
 </html>

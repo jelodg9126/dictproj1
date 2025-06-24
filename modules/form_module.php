@@ -16,9 +16,13 @@ if (!defined('FORM_MODULE_INCLUDED')) {
                 <label for="officeName" class="required">Select Office</label>
                 <select name="officeName" id="officeName" required>
                     <option value="">-- Select Office --</option>
-                    <option value="Office A">Office A</option>
-                    <option value="Office B">Office B</option>
-                    <option value="Office C">Office C</option>
+                    <option value="Provical Office 1">Provical Office 1</option>
+                    <option value="Provical Office 2">Provical Office 2</option>
+                    <option value="Provical Office 3">Provical Office 3</option>
+                    <option value="Provical Office 4">Provical Office 4</option>
+                    <option value="Provical Office 5">Provical Office 5</option>
+                    <option value="Provical Office 6">Provical Office 6</option>
+                    <option value="Others">Others</option>
                 </select>
             </div>
         </div>

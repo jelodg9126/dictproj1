@@ -235,3 +235,51 @@
     background-color: #4b5563;
 }
 
+.chart-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    height: 100%;
+    padding: 0.5rem;
+}
+
+.chartWrapper {
+    flex: 1;
+    position: relative;
+    min-height: 150px;
+}
+
+.chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #374151;
+    margin-top: 0;
+    min-width: 100px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+   
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: inherit !important;
+}
+
+.legend-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+    font-weight: 500;
+}
+
