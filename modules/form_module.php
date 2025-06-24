@@ -9,7 +9,7 @@ if (!defined('FORM_MODULE_INCLUDED')) {
 ?>
 
 <div class="form-container" id="documentFormContainer">
-    <form action="/dictproj1/modules/process_form.php" method="post" id="documentForm">
+    <form action="/dictproj1/modules/process_form.php" method="post" id="documentForm" enctype="multipart/form-data">
         <div class="form-section">
             <h3>Office Information</h3>
             <div class="form-group">
@@ -68,6 +68,15 @@ if (!defined('FORM_MODULE_INCLUDED')) {
                 <br>
                 <button type="button" class="btn btn-secondary" id="clearSignature">Clear Signature</button>
                 <input type="hidden" name="signature" id="signatureInput">
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <h3>Proof of Document (POD)</h3>
+            <div class="form-group">
+                <label for="podFile">Upload Proof of Document</label>
+                <input type="file" name="podFile" id="podFile" accept="image/*,application/pdf" required>
+                <small>Max file size: 5MB</small>
             </div>
         </div>
         

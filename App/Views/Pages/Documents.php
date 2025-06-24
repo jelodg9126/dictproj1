@@ -272,11 +272,9 @@ if ($statuses_result) {
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Courier Name
                                     </th>
-                                    
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Status
                                     </th>
-
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Date & Time
                                     </th>
@@ -285,7 +283,7 @@ if ($statuses_result) {
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php while($row = $result->fetch_assoc()): ?>
-                                        <?php $row_for_data = $row; unset($row_for_data['signature']); ?>
+                                        <?php $row_for_data = $row; unset($row_for_data['signature']); $row_for_data['pod'] = !empty($row['pod']) ? true : false; ?>
                                         <tr class="hover:bg-gray-50 transition-colors clickable-row" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm font-medium text-gray-900">
@@ -304,11 +302,9 @@ if ($statuses_result) {
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 <?php echo htmlspecialchars($row['courierName'] ?: '-'); ?>
                                             </td>
-
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 <?php echo htmlspecialchars($row['status'] ?: '-'); ?>
                                             </td>
-
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 <?php echo date('M d, Y g:i A', strtotime($row['dateAndTime'])); ?>
                                             </td>
@@ -316,7 +312,7 @@ if ($statuses_result) {
                                     <?php endwhile; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="7" class="text-center py-12">
+                                        <td colspan="8" class="text-center py-12">
                                             <div class="text-gray-500 text-lg">No documents found</div>
                                             <div class="text-gray-400 text-sm mt-2">Try adjusting your search or filter criteria</div>
                                         </td>
@@ -427,6 +423,13 @@ if ($statuses_result) {
                             </a>
                         </div>
                     </div>
+                    <div class="form-section">
+                        <h3>Proof of Document (POD)</h3>
+                        <div class="form-group">
+                            <img id="detailsPod" src="" alt="Proof of Document" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; display:none; cursor:pointer;">
+                            <span id="podNoImage" style="color:#aaa;">No POD</span>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
@@ -437,6 +440,24 @@ if ($statuses_result) {
       <img id="enlargedSignature" src="" alt="Enlarged Signature" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
 
+    <!-- Add a new lightbox for POD -->
+    <div id="podLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedPod" src="" alt="Enlarged POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
+
+    <!-- POD Preview Modal -->
+    <div id="podPreviewModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>Proof of Document</h2>
+                <span class="close" id="closePodPreviewModal" style="cursor:pointer;">&times;</span>
+            </div>
+            <div class="modal-body" style="text-align:center;">
+                <img id="podPreviewImg" src="" alt="Proof of Document" style="max-width:100%; max-height:400px; border:1px solid #ccc; background:#f9f9f9;">
+            </div>
+        </div>
+    </div>
+
     <style>
     .input-readonly {
         width: 100%;
@@ -445,9 +466,85 @@ if ($statuses_result) {
         border-radius: 4px;
         background: #f5f5f5;
     }
+    .modal {
+        display: none;
+        position: fixed !important;
+        z-index: 99999 !important;
+        left: 0; top: 0; width: 100vw; height: 100vh;
+        align-items: center; justify-content: center;
+        background: rgba(0,0,0,0.3);
+    }
+    .modal[style*="display: flex"] {
+        display: flex !important;
+    }
     </style>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Event delegation for table row and POD preview button
+        var tableBody = document.querySelector('tbody');
+        if (tableBody) {
+            tableBody.addEventListener('click', function(e) {
+                var btn = e.target.closest('.preview-pod-btn');
+                if (btn) {
+                    // Eye button clicked
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var id = btn.getAttribute('data-id');
+                    var modal = document.getElementById('podPreviewModal');
+                    var img = document.getElementById('podPreviewImg');
+                    img.src = '/dictproj1/modules/get_pod.php?id=' + id;
+                    modal.style.display = 'flex';
+                    return;
+                }
+                // Otherwise, check if a row was clicked
+                var row = e.target.closest('.clickable-row');
+                if (row) {
+                    var rowData = row.getAttribute('data-row');
+                    if (!rowData) return;
+                    var data = JSON.parse(rowData);
+                    console.log('Row data:', data);
+                    document.getElementById('detailsOfficeName').value = data.officeName || '';
+                    document.getElementById('detailsSenderName').value = data.senderName || '';
+                    document.getElementById('detailsEmailAdd').value = data.emailAdd || '';
+                    document.getElementById('detailsAddressTo').value = data.addressTo || '';
+                    document.getElementById('detailsModeOfDel').value = data.modeOfDel || '';
+                    document.getElementById('detailsCourierName').value = data.courierName || '';
+                    document.getElementById('detailsStatus').value = data.status || '';
+                    document.getElementById('detailsDateAndTime').value = data.dateAndTime || '';
+                    document.getElementById('detailsSignature').src = data.transactionID ? '/dictproj1/modules/get_signature.php?id=' + data.transactionID : '';
+                    var podImg = document.getElementById('detailsPod');
+                    var podNoImage = document.getElementById('podNoImage');
+                    if (data.pod) {
+                        var podUrl = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
+                        console.log('Setting POD src:', podUrl);
+                        podImg.src = podUrl;
+                        podImg.style.display = 'inline';
+                        podNoImage.style.display = 'none';
+                        podImg.onerror = function() {
+                            console.log('POD image failed to load:', podUrl);
+                            podImg.style.display = 'none';
+                            podNoImage.style.display = 'inline';
+                        };
+                    } else {
+                        podImg.src = '';
+                        podImg.style.display = 'none';
+                        podNoImage.style.display = 'inline';
+                    }
+                    document.getElementById('detailsModal').style.display = 'flex';
+                }
+            });
+        }
+        // Modal close logic for POD preview
+        document.getElementById('closePodPreviewModal').onclick = function() {
+            document.getElementById('podPreviewModal').style.display = 'none';
+            document.getElementById('podPreviewImg').src = '';
+        };
+        document.getElementById('podPreviewModal').onclick = function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+                document.getElementById('podPreviewImg').src = '';
+            }
+        };
         // Add New Record button logic
         document.getElementById('openFormModal').onclick = function() {
             document.getElementById('formModal').style.display = 'flex';
@@ -457,28 +554,6 @@ if ($statuses_result) {
             closeBtn.onclick = function() {
                 document.getElementById('formModal').style.display = 'none';
             };
-        });
-        // Row click event for details modal
-        document.querySelectorAll('.clickable-row').forEach(function(row) {
-            row.addEventListener('click', function() {
-                var rowData = this.getAttribute('data-row');
-                if (!rowData) return;
-                var data = JSON.parse(rowData);
-                document.getElementById('detailsOfficeName').value = data.officeName || '';
-                document.getElementById('detailsSenderName').value = data.senderName || '';
-                document.getElementById('detailsEmailAdd').value = data.emailAdd || '';
-                document.getElementById('detailsAddressTo').value = data.addressTo || '';
-                document.getElementById('detailsModeOfDel').value = data.modeOfDel || '';
-                document.getElementById('detailsCourierName').value = data.courierName || '';
-                document.getElementById('detailsStatus').value = data.status || '';
-                document.getElementById('detailsDateAndTime').value = data.dateAndTime || '';
-                if (data.transactionID) {
-                    document.getElementById('detailsSignature').src = '/dictproj1/modules/get_signature.php?id=' + data.transactionID;
-                } else {
-                    document.getElementById('detailsSignature').src = '';
-                }
-                document.getElementById('detailsModal').style.display = 'flex';
-            });
         });
         // Modal close logic for detailsModal
         document.getElementById('closeDetailsModal').onclick = function() {
@@ -493,9 +568,7 @@ if ($statuses_result) {
         document.getElementById('signatureEnlargeLink').onclick = function(e) {
             e.preventDefault();
             var sigImg = document.getElementById('detailsSignature');
-            console.log('Signature src:', sigImg.src);
             if (!sigImg.src || sigImg.src.endsWith('get_signature.php?id=')) {
-                // No image to show
                 return;
             }
             var enlarged = document.getElementById('enlargedSignature');
@@ -505,7 +578,6 @@ if ($statuses_result) {
             lightbox.style.opacity = 0;
             setTimeout(() => { lightbox.style.opacity = 1; }, 10);
         };
-        // Only close lightbox if background (not image) is clicked
         document.getElementById('signatureLightbox').onclick = function(e) {
             if (e.target === this) {
                 this.style.display = 'none';
@@ -513,6 +585,26 @@ if ($statuses_result) {
             }
         };
         document.getElementById('enlargedSignature').onclick = function(e) {
+            e.stopPropagation();
+        };
+        // POD lightbox
+        var podImg = document.getElementById('detailsPod');
+        podImg.onclick = function() {
+            if (!podImg.src || podImg.style.display === 'none') return;
+            var enlarged = document.getElementById('enlargedPod');
+            enlarged.src = podImg.src;
+            var lightbox = document.getElementById('podLightbox');
+            lightbox.style.display = 'flex';
+            lightbox.style.opacity = 0;
+            setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+        };
+        document.getElementById('podLightbox').onclick = function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+                document.getElementById('enlargedPod').src = '';
+            }
+        };
+        document.getElementById('enlargedPod').onclick = function(e) {
             e.stopPropagation();
         };
         // Live filter: auto-submit on input/change
@@ -561,6 +653,20 @@ if ($statuses_result) {
                 if (filterToggleText) filterToggleText.textContent = 'Hide Filters';
             }
         }
+        // Add JS for POD lightbox
+        var podEnlargeLink = document.getElementById('podEnlargeLink');
+        if (podEnlargeLink) {
+            podEnlargeLink.onclick = function(e) {
+                e.preventDefault();
+                var podImg = document.getElementById('detailsPod');
+                var enlarged = document.getElementById('enlargedPod');
+                enlarged.src = podImg.src;
+                var lightbox = document.getElementById('podLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
     });
 
     // Fallback for Show Filters button if external JS fails
@@ -568,25 +674,25 @@ if ($statuses_result) {
         var filterToggle = document.getElementById('filterToggle');
         var filterSection = document.getElementById('filterSection');
         var filterToggleText = document.getElementById('filterToggleText');
-        if (filterToggle && filterSection) {
-            filterToggle.addEventListener('click', function() {
+            if (filterToggle && filterSection) {
+                filterToggle.addEventListener('click', function() {
                 var isVisible = filterSection.style.display !== 'none';
-                filterSection.style.display = isVisible ? 'none' : 'block';
-                
+                    filterSection.style.display = isVisible ? 'none' : 'block';
+                    
                 // Store the panel state in sessionStorage
-                if (isVisible) {
+                    if (isVisible) {
                     // Panel is being closed
                     sessionStorage.setItem('filterPanelOpen', 'false');
-                } else {
+                    } else {
                     // Panel is being opened
                     sessionStorage.setItem('filterPanelOpen', 'true');
                 }
                 
                 if (filterToggleText) {
                     filterToggleText.textContent = isVisible ? 'Show Filters' : 'Hide Filters';
-                }
-            });
-        }
+                    }
+                });
+            }
     })();
     </script>
 </body>

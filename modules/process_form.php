@@ -29,6 +29,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = 'Pending';
     $filetype = '';
     
+    // POD file handling
+    $podBlob = null;
+    $podFilename = null;
+    $podMimeType = null;
+    $maxPodSize = 5 * 1024 * 1024; // 5MB
+    $allowedPodTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!isset($_FILES['podFile']) || $_FILES['podFile']['error'] !== UPLOAD_ERR_OK) {
+        $errors[] = "Proof of Document (POD) file is required.";
+    } else if ($_FILES['podFile']['size'] > $maxPodSize) {
+        $errors[] = "Proof of Document (POD) file must be 5MB or less.";
+    } else if (!in_array($_FILES['podFile']['type'], $allowedPodTypes)) {
+        $errors[] = "Only image files (JPG, PNG, GIF, WEBP) are allowed for Proof of Document (POD).";
+    } else {
+        $podBlob = file_get_contents($_FILES['podFile']['tmp_name']);
+        $podFilename = $_FILES['podFile']['name'];
+        $podMimeType = $_FILES['podFile']['type'];
+    }
+    
     // Validation
     $errors = [];
     
@@ -111,16 +129,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         // Prepare the SQL statement with correct column order
         $stmt = $conn->prepare("INSERT INTO maindoc
-            (officeName, senderName, emailAdd, signature, addressTo, modeOfDel, courierName, dateAndTime, status, filetype)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            (officeName, senderName, emailAdd, signature, addressTo, modeOfDel, courierName, dateAndTime, status, filetype, pod, pod_filename, pod_mime_type)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
         
-        // Bind parameters (s = string, b = blob)
-        $stmt->bind_param("ssssssssss", 
-            $office, $sname, $email, $signatureBlob, $addressTo, $modeOfDel, $courierName, $dateAndTime, $status, $filetype
+        // Bind parameters (all as strings for MySQLi, including blobs)
+        $stmt->bind_param("sssssssssssss", 
+            $office, $sname, $email, $signatureBlob, $addressTo, $modeOfDel, $courierName, $dateAndTime, $status, $filetype, $podBlob, $podFilename, $podMimeType
         );
         
         // Execute the statement
