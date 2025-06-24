@@ -18,12 +18,12 @@
                 <h1 class="text-4xl font-bold text-blue-900 text-center mb-6 mt-8">Log In</h1> 
                
           
-          <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-3">
              <input type="text" name="uNameLogin" class="border border-gray-400 rounded-xl p-2 pl-3 w-[350px] mx-auto" placeholder="Username"/>
              <input type="password" name="pNameLogin" class="border border-gray-400 rounded-xl p-2 pl-3 w-[350px] mx-auto" placeholder="Password"/>
               <button class="btn bg-blue-900 font-bold text-white p-2 rounded-xl cursor-pointer max-w-xl w-full mx-auto">Submit</button>
-</div>
-           </div>
+                </div>
+            </div>
         </div>
     </form>
 

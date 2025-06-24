@@ -1,0 +1,7 @@
+{
+    "lang":  "en-us",
+    "name": "DICT Documents Tracker",
+    "short_name": "Docs Tracker",
+    "description": "Web app used for monitoring and tracking documents",
+    "start_url": "/"
+}
