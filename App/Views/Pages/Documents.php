@@ -117,42 +117,6 @@ if (!empty($params)) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Filter by status if specified (after fetching results)
-if (!empty($status_filter) && $result) {
-    $filtered_rows = [];
-    while ($row = $result->fetch_assoc()) {
-        $submission_date = strtotime($row['dateAndTime']);
-        $current_date = time();
-        $days_diff = ($current_date - $submission_date) / (60 * 60 * 24);
-        
-        if ($days_diff > 7) {
-            $status = 'received';
-        } elseif ($days_diff > 0) {
-            $status = 'pending';
-        } else {
-            $status = 'incoming';
-        }
-        
-        if ($status === $status_filter) {
-            $filtered_rows[] = $row;
-        }
-    }
-    
-    // Create a new result set with filtered data
-    $result = new stdClass();
-    $result->num_rows = count($filtered_rows);
-    $result->data_seek = function($index) use ($filtered_rows) {
-        $this->current_index = $index;
-    };
-    $result->fetch_assoc = function() use ($filtered_rows) {
-        if (isset($this->current_index) && $this->current_index < count($filtered_rows)) {
-            return $filtered_rows[$this->current_index++];
-        }
-        return false;
-    };
-    $result->data_seek(0);
-}
-
 // Get total count for display
 $total_records = $result ? $result->num_rows : 0;
 
@@ -231,22 +195,23 @@ if ($statuses_result) {
 
                 <!-- Search and Filter Section -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6" id="filterSection" style="display: none;">
-                    <form method="GET" action="">
+                    <form method="GET" action="index.php">
+                        <input type="hidden" name="page" value="documents">
                         <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                             <div class="flex items-center gap-4 flex-1">
                                 <div class="relative flex-1 max-w-md">
                                     <input
                                         type="text"
                                         name="search"
+                                        class="filter-input pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="Search documents, sender, or recipient..."
-                                        class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         value="<?php echo htmlspecialchars($search); ?>"
                                     />
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <select
                                         name="office"
-                                        class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">All Offices</option>
                                         <?php foreach ($offices as $office): ?>
                                             <option value="<?php echo htmlspecialchars($office); ?>" 
@@ -257,14 +222,14 @@ if ($statuses_result) {
                                     </select>
                                     <select
                                         name="delivery"
-                                        class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">All Modes</option>
                                         <option value="Courier" <?php echo $delivery_filter === 'Courier' ? 'selected' : ''; ?>>Courier</option>
                                         <option value="In-Person" <?php echo $delivery_filter === 'In-Person' ? 'selected' : ''; ?>>In-Person</option>
                                     </select>
                                     <select
                                         name="status"
-                                        class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">All Status</option>
                                         <?php foreach ($statuses as $status): ?>
                                             <option value="<?php echo htmlspecialchars($status); ?>" 
@@ -276,8 +241,8 @@ if ($statuses_result) {
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Filter</button>
-                                <a href="/dictproj1/App/Views/Pages/Documents.php" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Clear</a>
+                                <!-- <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Filter</button> -->
+                                <a href="?page=documents" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Clear</a>
                                 <span class="text-sm text-gray-600">
                                     <?php echo $total_records; ?> document<?php echo $total_records != 1 ? 's' : ''; ?>
                                 </span>
@@ -550,7 +515,79 @@ if ($statuses_result) {
         document.getElementById('enlargedSignature').onclick = function(e) {
             e.stopPropagation();
         };
+        // Live filter: auto-submit on input/change
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+        var filterForm = document.querySelector('#filterSection form');
+        if (filterForm) {
+            // For text input (search)
+            var searchInput = filterForm.querySelector('input[name="search"]');
+            if (searchInput) {
+                searchInput.addEventListener('input', debounce(function() {
+                    filterForm.submit();
+                }, 400));
+            }
+            // For dropdowns and other filter fields
+            filterForm.querySelectorAll('.filter-input').forEach(function(input) {
+                if (input !== searchInput) {
+                    input.addEventListener('change', function() {
+                        filterForm.submit();
+                    });
+                }
+            });
+        }
+        // Keep filter section open if any filter is active OR if it was previously opened
+        var filterSection = document.getElementById('filterSection');
+        if (filterSection) {
+            // Check if filter panel was previously opened (stored in sessionStorage)
+            var wasFilterPanelOpen = sessionStorage.getItem('filterPanelOpen') === 'true';
+            
+            var hasActiveFilter = false;
+            filterSection.querySelectorAll('.filter-input').forEach(function(input) {
+                if (input.value && input.value !== '') {
+                    hasActiveFilter = true;
+                }
+            });
+            
+            // Keep panel open if there are active filters OR if it was previously opened
+            if (hasActiveFilter || wasFilterPanelOpen) {
+                filterSection.style.display = 'block';
+                var filterToggleText = document.getElementById('filterToggleText');
+                if (filterToggleText) filterToggleText.textContent = 'Hide Filters';
+            }
+        }
     });
+
+    // Fallback for Show Filters button if external JS fails
+    (function() {
+        var filterToggle = document.getElementById('filterToggle');
+        var filterSection = document.getElementById('filterSection');
+        var filterToggleText = document.getElementById('filterToggleText');
+        if (filterToggle && filterSection) {
+            filterToggle.addEventListener('click', function() {
+                var isVisible = filterSection.style.display !== 'none';
+                filterSection.style.display = isVisible ? 'none' : 'block';
+                
+                // Store the panel state in sessionStorage
+                if (isVisible) {
+                    // Panel is being closed
+                    sessionStorage.setItem('filterPanelOpen', 'false');
+                } else {
+                    // Panel is being opened
+                    sessionStorage.setItem('filterPanelOpen', 'true');
+                }
+                
+                if (filterToggleText) {
+                    filterToggleText.textContent = isVisible ? 'Show Filters' : 'Hide Filters';
+                }
+            });
+        }
+    })();
     </script>
 </body>
 </html>

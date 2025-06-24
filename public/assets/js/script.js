@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Filter toggle functionality
     const filterToggle = document.getElementById('filterToggle');
-    const filterContent = document.getElementById('filterContent');
+    const filterContent = document.getElementById('filterSection');
     
     if (filterToggle && filterContent) {
         filterToggle.addEventListener('click', function() {
