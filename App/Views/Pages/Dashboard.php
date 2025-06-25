@@ -18,6 +18,14 @@
    <div class="app-container">
 
 <?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['uNameLogin'])) {
+    header("Location: Login.php");
+    exit();
+}
+
 // Include database connection
 include __DIR__ . '/../../Model/connect.php';
 
@@ -54,6 +62,7 @@ include __DIR__ . '/../components/Sidebar.php';
              <div class="box1">
                 <div class="">
               <h1 class="text-3xl font-bold text-blue-900">Dashboard</h1>
+              <p class="text-sm text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
               </div>
               
             </div>

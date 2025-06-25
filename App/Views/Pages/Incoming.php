@@ -24,9 +24,9 @@ $status_filter = $_GET['status'] ?? '';
 $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 
-// Build the SQL query with filters
-$sql = "SELECT * FROM maindoc WHERE 1=1";
-$count_sql = "SELECT COUNT(*) as total FROM maindoc WHERE 1=1";
+// Build the SQL query with filters - only incoming documents
+$sql = "SELECT * FROM maindoc WHERE filetype = 'incoming' AND status != 'Received'";
+$count_sql = "SELECT COUNT(*) as total FROM maindoc WHERE filetype = 'incoming' AND status != 'Received'";
 $params = [];
 $types = "";
 $count_params = [];
@@ -128,8 +128,8 @@ $result = $stmt->get_result();
 // Get total count for display
 $total_records = $result ? $result->num_rows : 0;
 
-// Get unique offices for filter dropdown
-$offices_sql = "SELECT DISTINCT officeName FROM maindoc ORDER BY officeName";
+// Get unique offices for filter dropdown (only from incoming documents)
+$offices_sql = "SELECT DISTINCT officeName FROM maindoc WHERE filetype = 'incoming' ORDER BY officeName";
 $offices_result = $conn->query($offices_sql);
 $offices = [];
 if ($offices_result) {
@@ -138,8 +138,8 @@ if ($offices_result) {
     }
 }
 
-// Get unique statuses for filter dropdown
-$statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE status IS NOT NULL AND status != '' ORDER BY status";
+// Get unique statuses for filter dropdown (only from incoming documents)
+$statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE filetype = 'incoming' AND status IS NOT NULL AND status != '' ORDER BY status";
 $statuses_result = $conn->query($statuses_sql);
 $statuses = [];
 if ($statuses_result) {
@@ -161,7 +161,7 @@ if ($statuses_result) {
     <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>Document</title>
+    <title>Incoming Documents</title>
 </head>
 <body>
     <div class="app-container">
@@ -187,8 +187,8 @@ if ($statuses_result) {
 
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
-                        <h1 class="text-3xl font-bold text-blue-800">Documents</h1>
-                        <p class="text-gray-600 mt-2">Manage and track all incoming documents</p>
+                        <h1 class="text-3xl font-bold text-blue-800">Incoming Documents</h1>
+                        <p class="text-gray-600 mt-2">View and track all incoming documents (read-only)</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
@@ -197,14 +197,13 @@ if ($statuses_result) {
                             </svg>
                             <span id="filterToggleText">Show Filters</span>
                         </button>
-                        <button type="button" class="btn" id="openFormModal">Add New Record</button>
                     </div>
                 </div>
 
                 <!-- Search and Filter Section -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6" id="filterSection" style="display: none;">
                     <form method="GET" action="index.php">
-                        <input type="hidden" name="page" value="documents">
+                        <input type="hidden" name="page" value="incoming">
                         <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                             <div class="flex items-center gap-4 flex-1">
                                 <div class="relative flex-1 max-w-md">
@@ -249,8 +248,7 @@ if ($statuses_result) {
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <!-- <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Filter</button> -->
-                                <a href="?page=documents" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Clear</a>
+                                <a href="?page=incoming" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Clear</a>
                                 <span class="text-sm text-gray-600">
                                     <?php echo $total_records; ?> document<?php echo $total_records != 1 ? 's' : ''; ?>
                                 </span>
@@ -259,109 +257,109 @@ if ($statuses_result) {
                     </form>
                 </div>
 
-                <!-- Table Section -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-50 border-b border-gray-200">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Office
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Sender Name
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Email
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Delivery Mode
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Courier Name
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
-                                    </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Date & Time
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                <?php if ($result && $result->num_rows > 0): ?>
-                                    <?php while($row = $result->fetch_assoc()): ?>
-                                        <?php $row_for_data = $row; unset($row_for_data['signature']); $row_for_data['pod'] = !empty($row['pod']) ? true : false; ?>
-                                        <tr class="hover:bg-gray-50 transition-colors clickable-row" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">
-                                                    <?php echo htmlspecialchars($row['officeName']); ?>
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <?php echo htmlspecialchars($row['senderName']); ?>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <?php echo htmlspecialchars($row['emailAdd']); ?>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <?php echo htmlspecialchars($row['modeOfDel']); ?>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <?php echo htmlspecialchars($row['courierName'] ?: '-'); ?>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <?php echo htmlspecialchars($row['status'] ?: '-'); ?>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <?php echo date('M d, Y g:i A', strtotime($row['dateAndTime'])); ?>
+                <!-- Incoming Documents Table (default visible) -->
+                <div id="incomingTableSection">
+                    <!-- Table Section -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Office
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Sender Name
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Email
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Delivery Mode
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Courier Name
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Received By
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Date & Time
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <?php if ($result && $result->num_rows > 0): ?>
+                                        <?php while($row = $result->fetch_assoc()): ?>
+                                            <?php $row_for_data = $row; $row_for_data['pod'] = !empty($row['pod_filename']) ? true : false; $row_for_data['hasSignature'] = !empty($row['signature']); unset($row_for_data['signature']); ?>
+                                            <tr class="hover:bg-gray-50 transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm font-medium text-gray-900">
+                                                        <?php echo htmlspecialchars($row['officeName']); ?>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    <?php echo htmlspecialchars($row['senderName']); ?>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    <?php echo htmlspecialchars($row['emailAdd']); ?>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    <?php echo htmlspecialchars($row['modeOfDel']); ?>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    <?php echo htmlspecialchars($row['courierName'] ?: '-'); ?>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    <?php echo htmlspecialchars($row['receivedBy'] ?: '-'); ?>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    <?php echo htmlspecialchars($row['status'] ?: '-'); ?>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    <?php echo date('M d, Y g:i A', strtotime($row['dateAndTime'])); ?>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    <button class="view-btn bg-blue-500 text-white px-3 py-1 rounded" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</button>
+                                                </td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="9" class="text-center py-12">
+                                                <div class="text-gray-500 text-lg">No incoming documents found</div>
+                                                <div class="text-gray-400 text-sm mt-2">Try adjusting your search or filter criteria</div>
                                             </td>
                                         </tr>
-                                    <?php endwhile; ?>
-                                <?php else: ?>
-                                    <tr>
-                                        <td colspan="8" class="text-center py-12">
-                                            <div class="text-gray-500 text-lg">No documents found</div>
-                                            <div class="text-gray-400 text-sm mt-2">Try adjusting your search or filter criteria</div>
-                                        </td>
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Pagination Controls -->
+                    <div class="flex justify-center my-4">
+                        <?php if ($total_pages > 1): ?>
+                            <nav class="inline-flex -space-x-px">
+                                <?php
+                                // Build query string for filters/search
+                                $query_params = $_GET;
+                                foreach(['page_num'] as $unset) unset($query_params[$unset]);
+                                $base_query = http_build_query($query_params);
+                                for ($i = 1; $i <= $total_pages; $i++):
+                                    $link = '?' . $base_query . ($base_query ? '&' : '') . 'page_num=' . $i;
+                                ?>
+                                    <a href="<?php echo $link; ?>" class="px-3 py-1 border border-gray-300 <?php echo $i == $page ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'; ?> hover:bg-blue-100 mx-1 rounded">
+                                        <?php echo $i; ?>
+                                    </a>
+                                <?php endfor; ?>
+                            </nav>
+                        <?php endif; ?>
                     </div>
                 </div>
-                <!-- Pagination Controls -->
-                <div class="flex justify-center my-4">
-                    <?php if ($total_pages > 1): ?>
-                        <nav class="inline-flex -space-x-px">
-                            <?php
-                            // Build query string for filters/search
-                            $query_params = $_GET;
-                            foreach(['page_num'] as $unset) unset($query_params[$unset]);
-                            $base_query = http_build_query($query_params);
-                            for ($i = 1; $i <= $total_pages; $i++):
-                                $link = '?' . $base_query . ($base_query ? '&' : '') . 'page_num=' . $i;
-                            ?>
-                                <a href="<?php echo $link; ?>" class="px-3 py-1 border border-gray-300 <?php echo $i == $page ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'; ?> hover:bg-blue-100 mx-1 rounded">
-                                    <?php echo $i; ?>
-                                </a>
-                            <?php endfor; ?>
-                        </nav>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for Form -->
-    <div id="formModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add New Document Record</h2>
-                <span class="close text-black">&times;</span>
-            </div>
-            <div class="modal-body">
-                <?php include __DIR__ . '/../../../modules/form_module.php'; ?>
             </div>
         </div>
     </div>
@@ -371,7 +369,7 @@ if ($statuses_result) {
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Document Details</h2>
-                <span class="close " id="closeDetailsModal">&times;</span>
+                <span class="close" id="closeDetailsModal">&times;</span>
             </div>
             <div class="modal-body">
                 <form id="detailsForm">
@@ -408,6 +406,10 @@ if ($statuses_result) {
                         <div class="form-group">
                             <label for="detailsCourierName">Courier Name</label>
                             <input type="text" id="detailsCourierName" readonly class="input-readonly">
+                        </div>
+                        <div class="form-group">
+                            <label for="detailsReceivedBy">Received By</label>
+                            <input type="text" id="detailsReceivedBy" readonly class="input-readonly">
                         </div>
                     </div>
                     <div class="form-section">
@@ -466,6 +468,56 @@ if ($statuses_result) {
         </div>
     </div>
 
+    <!-- Add Signature Modal for Incoming Documents -->
+    <div id="addSignatureModal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Add Receipt Signature</h2>
+                <span class="close" id="closeAddSignatureModal" style="cursor:pointer;">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addSignatureForm">
+                    <div class="form-section">
+                        <h3>Document Information</h3>
+                        <div class="form-group">
+                            <label>Office: <span id="signatureOfficeName"></span></label>
+                        </div>
+                        <div class="form-group">
+                            <label>Sender: <span id="signatureSenderName"></span></label>
+                        </div>
+                        <div class="form-group">
+                            <label>Date Received: <span id="signatureDateReceived"></span></label>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3>Receipt Information</h3>
+                        <div class="form-group">
+                            <label for="receiverName" class="required">Your Name (Receiver)</label>
+                            <input type="text" name="receiverName" id="receiverName" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="receiptSignaturePad">Please sign below to confirm receipt:</label>
+                            <br>
+                            <canvas id="receiptSignaturePad" width="350" height="220" style="border:1px solid #ccc; background:#fff;"></canvas>
+                            <br>
+                            <button type="button" class="btn btn-secondary" id="clearReceiptSignature">Clear Signature</button>
+                            <input type="hidden" name="receiptSignature" id="receiptSignatureInput">
+                        </div>
+                        <div class="form-group">
+                            <label for="podFile">Upload Proof of Document (POD)</label>
+                            <input type="file" name="podFile" id="podFile" accept="image/*,application/pdf">
+                            <small>Max file size: 5MB</small>
+                        </div>
+                    </div>
+                    <div class="submit-section">
+                        <button type="submit" class="btn">Confirm Receipt</button>
+                        <button type="button" class="btn btn-secondary" id="cancelReceiptSignature">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <style>
     .input-readonly {
         width: 100%;
@@ -488,60 +540,28 @@ if ($statuses_result) {
     </style>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Event delegation for table row and POD preview button
-        var tableBody = document.querySelector('tbody');
-        if (tableBody) {
-            tableBody.addEventListener('click', function(e) {
-                var btn = e.target.closest('.preview-pod-btn');
-                if (btn) {
-                    // Eye button clicked
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var id = btn.getAttribute('data-id');
-                    var modal = document.getElementById('podPreviewModal');
-                    var img = document.getElementById('podPreviewImg');
-                    img.src = '/dictproj1/modules/get_pod.php?id=' + id;
-                    modal.style.display = 'flex';
-                    return;
-                }
-                // Otherwise, check if a row was clicked
-                var row = e.target.closest('.clickable-row');
-                if (row) {
-                    var rowData = row.getAttribute('data-row');
-                    if (!rowData) return;
-                    var data = JSON.parse(rowData);
-                    console.log('Row data:', data);
-                    document.getElementById('detailsOfficeName').value = data.officeName || '';
-                    document.getElementById('detailsSenderName').value = data.senderName || '';
-                    document.getElementById('detailsEmailAdd').value = data.emailAdd || '';
-                    document.getElementById('detailsAddressTo').value = data.addressTo || '';
-                    document.getElementById('detailsModeOfDel').value = data.modeOfDel || '';
-                    document.getElementById('detailsCourierName').value = data.courierName || '';
-                    document.getElementById('detailsStatus').value = data.status || '';
-                    document.getElementById('detailsDateAndTime').value = data.dateAndTime || '';
-                    document.getElementById('detailsSignature').src = data.transactionID ? '/dictproj1/modules/get_signature.php?id=' + data.transactionID : '';
-                    var podImg = document.getElementById('detailsPod');
-                    var podNoImage = document.getElementById('podNoImage');
-                    if (data.pod) {
-                        var podUrl = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
-                        console.log('Setting POD src:', podUrl);
-                        podImg.src = podUrl;
-                        podImg.style.display = 'inline';
-                        podNoImage.style.display = 'none';
-                        podImg.onerror = function() {
-                            console.log('POD image failed to load:', podUrl);
-                            podImg.style.display = 'none';
-                            podNoImage.style.display = 'inline';
-                        };
-                    } else {
-                        podImg.src = '';
-                        podImg.style.display = 'none';
-                        podNoImage.style.display = 'inline';
-                    }
-                    document.getElementById('detailsModal').style.display = 'flex';
-                }
+        document.querySelectorAll('.view-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var rowData = btn.getAttribute('data-row');
+                if (!rowData) return;
+                var data = JSON.parse(rowData);
+                // Show the add signature modal and populate transactionID
+                var addSignatureModal = document.getElementById('addSignatureModal');
+                var addSignatureForm = document.getElementById('addSignatureForm');
+                addSignatureForm.setAttribute('data-transaction-id', data.transactionID);
+                document.getElementById('receiverName').value = data.receivedBy || '';
+                // Optionally clear signature and pod fields
+                var receiptSignatureInput = document.getElementById('receiptSignatureInput');
+                if (receiptSignatureInput) receiptSignatureInput.value = '';
+                var podFileInput = document.getElementById('podFile');
+                if (podFileInput) podFileInput.value = '';
+                document.getElementById('signatureOfficeName').textContent = data.officeName || '';
+                document.getElementById('signatureSenderName').textContent = data.senderName || '';
+                document.getElementById('signatureDateReceived').textContent = data.dateAndTime ? new Date(data.dateAndTime).toLocaleString() : '';
+                addSignatureModal.style.display = 'flex';
             });
-        }
+        });
         // Modal close logic for POD preview
         document.getElementById('closePodPreviewModal').onclick = function() {
             document.getElementById('podPreviewModal').style.display = 'none';
@@ -553,16 +573,6 @@ if ($statuses_result) {
                 document.getElementById('podPreviewImg').src = '';
             }
         };
-        // Add New Record button logic
-        document.getElementById('openFormModal').onclick = function() {
-            document.getElementById('formModal').style.display = 'flex';
-        };
-        // Modal close logic for formModal
-        document.querySelectorAll('#formModal .close').forEach(function(closeBtn) {
-            closeBtn.onclick = function() {
-                document.getElementById('formModal').style.display = 'none';
-            };
-        });
         // Modal close logic for detailsModal
         document.getElementById('closeDetailsModal').onclick = function() {
             document.getElementById('detailsModal').style.display = 'none';
@@ -675,6 +685,177 @@ if ($statuses_result) {
                 setTimeout(() => { lightbox.style.opacity = 1; }, 10);
             };
         }
+        
+        // Add Signature Modal functionality
+        // Modal close logic for addSignatureModal
+        document.getElementById('closeAddSignatureModal').onclick = function() {
+            document.getElementById('addSignatureModal').style.display = 'none';
+        };
+        document.getElementById('addSignatureModal').onclick = function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        };
+        
+        // Cancel button for add signature modal
+        document.getElementById('cancelReceiptSignature').onclick = function() {
+            document.getElementById('addSignatureModal').style.display = 'none';
+        };
+        
+        // Receipt Signature Pad
+        var receiptCanvas = document.getElementById('receiptSignaturePad');
+        var receiptSignatureInput = document.getElementById('receiptSignatureInput');
+        var clearReceiptBtn = document.getElementById('clearReceiptSignature');
+        if (receiptCanvas && receiptSignatureInput) {
+            var receiptCtx = receiptCanvas.getContext('2d');
+            let receiptDrawing = false;
+            let receiptLastX = 0;
+            let receiptLastY = 0;
+
+            function receiptDraw(e) {
+                if (!receiptDrawing) return;
+                receiptCtx.lineWidth = 2;
+                receiptCtx.lineCap = 'round';
+                receiptCtx.strokeStyle = '#222';
+                let x, y;
+                if (e.touches) {
+                    x = e.touches[0].clientX - receiptCanvas.getBoundingClientRect().left;
+                    y = e.touches[0].clientY - receiptCanvas.getBoundingClientRect().top;
+                } else {
+                    x = e.offsetX;
+                    y = e.offsetY;
+                }
+                receiptCtx.lineTo(x, y);
+                receiptCtx.stroke();
+                receiptCtx.beginPath();
+                receiptCtx.moveTo(x, y);
+            }
+
+            receiptCanvas.addEventListener('mousedown', (e) => {
+                receiptDrawing = true;
+                receiptCtx.beginPath();
+                receiptCtx.moveTo(e.offsetX, e.offsetY);
+            });
+            receiptCanvas.addEventListener('mousemove', receiptDraw);
+            receiptCanvas.addEventListener('mouseup', () => {
+                receiptDrawing = false;
+                receiptCtx.beginPath();
+            });
+            receiptCanvas.addEventListener('mouseout', () => {
+                receiptDrawing = false;
+                receiptCtx.beginPath();
+            });
+            // Touch events for mobile
+            receiptCanvas.addEventListener('touchstart', (e) => {
+                receiptDrawing = true;
+                receiptCtx.beginPath();
+                receiptCtx.moveTo(e.touches[0].clientX - receiptCanvas.getBoundingClientRect().left, e.touches[0].clientY - receiptCanvas.getBoundingClientRect().top);
+            });
+            receiptCanvas.addEventListener('touchmove', receiptDraw);
+            receiptCanvas.addEventListener('touchend', () => {
+                receiptDrawing = false;
+                receiptCtx.beginPath();
+            });
+
+            // Clear signature button
+            if (clearReceiptBtn) {
+                clearReceiptBtn.addEventListener('click', function() {
+                    receiptCtx.clearRect(0, 0, receiptCanvas.width, receiptCanvas.height);
+                    receiptSignatureInput.value = '';
+                });
+            }
+            
+            // Capture signature data when drawing stops
+            function captureReceiptSignature() {
+                if (receiptCanvas.width > 0 && receiptCanvas.height > 0) {
+                    var signatureData = receiptCanvas.toDataURL('image/png');
+                    receiptSignatureInput.value = signatureData;
+                }
+            }
+            
+            // Add event listeners to capture signature
+            receiptCanvas.addEventListener('mouseup', captureReceiptSignature);
+            receiptCanvas.addEventListener('touchend', captureReceiptSignature);
+        }
+        
+        // Handle add signature form submission
+        document.getElementById('addSignatureForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            var transactionID = this.getAttribute('data-transaction-id');
+            var receiverName = document.getElementById('receiverName').value.trim();
+            var signatureData = receiptSignatureInput.value;
+            
+            // Validation
+            if (!receiverName) {
+                alert('Please enter your name.');
+                return;
+            }
+            
+            if (!signatureData) {
+                alert('Please provide your signature.');
+                return;
+            }
+            
+            // Show loading state
+            var submitBtn = this.querySelector('button[type="submit"]');
+            var originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+            
+            // Prepare form data
+            var formData = new FormData();
+            formData.append('transactionID', transactionID);
+            formData.append('receiverName', receiverName);
+            formData.append('receiptSignature', signatureData);
+            
+            // Add podFile to form data
+            var podFileInput = document.getElementById('podFile');
+            if (podFileInput && podFileInput.files.length > 0) {
+                formData.append('podFile', podFileInput.files[0]);
+            }
+            
+            // Submit to server
+            fetch('/dictproj1/modules/update_receipt_signature.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Success - show success message and close modal
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: data.message,
+                        confirmButtonColor: '#3085d6',
+                        timer: 2000
+                    });
+                    document.getElementById('addSignatureModal').style.display = 'none';
+                    // Remove the row from Incoming table
+                    var rowToRemove = document.querySelector('tr[data-transaction-id="' + transactionID + '"]');
+                    if (rowToRemove) rowToRemove.remove();
+                } else {
+                    // Error - show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: (data.errors ? data.errors.join(', ') : 'Unknown error occurred'),
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request.');
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+        });
     });
 
     // Fallback for Show Filters button if external JS fails
