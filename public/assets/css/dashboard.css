@@ -241,13 +241,13 @@
     display: flex;
     align-items: center;
     height: 90%;
-    border: 1px solid black;
+
 }
 
 .chartWrapper {
     flex: 1;
     min-height: 150px;
-    border: 1px solid black;
+
 }
 
 .chart-legend {
