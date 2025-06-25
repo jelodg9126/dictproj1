@@ -61,6 +61,7 @@ include __DIR__ . '/../components/Sidebar.php';
               </div>
               
             </div>
+            
 
              <div class="box2">
                <h2 class="text-lg font-thin pl-1.5">Total Received</h2>
