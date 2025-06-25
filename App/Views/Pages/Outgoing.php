@@ -24,9 +24,9 @@ $status_filter = $_GET['status'] ?? '';
 $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 
-// Build the SQL query with filters
-$sql = "SELECT * FROM maindoc WHERE 1=1";
-$count_sql = "SELECT COUNT(*) as total FROM maindoc WHERE 1=1";
+// Build the SQL query with filters - only outgoing documents
+$sql = "SELECT * FROM maindoc WHERE filetype = 'outgoing'";
+$count_sql = "SELECT COUNT(*) as total FROM maindoc WHERE filetype = 'outgoing'";
 $params = [];
 $types = "";
 $count_params = [];
@@ -128,8 +128,8 @@ $result = $stmt->get_result();
 // Get total count for display
 $total_records = $result ? $result->num_rows : 0;
 
-// Get unique offices for filter dropdown
-$offices_sql = "SELECT DISTINCT officeName FROM maindoc ORDER BY officeName";
+// Get unique offices for filter dropdown (only from outgoing documents)
+$offices_sql = "SELECT DISTINCT officeName FROM maindoc WHERE filetype = 'outgoing' ORDER BY officeName";
 $offices_result = $conn->query($offices_sql);
 $offices = [];
 if ($offices_result) {
@@ -138,8 +138,8 @@ if ($offices_result) {
     }
 }
 
-// Get unique statuses for filter dropdown
-$statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE status IS NOT NULL AND status != '' ORDER BY status";
+// Get unique statuses for filter dropdown (only from outgoing documents)
+$statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE filetype = 'outgoing' AND status IS NOT NULL AND status != '' ORDER BY status";
 $statuses_result = $conn->query($statuses_sql);
 $statuses = [];
 if ($statuses_result) {
@@ -161,7 +161,7 @@ if ($statuses_result) {
     <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <title>Document</title>
+    <title>Outgoing Documents</title>
 </head>
 <body>
     <div class="app-container">
@@ -187,8 +187,8 @@ if ($statuses_result) {
 
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
-                        <h1 class="text-3xl font-bold text-blue-800">Documents</h1>
-                        <p class="text-gray-600 mt-2">Manage and track all incoming documents</p>
+                        <h1 class="text-3xl font-bold text-blue-800">Outgoing Documents</h1>
+                        <p class="text-gray-600 mt-2">Manage and track all outgoing documents</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
@@ -204,7 +204,7 @@ if ($statuses_result) {
                 <!-- Search and Filter Section -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6" id="filterSection" style="display: none;">
                     <form method="GET" action="index.php">
-                        <input type="hidden" name="page" value="documents">
+                        <input type="hidden" name="page" value="outgoing">
                         <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                             <div class="flex items-center gap-4 flex-1">
                                 <div class="relative flex-1 max-w-md">
@@ -249,8 +249,7 @@ if ($statuses_result) {
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <!-- <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Filter</button> -->
-                                <a href="?page=documents" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Clear</a>
+                                <a href="?page=outgoing" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Clear</a>
                                 <span class="text-sm text-gray-600">
                                     <?php echo $total_records; ?> document<?php echo $total_records != 1 ? 's' : ''; ?>
                                 </span>
@@ -321,7 +320,7 @@ if ($statuses_result) {
                                 <?php else: ?>
                                     <tr>
                                         <td colspan="8" class="text-center py-12">
-                                            <div class="text-gray-500 text-lg">No documents found</div>
+                                            <div class="text-gray-500 text-lg">No outgoing documents found</div>
                                             <div class="text-gray-400 text-sm mt-2">Try adjusting your search or filter criteria</div>
                                         </td>
                                     </tr>
@@ -553,16 +552,6 @@ if ($statuses_result) {
                 document.getElementById('podPreviewImg').src = '';
             }
         };
-        // Add New Record button logic
-        document.getElementById('openFormModal').onclick = function() {
-            document.getElementById('formModal').style.display = 'flex';
-        };
-        // Modal close logic for formModal
-        document.querySelectorAll('#formModal .close').forEach(function(closeBtn) {
-            closeBtn.onclick = function() {
-                document.getElementById('formModal').style.display = 'none';
-            };
-        });
         // Modal close logic for detailsModal
         document.getElementById('closeDetailsModal').onclick = function() {
             document.getElementById('detailsModal').style.display = 'none';
@@ -675,6 +664,19 @@ if ($statuses_result) {
                 setTimeout(() => { lightbox.style.opacity = 1; }, 10);
             };
         }
+        // Add New Record button logic
+        document.getElementById('openFormModal').onclick = function() {
+            document.getElementById('formModal').style.display = 'flex';
+        };
+        
+        // Modal close logic for formModal
+        document.querySelectorAll('#formModal .close').forEach(function(closeBtn) {
+            closeBtn.onclick = function() {
+                document.getElementById('formModal').style.display = 'none';
+            };
+        });
+        
+        // Modal close logic for POD preview
     });
 
     // Fallback for Show Filters button if external JS fails

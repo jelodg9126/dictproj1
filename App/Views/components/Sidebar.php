@@ -26,16 +26,42 @@
                     Dashboard
                 </a>
                 
-                <a class="flex gap-3 items-center p-5 transition duration-300 hover:bg-blue-600 active:bg-blue-700 active:scale-95 <?php echo ($currentPage === 'documents') ? 'bg-blue-600 border-l-4 border-white' : 'border-l-4 border-transparent'; ?>" href="/dictproj1/public/index.php?page=documents">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Documents
-                </a>
+                <!-- Documents Dropdown -->
+                <div class="relative">
+                    <button id="documentsDropdown" class="flex gap-3 items-center p-5 w-full text-left transition duration-300 hover:bg-blue-600 active:bg-blue-700 active:scale-95 <?php echo (in_array($currentPage, ['documents', 'incoming', 'outgoing'])) ? 'bg-blue-600 border-l-4 border-white' : 'border-l-4 border-transparent'; ?>">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Documents</span>
+                        <svg class="w-4 h-4 ml-auto transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="documentsDropdownMenu" class="absolute left-0 right-0 top-full bg-blue-800 border-l-4 border-white hidden">
+                        <a href="/dictproj1/public/index.php?page=incoming" class="flex gap-3 items-center p-4 pl-12 transition duration-300 hover:bg-blue-700 <?php echo ($currentPage === 'incoming') ? 'bg-blue-700' : ''; ?>">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                            </svg>
+                            Incoming
+                        </a>
+                        <a href="/dictproj1/public/index.php?page=outgoing" class="flex gap-3 items-center p-4 pl-12 transition duration-300 hover:bg-blue-700 <?php echo ($currentPage === 'outgoing') ? 'bg-blue-700' : ''; ?>">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                            Outgoing
+                        </a>
+                        <a href="/dictproj1/public/index.php?page=received" class="flex gap-3 items-center p-4 pl-12 transition duration-300 hover:bg-blue-700 <?php echo ($currentPage === 'received') ? 'bg-blue-700' : ''; ?>">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Received Documents
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div class="mt-12 text-gray-100">
-                <a class="flex gap-3 items-center p-5 transition-transform duration-200 transform  hover:text-[17.5px] <?php echo ($currentPage === 'logout') ? 'bg-blue-600' : ''; ?>" href="/dictproj1/App/Views/Pages/Login.php">
+                <a class="flex gap-3 items-center p-5 transition-transform duration-200 transform  hover:text-[17.5px] <?php echo ($currentPage === 'logout') ? 'bg-blue-600' : ''; ?>" href="/dictproj1/App/Model/logout.php">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
@@ -45,6 +71,43 @@
         </div>
     </div>
 
-    
+    <script>
+        // Documents dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownButton = document.getElementById('documentsDropdown');
+            const dropdownMenu = document.getElementById('documentsDropdownMenu');
+            const dropdownArrow = dropdownButton.querySelector('svg:last-child');
+            
+            if (dropdownButton && dropdownMenu) {
+                dropdownButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const isOpen = !dropdownMenu.classList.contains('hidden');
+                    
+                    if (isOpen) {
+                        dropdownMenu.classList.add('hidden');
+                        dropdownArrow.style.transform = 'rotate(0deg)';
+                    } else {
+                        dropdownMenu.classList.remove('hidden');
+                        dropdownArrow.style.transform = 'rotate(180deg)';
+                    }
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                        dropdownMenu.classList.add('hidden');
+                        dropdownArrow.style.transform = 'rotate(0deg)';
+                    }
+                });
+                
+                // Keep dropdown open if current page is incoming, outgoing, or received
+                const currentPage = '<?php echo $currentPage; ?>';
+                if (currentPage === 'incoming' || currentPage === 'outgoing' || currentPage === 'received') {
+                    dropdownMenu.classList.remove('hidden');
+                    dropdownArrow.style.transform = 'rotate(180deg)';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

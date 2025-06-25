@@ -6,6 +6,19 @@
 if (!defined('FORM_MODULE_INCLUDED')) {
     define('FORM_MODULE_INCLUDED', true);
 }
+
+// Get current page to pre-select filetype
+$current_page = $_GET['page'] ?? '';
+$pre_selected_filetype = '';
+$filetype_readonly = false;
+
+if ($current_page === 'incoming') {
+    $pre_selected_filetype = 'incoming';
+    $filetype_readonly = true;
+} elseif ($current_page === 'outgoing') {
+    $pre_selected_filetype = 'outgoing';
+    $filetype_readonly = true;
+}
 ?>
 
 <div class="form-container" id="documentFormContainer">
@@ -24,6 +37,17 @@ if (!defined('FORM_MODULE_INCLUDED')) {
                     <option value="Provical Office 6">Provical Office 6</option>
                     <option value="Others">Others</option>
                 </select>
+            </div>
+            <div class="form-group">
+                <label for="filetype" class="required">Document Type</label>
+                <select name="filetype" id="filetype" required <?php echo $filetype_readonly ? 'disabled' : ''; ?>>
+                    <option value="">-- Select Document Type --</option>
+                    <option value="incoming" <?php echo $pre_selected_filetype === 'incoming' ? 'selected' : ''; ?>>Incoming</option>
+                    <option value="outgoing" <?php echo $pre_selected_filetype === 'outgoing' ? 'selected' : ''; ?>>Outgoing</option>
+                </select>
+                <?php if ($filetype_readonly): ?>
+                    <input type="hidden" name="filetype" value="<?php echo $pre_selected_filetype; ?>">
+                <?php endif; ?>
             </div>
         </div>
         

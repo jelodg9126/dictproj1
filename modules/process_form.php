@@ -18,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $addressTo = trim($_POST['addressTo'] ?? '');
     $modeOfDel = trim($_POST['modeOfDel'] ?? '');
     $courierName = trim($_POST['courierName'] ?? '');
+    $filetype = trim($_POST['filetype'] ?? '');
     $dateAndTime = date("Y-m-d H:i:s");
     
     // Signature extraction and decoding
@@ -27,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $signatureBlob = base64_decode(str_replace('data:image/png;base64,', '', $signatureData));
     }
     $status = 'Pending';
-    $filetype = '';
     
     // POD file handling
     $podBlob = null;
@@ -68,6 +68,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     if (empty($modeOfDel)) {
         $errors[] = "Delivery mode selection is required.";
+    }
+    
+    if (empty($filetype) || !in_array($filetype, ['incoming', 'outgoing'])) {
+        $errors[] = "Document type selection is required (Incoming or Outgoing).";
     }
     
     // Check if courier name is required when courier delivery is selected
@@ -146,15 +150,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Check if this is an AJAX request
             if (isset($_POST['ajax']) && $_POST['ajax'] === 'true') {
                 header('Content-Type: application/json');
+                $redirect_url = $filetype === 'incoming' ? '/dictproj1/public/index.php?page=incoming&success=1' : 
+                               ($filetype === 'outgoing' ? '/dictproj1/public/index.php?page=outgoing&success=1' : 
+                               '/dictproj1/public/index.php?page=documents&success=1');
                 echo json_encode([
                     'success' => true,
                     'message' => 'Record inserted successfully!',
-                    'redirect' => '/dictproj1/App/Views/Pages/Documents.php'
+                    'redirect' => $redirect_url
                 ]);
                 exit;
             } else {
                 // Regular form submission - redirect immediately
-                header("Location: /dictproj1/App/Views/Pages/Documents.php?success=1");
+                $redirect_url = $filetype === 'incoming' ? '/dictproj1/public/index.php?page=incoming&success=1' : 
+                               ($filetype === 'outgoing' ? '/dictproj1/public/index.php?page=outgoing&success=1' : 
+                               '/dictproj1/public/index.php?page=documents&success=1');
+                header("Location: " . $redirect_url);
                 exit;
             }
         } else {
@@ -207,7 +217,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
 } else {
     // If accessed directly without POST data, redirect to view records
-    header("Location: /dictproj1/App/Views/Pages/Documents.php");
+    $current_page = $_GET['page'] ?? 'documents';
+    $redirect_url = $current_page === 'incoming' ? '/dictproj1/public/index.php?page=incoming' : 
+                   ($current_page === 'outgoing' ? '/dictproj1/public/index.php?page=outgoing' : 
+                   '/dictproj1/public/index.php?page=documents');
+    header("Location: " . $redirect_url);
     exit;
 }
 ?> 
