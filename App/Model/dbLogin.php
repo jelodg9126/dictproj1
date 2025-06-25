@@ -1,11 +1,14 @@
 <?php
-// Start session and configure it properly
-session_start();
-session_regenerate_id(true); // Regenerate session ID for security
 
 // Set session cookie parameters
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
+
+// Start session and configure it properly
+session_start();
+session_regenerate_id(true); // Regenerate session ID for security
+
+
 
 include_once '../Model/connect.php';
 
@@ -19,10 +22,12 @@ if (!isset($_POST['uNameLogin']) || !isset($_POST['pNameLogin'])) {
 $username = mysqli_real_escape_string($conn, $_POST['uNameLogin']);
 $password = mysqli_real_escape_string($conn, $_POST['pNameLogin']);
 
-// SQL query to select user (using prepared statements would be better)
-$sql = "SELECT * FROM users WHERE userName='$username' AND passWord='$password'";
+// Prepared Statement to check database
+$stmt = $conn->prepare("SELECT * FROM dictadmin WHERE userName=? AND passWord=?");
+$stmt->bind_param("ss", $username, $password);
+$stmt->execute();
+$result = $stmt->get_result();
 
-$result = $conn->query($sql);
 
 if (!$result) {
     header("Location: ../Views/Pages/Login.php?error=db_error");
