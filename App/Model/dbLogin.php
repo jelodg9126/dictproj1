@@ -23,7 +23,7 @@ $username = mysqli_real_escape_string($conn, $_POST['uNameLogin']);
 $password = mysqli_real_escape_string($conn, $_POST['pNameLogin']);
 
 // Prepared Statement to check database
-$stmt = $conn->prepare("SELECT * FROM dictadmin WHERE userName=? AND passWord=?");
+$stmt = $conn->prepare("SELECT * FROM users WHERE userName=? AND passWord=?");
 $stmt->bind_param("ss", $username, $password);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -40,15 +40,24 @@ if ($result && $result->num_rows > 0) {
     $_SESSION['uNameLogin'] = $row["userName"];
     $_SESSION['user_id'] = $row["id"]; // Assuming there's an id column
     $_SESSION['login_time'] = time();
-    
+    $_SESSION['userAuthLevel'] = $row['userType'];
     // Clear any output buffer to ensure clean redirect
     if (ob_get_level()) {
         ob_end_clean();
     }
     
-    // Redirect to dashboard
-    header("Location: ../Views/Pages/Dashboard.php");
-    exit();
+    switch($_SESSION['userAuthLevel']){
+        case 'superAdmin':
+            //redirect to dashboard
+            header("Location: ../Views/Pages/Dashboard.php");
+            exit();
+            break;
+        case 'provincial':
+            //redirect to dashboard
+            header("Location: ../Views/RegionalPages/DashboardPO.php");
+            exit();
+            break;
+    }
 } else {
     // Clear any output buffer
     if (ob_get_level()) {
