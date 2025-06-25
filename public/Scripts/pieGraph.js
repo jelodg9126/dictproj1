@@ -3,7 +3,7 @@ let papersChart;
 // Function to load chart data from database
 async function loadChartData() {
     try {
-        const response = await fetch('../modules/get_paper_data.php'); 
+        const response = await fetch('/dictproj1/App/Model/graphConn/pieConn.php'); 
         const data = await response.json();
         
         if (data.error) {
@@ -31,12 +31,12 @@ async function loadChartData() {
         const values = Object.values(officeTotals);
 
         const officeColors = {
-            'Provical Office 1': 'rgba(104, 127, 229, 0.7)',
-            'Provical Office 2': 'rgba(252, 216, 205, 0.7)',
-            'Provical Office 3': 'rgba(255, 206, 86, 0.7)',
-            'Provical Office 4': 'rgba(75, 192, 192, 0.7)',
-            'Provical Office 5': 'rgba(153, 102, 255, 0.7)',
-            'Provical Office 6': 'rgba(255, 159, 64, 0.7)',
+            'Provincial Office 1': 'rgba(104, 127, 229, 0.7)',
+            'Provincial Office 2': 'rgba(252, 216, 205, 0.7)',
+            'Provincial Office 3': 'rgba(255, 206, 86, 0.7)',
+            'Provincial Office 4': 'rgba(75, 192, 192, 0.7)',
+            'Provincial Office 5': 'rgba(153, 102, 255, 0.7)',
+            'Provincial Office 6': 'rgba(255, 159, 64, 0.7)',
             'Others': 'rgba(255, 17, 255, 0.7)'
            
 

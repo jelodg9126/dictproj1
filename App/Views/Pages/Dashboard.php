@@ -4,12 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <script src="https://cdn.tailwindcss.com"></script>
-<<<<<<< Updated upstream
   <link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
-=======
- 
-<link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
->>>>>>> Stashed changes
   <link rel="stylesheet" href="/dictproj1/src/input.css">
 
     <title>Document</title>
@@ -85,46 +80,39 @@ include __DIR__ . '/../components/Sidebar.php';
             </div>
 
              <div class="box5">
-<<<<<<< Updated upstream
                <h2 class="text-lg font-semibold pl-1.5">Daily Sent</h2>
             </div>
 
              <div class="box6">
             <h2 class="text-lg font-semibold pl-1.5">Sent per PO</h2>
+
             <div class="chart-container">
+
                 <div class="chartWrapper">
                     <canvas id="papersChart" width="80" height="140"></canvas>
                 </div>
+
                 <div id="chartLegend" class="chart-legend"></div>
+
             </div>
+            
             <div id="errorMessage" class="error" style="display: none;"></div>
+
              </div>
 
-        <div class="box7">
-               <h2 class="text-lg font-semibold pl-1.5">Delivery</h2>
-=======
-               <h2 class="text-lg font-thin pl-1.5">Daily Sent</h2>
-            </div>
-
-             <div class="box6">
-              <h2 class="text-lg font-semibold pl-1.5">Sent per PO</h2> 
-               <div>
->>>>>>> Stashed changes
-               
-               </div>
-            </div>
+        
 
             <div class="box7 ">
                <h2 class="text-lg font-semibold pl-1.5 ">Delivery Modes</h2>
-                <div class="m-auto h-60 max-w-full flex items-center border">
-                   <canvas id="myChart" class="border h-auto w-full max-w-full"></canvas>
+                <div class="m-auto h-60 max-w-full flex items-center ">
+                   <canvas id="myChart" class="h-auto w-full max-w-full"></canvas>
                 </div>
             </div>
 
             <div class="box8">
                 <h2 class="text-lg font-semibold pl-1.5">Monthly Sent</h2>
-                 <div class="m-auto h-60 max-w-full flex items-center border">
-                   <canvas id="myChart2" class="border h-auto w-full max-w-full"></canvas>
+                 <div class="m-auto h-60 max-w-full flex items-center ">
+                   <canvas id="myChart2" class="h-auto w-full max-w-full"></canvas>
                 </div>
             </div>
 
@@ -137,15 +125,11 @@ include __DIR__ . '/../components/Sidebar.php';
             </div>
         </div>
 </div>
-<<<<<<< Updated upstream
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="Scripts/chart_scripts.js"></script>
-=======
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/dictproj1/public/Scripts/pieGraph.js"></script>
 <script src="/dictproj1/public/Scripts/barGraph.js"></script>
 <script src="/dictproj1/public/Scripts/lineGraph.js"></script>
->>>>>>> Stashed changes
 </body>
 </html>

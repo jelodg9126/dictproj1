@@ -9,28 +9,4 @@
 *{
     padding: 0;
     margin: 0;
-<<<<<<< Updated upstream
 }
-
-.btn {
-    border: 1px solid #cbd5e0;     /* Similar to Tailwind's border-gray-400 */
-    background-color: #ffffff;     /* White background */
-    color: #000000;                /* Black text (default) */
-    padding: 0.75rem 1.25rem;      /* Tailwind's p-3 */
-    border-radius: 1rem;           /* rounded-2xl = 1rem */
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;                  /* Same as gap-1 */
-    font-size: 1rem;
-    font-weight: 500;
-    transition: background-color 0.2s, box-shadow 0.2s;
-}
-
-.btn:hover {
-    background-color: #f1f5f9;     /* Light hover effect */
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-} 
-=======
-}
->>>>>>> Stashed changes

@@ -239,23 +239,22 @@
 
 .chart-container {
     display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    height: 100%;
-    padding: 0.5rem;
+    align-items: center;
+    height: 90%;
+    border: 1px solid black;
 }
 
 .chartWrapper {
     flex: 1;
-    position: relative;
     min-height: 150px;
+    border: 1px solid black;
 }
 
 .chart-legend {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    font-size: 0.75rem;
+    font-size: 0.55rem;
     color: #374151;
     margin-top: 0;
     min-width: 100px;
@@ -265,7 +264,6 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-   
 }
 
 .legend-dot {
