@@ -70,7 +70,7 @@
 }
 
 .close {
-    color: rgba(255, 255, 255, 0.8);
+    color: #000;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
@@ -86,7 +86,7 @@
 
 .close:hover,
 .close:focus {
-    color: white;
+    color: rgb(35, 34, 34);
     background-color: rgba(255, 255, 255, 0.1);
 }
 

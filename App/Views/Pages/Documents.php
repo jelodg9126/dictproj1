@@ -350,7 +350,7 @@ if ($statuses_result) {
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Add New Document Record</h2>
-                <span class="close">&times;</span>
+                <span class="close text-black">&times;</span>
             </div>
             <div class="modal-body">
                 <?php include __DIR__ . '/../../../modules/form_module.php'; ?>
@@ -363,7 +363,7 @@ if ($statuses_result) {
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Document Details</h2>
-                <span class="close" id="closeDetailsModal">&times;</span>
+                <span class="close " id="closeDetailsModal">&times;</span>
             </div>
             <div class="modal-body">
                 <form id="detailsForm">
