@@ -168,7 +168,9 @@ if ($statuses_result) {
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
 
         <div class="flex-1 p-6 bg-gray-50 min-h-screen overflow-y-auto  " id="docu">
+            
             <div class="max-w-7xl mx-auto">
+                
                 <!-- Success Message -->
                 <?php if ($show_success): ?>
                     <script>
@@ -185,7 +187,9 @@ if ($statuses_result) {
                     </script>
                 <?php endif; ?>
 
+                 <p class="text-xl text-gray-600 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
                 <div class="flex items-center justify-between mb-6">
+                    
                     <div class="items-center">
                         <h1 class="text-3xl font-bold text-blue-800">Incoming Documents</h1>
                         <p class="text-gray-600 mt-2">View and track all incoming documents (read-only)</p>
@@ -196,7 +200,9 @@ if ($statuses_result) {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
                             </svg>
                             <span id="filterToggleText">Show Filters</span>
+                            
                         </button>
+                           
                     </div>
                 </div>
 

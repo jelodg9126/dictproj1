@@ -12,7 +12,7 @@
     $currentPage = $_GET['page'] ?? 'dashboard';
     ?>
     
-    <div class="h-screen bg-blue-900 min-w-[20%] flex flex-col justify-between">
+    <div class="h-screen bg-blue-950 min-w-[20%] flex flex-col justify-between ">
         <div class="">
             <img src="/dictproj1/public/assets/images/dictWhite.png" class="p-6 h-44 object-cover" alt="Logo" />
         </div>

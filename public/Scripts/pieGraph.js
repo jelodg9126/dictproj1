@@ -1,6 +1,5 @@
 let papersChart;
 
-// Function to load chart data from database
 async function loadChartData() {
     try {
         const response = await fetch('/dictproj1/App/Model/graphConn/pieConn.php'); 
@@ -37,6 +36,7 @@ async function loadChartData() {
             'Provincial Office 4': 'rgba(75, 192, 192, 0.7)',
             'Provincial Office 5': 'rgba(153, 102, 255, 0.7)',
             'Provincial Office 6': 'rgba(255, 159, 64, 0.7)',
+            'Provincial Office 7': 'rgba(252, 188, 194, 0.7)',
             'Others': 'rgba(255, 17, 255, 0.7)'
            
 

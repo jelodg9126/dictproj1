@@ -52,12 +52,12 @@ if ($result_received && $result_received->num_rows > 0) {
 
 include __DIR__ . '/../components/Sidebar.php';
 ?>
-     <div class="dboard-layout">
+     <div class="dboard-layout opacity-95">
 
              <div class="box1">
-                <div class="">
-              <h1 class="text-3xl font-bold text-blue-900">Dashboard</h1>
-              <p class="text-sm text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
+                <div class="flex justify-between w-full items-center">
+              <h1 class="text-3xl font-bold px-3 text-blue-900">Dashboard</h1>
+              <p class="text-sm text-gray-600 p-3 border rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
               </div>
               
             </div>
@@ -118,11 +118,99 @@ include __DIR__ . '/../components/Sidebar.php';
             </div>
 
             <div class="box9">
-               <h2 class="text-lg font-semibold pl-1.5">Table 1</h2>
+               <h2 class="text-lg font-semibold pl-1.5">Recent Documents</h2>
+               <div class="overflow-x-auto">
+                   <table class="dashboard-table">
+                       <thead>
+                           <tr>
+                               <th>Document Title</th>
+                               <th>Type</th>
+                               <th>Status</th>
+                               <th>Date Created</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                           <tr>
+                               <td>Annual Report 2024</td>
+                               <td>Outgoing</td>
+                               <td>
+                                   <span class="status-badge status-sent">Sent</span>
+                               </td>
+                               <td>2024-01-15</td>
+                           </tr>
+                           <tr>
+                               <td>Budget Proposal Q1</td>
+                               <td>Incoming</td>
+                               <td>
+                                   <span class="status-badge status-pending">Pending</span>
+                               </td>
+                               <td>2024-01-14</td>
+                           </tr>
+                           <tr>
+                               <td>Project Guidelines</td>
+                               <td>Outgoing</td>
+                               <td>
+                                   <span class="status-badge status-received">Received</span>
+                               </td>
+                               <td>2024-01-13</td>
+                           </tr>
+                           <tr>
+                               <td>Meeting Minutes</td>
+                               <td>Internal</td>
+                               <td>
+                                   <span class="status-badge status-pending">Pending</span>
+                               </td>
+                               <td>2024-01-12</td>
+                           </tr>
+                           <tr>
+                               <td>Policy Update</td>
+                               <td>Outgoing</td>
+                               <td>
+                                   <span class="status-badge status-sent">Sent</span>
+                               </td>
+                               <td>2024-01-11</td>
+                           </tr>
+                       </tbody>
+                   </table>
+               </div>
             </div>
 
             <div class="box10">
-               <h2 class="text-lg font-semibold pl-1.5">Table 2</h2>
+               <h2 class="text-lg font-semibold pl-1.5">Documents by Status</h2>
+               <div class="overflow-x-auto">
+                   <table class="dashboard-table">
+                       <thead>
+                           <tr>
+                               <th>Status</th>
+                               <th>Count</th>
+                               <th>Percentage</th>
+                           </tr>
+                       </thead>
+                       <tbody>
+                           <tr>
+                               <td>
+                                   <span class="status-badge status-pending">Pending</span>
+                               </td>
+                               <td>15</td>
+                               <td>30%</td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <span class="status-badge status-received">Received</span>
+                               </td>
+                               <td>25</td>
+                               <td>50%</td>
+                           </tr>
+                           <tr>
+                               <td>
+                                   <span class="status-badge status-sent">Sent</span>
+                               </td>
+                               <td>10</td>
+                               <td>20%</td>
+                           </tr>
+                       </tbody>
+                   </table>
+               </div>
             </div>
         </div>
 </div>
