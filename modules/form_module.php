@@ -29,12 +29,13 @@ if ($current_page === 'incoming') {
                 <label for="officeName" class="required">Select Office</label>
                 <select name="officeName" id="officeName" required>
                     <option value="">-- Select Office --</option>
-                    <option value="Provical Office 1">Provical Office 1</option>
-                    <option value="Provical Office 2">Provical Office 2</option>
-                    <option value="Provical Office 3">Provical Office 3</option>
-                    <option value="Provical Office 4">Provical Office 4</option>
-                    <option value="Provical Office 5">Provical Office 5</option>
-                    <option value="Provical Office 6">Provical Office 6</option>
+                    <option value="dictBulacan">Provincial Office Bulacan</option>
+                    <option value="dictPampanga">Provincial Office Pampanga</option>
+                    <option value="dictAurora">Provincial Office Aurora</option>
+                    <option value="dictBataan">Provincial Office Bataan</option>
+                    <option value="dictNE">Provincial Office Nueva Ecija</option>
+                    <option value="dictTarlac">Provincial Office Tarlac</option>
+                    <option value="dictZambales">Provincial Office Zambales</option>
                     <option value="Others">Others</option>
                 </select>
             </div>
@@ -69,7 +70,16 @@ if ($current_page === 'incoming') {
             <h3>Delivery Information</h3>
             <div class="form-group">
                 <label for="addressTo" class="required">Receiving Office</label>
-                <input type="text" name="addressTo" id="addressTo" required placeholder="Enter receiving office">
+                    <select name="addressTo" id="addressTo" required>
+                    <option value="RdictBulacan">Provincial Office Bulacan</option>
+                    <option value="RdictPampanga">Provincial Office Pampanga</option>
+                    <option value="RdictAurora">Provincial Office Aurora</option>
+                    <option value="RdictBataan">Provincial Office Bataan</option>
+                    <option value="RdictNE">Provincial Office Nueva Ecija</option>
+                    <option value="RdictTarlac">Provincial Office Tarlac</option>
+                    <option value="RdictZambales">Provincial Office Zambales</option>
+                    <option value="ROthers">Others</option>
+                </select>
             </div>
             
             <div class="form-group">
