@@ -16,18 +16,41 @@ fetch('/dictproj1/App/Model/graphConn/barConn.php')
           label: '# of Senders',
           data: modeDel,
           backgroundColor: ['#10b981', '#f59e0b'],
+          
           borderWidth: 1
         }]
       },
-      options: {
+           options: {
         responsive: true,
         maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: 'white' // make legend text white
+            }
+          }
+        },
         scales: {
+          x: {
+            ticks: {
+              color: 'white' // X-axis text white
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)' // subtle grid lines
+            }
+          },
           y: {
-            beginAtZero: true
+            beginAtZero: true,
+            ticks: {
+              color: 'white' // Y-axis text white
+            },
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)' // subtle grid lines
+            }
           }
         }
       }
     });
   })
+
   .catch(error => console.error("Chart fetch error:", error));

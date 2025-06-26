@@ -4,18 +4,16 @@ async function loadChartData() {
     try {
         const response = await fetch('/dictproj1/App/Model/graphConn/pieConn.php'); 
         const data = await response.json();
-        
+
         if (data.error) {
             showError('Error: ' + data.error);
             return;
         }
 
-        // Destroy existing chart if it exists
         if (papersChart) {
             papersChart.destroy();
         }
 
-        // Prepare data for pie chart (total papers per office)
         const officeTotals = {};
         data.offices.forEach(office => {
             officeTotals[office] = 0;
@@ -29,22 +27,33 @@ async function loadChartData() {
         const labels = Object.keys(officeTotals);
         const values = Object.values(officeTotals);
 
+        // Define colors for each office
         const officeColors = {
-            'Provincial Office 1': 'rgba(104, 127, 229, 0.7)',
-            'Provincial Office 2': 'rgba(252, 216, 205, 0.7)',
-            'Provincial Office 3': 'rgba(255, 206, 86, 0.7)',
-            'Provincial Office 4': 'rgba(75, 192, 192, 0.7)',
-            'Provincial Office 5': 'rgba(153, 102, 255, 0.7)',
-            'Provincial Office 6': 'rgba(255, 159, 64, 0.7)',
-            'Provincial Office 7': 'rgba(252, 188, 194, 0.7)',
-            'Others': 'rgba(255, 17, 255, 0.7)'
-           
-
+            'Provincial Office Bulacan': 'rgba(255, 107, 107, 0.7)',
+            'Provincial Office Pampanga': 'rgba(107, 203, 119, 0.7)',
+            'Provincial Office Aurora': 'rgba(77, 150, 255, 0.7)',
+            'Provincial Office Bataan': 'rgba(255, 199, 95, 0.7)',
+            'Provincial Office Nueva Ecija': 'rgba(132, 94, 194, 0.7)',
+            'Provincial Office Tarlac': 'rgba(249, 248, 113, 0.7)',
+            'Provincial Office Zambales': 'rgba(249, 132, 239, 0.7)',
+            'Others': 'rgba(0, 201, 167, 0.7)'
         };
-        
-       const backgroundColor = labels.map(label => officeColors[label] || 'rgba(200, 200, 200, 0.7)');
-const borderColor = backgroundColor.map(color => color.replace('0.7', '1'));
-        // Create custom legend
+
+        // Normalize labels for consistent matching
+        const normalizeLabel = label => label.trim().toLowerCase();
+
+        const normalizedColors = {};
+        for (const key in officeColors) {
+            normalizedColors[normalizeLabel(key)] = officeColors[key];
+        }
+
+        const backgroundColor = labels.map(label => {
+            const normalized = normalizeLabel(label);
+            return normalizedColors[normalized] || 'rgba(200, 200, 200, 0.7)';
+        });
+
+        const borderColor = backgroundColor.map(color => color.replace('0.7', '1'));
+
         createCustomLegend(labels, backgroundColor);
 
         const ctx = document.getElementById('papersChart').getContext('2d');
@@ -57,7 +66,9 @@ const borderColor = backgroundColor.map(color => color.replace('0.7', '1'));
                     data: values,
                     backgroundColor: backgroundColor,
                     borderColor: borderColor,
-                    borderWidth: 1
+                    borderWidth: 2,
+                    hoverOffset: 10
+                
                 }]
             },
             options: {
@@ -65,7 +76,10 @@ const borderColor = backgroundColor.map(color => color.replace('0.7', '1'));
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
+                        display: false,
+                        labels: {
+                            color:'white'
+                        }
                     },
                     tooltip: {
                         callbacks: {
@@ -76,7 +90,11 @@ const borderColor = backgroundColor.map(color => color.replace('0.7', '1'));
                                 const percentage = ((value / total) * 100).toFixed(1);
                                 return `${label}: ${value} (${percentage}%)`;
                             }
-                        }
+                        },
+                          bodyColor: 'white',   // ← tooltip value text color
+                           titleColor: 'white',  // ← tooltip title text color
+                        backgroundColor: '#111' // optional: dark tooltip background
+    
                     }
                 },
                 animation: {

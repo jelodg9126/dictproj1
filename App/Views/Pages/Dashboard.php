@@ -125,7 +125,7 @@ include __DIR__ . '/../components/Sidebar.php';
                         <canvas id="papersChart" width="80" height="140"></canvas>
                     </div>
 
-                    <div id="chartLegend" class="chart-legend"></div>
+                    <div id="chartLegend" class="chart-legend text-white"></div>
 
                 </div>
 
