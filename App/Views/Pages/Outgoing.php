@@ -260,10 +260,10 @@ if ($statuses_result) {
                 </div>
 
                 <!-- Table Section -->
-                <div class="bg-[rgba(240,240,240,0.4)] backdrop-blur rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class=" bg-gray-200 rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="overflow-x-auto ">
                         <table class="w-full ">
-                            <thead class="bg-gray-50 border-b border-gray-200">
+                            <thead class="bg-[rgba(240,240,240,0.51)] backdrop-blur border-b border-gray-200">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Office
@@ -288,11 +288,11 @@ if ($statuses_result) {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-[rgba(255,255,255,0.2)] divide-y divide-gray-200">
+                            <tbody class="bg-[rgb(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php while($row = $result->fetch_assoc()): ?>
                                         <?php $row_for_data = $row; unset($row_for_data['signature']); $row_for_data['pod'] = !empty($row['pod']) ? true : false; ?>
-                                        <tr class="hover:bg-gray-50 transition-colors clickable-row" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>
+                                        <tr class="hover:bg-[rgb(203,202,202)] backdrop-blur-sm transition-colors clickable-row" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm font-medium text-gray-900">
                                                     <?php echo htmlspecialchars($row['officeName']); ?>

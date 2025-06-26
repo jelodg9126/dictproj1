@@ -115,7 +115,7 @@ if ($offices_result) {
                     </div>
                 </div>
                 <!-- Table -->
-                <div class="bg-[rgba(240,240,240,0.4)] backdrop-blur rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gray-200 backdrop-blur rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead class="bg-gray-50 border-b border-gray-200">

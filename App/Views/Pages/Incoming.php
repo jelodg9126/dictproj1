@@ -304,7 +304,7 @@ if ($statuses_result) {
                                     <?php if ($result && $result->num_rows > 0): ?>
                                         <?php while($row = $result->fetch_assoc()): ?>
                                             <?php $row_for_data = $row; $row_for_data['pod'] = !empty($row['pod_filename']) ? true : false; $row_for_data['hasSignature'] = !empty($row['signature']); unset($row_for_data['signature']); ?>
-                                            <tr class="hover:bg-gray-50 transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
+                                            <tr class="hover:bg-[rgb(203,202,202)] transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="text-sm font-medium text-gray-900">
                                                         <?php echo htmlspecialchars($row['officeName']); ?>
