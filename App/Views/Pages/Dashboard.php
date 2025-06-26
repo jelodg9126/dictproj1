@@ -65,10 +65,50 @@ include __DIR__ . '/../components/Sidebar.php';
 ?>
      <div class="dboard-layout">
 
+<<<<<<< Updated upstream
             <div class="box1">
                 <div class="flex justify-between w-full items-center">
                     <h1 class="text-3xl font-bold px-3 text-blue-900">Dashboard</h1>
                     <p class="text-sm text-gray-600 p-3 border rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
+=======
+             <div class="box1">
+                <div class="">
+              <h1 class="text-3xl font-bold text-blue-900">Dashboard</h1>
+              <p class="text-sm text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
+              </div>
+              
+            </div>
+            
+
+             <div class="box2">
+               <h2 class="text-lg font-thin pl-1.5">Total Received</h2>
+               <p class="text-sm text-gray-600 pl-1.5"><?php echo $received_count;?></p>
+               
+            </div>
+
+            
+             <div class="box3">
+               <h2 class="text-lg font-thin pl-1.5">Pending</h2>
+               <p class="text-2xl font-bold text-gray-800 pl-1.5 "><?php echo $pending_count; ?></p>
+            </div>
+
+             <div class="box4">
+               <h2 class="text-lg font-thin pl-1.5">Total Sent</h2>
+               <p class="text-2xl font-bold text-gray-800 pl-1.5 "><?php echo $outgoing_count; ?></p>
+            </div>
+
+             <div class="box5">
+               <h2 class="text-lg font-semibold pl-1.5">Daily Sent</h2>
+            </div>
+
+             <div class="box6">
+            <h2 class="text-lg font-semibold pl-1.5">Sent per PO</h2>
+
+            <div class="chart-container">
+
+                <div class="chartWrapper">
+                    <canvas id="papersChart" width="80" height="140"></canvas>
+>>>>>>> Stashed changes
                 </div>
 
             </div>
@@ -150,6 +190,7 @@ include __DIR__ . '/../components/Sidebar.php';
             </div>
 
             <div class="box9">
+<<<<<<< Updated upstream
                 <h2 class="text-lg font-semibold pl-1.5">Recent Documents</h2>
                 <div class="overflow-x-auto">
                     <table class="dashboard-table">
@@ -243,6 +284,13 @@ include __DIR__ . '/../components/Sidebar.php';
                         </tbody>
                     </table>
                 </div>
+=======
+               <h2 class="text-lg font-semibold pl-1.5">Table 1</h2>
+            </div>
+
+            <div class="box10">
+               <h2 class="text-lg font-semibold pl-1.5">Table 2</h2>
+>>>>>>> Stashed changes
             </div>
         </div>
     </div>

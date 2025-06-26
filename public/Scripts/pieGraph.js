@@ -1,5 +1,18 @@
 let papersChart;
 
+// Mapping for office codes to display names
+const officeDisplayNames = {
+    'dictbulacan': 'Provincial Office Bulacan',
+    'dictaurora': 'Provincial Office Aurora',
+    'dictbataan': 'Provincial Office Bataan',
+    'dictpampanga': 'Provincial Office Pampanga',
+    'dicttarlac': 'Provincial Office Tarlac',
+    'dictzambales': 'Provincial Office Zambales',
+    'dictothers': 'Provincial Office Others',
+    'Rdictpampanga': 'Provincial Office Pampanga',
+    // Add more as needed
+};
+
 async function loadChartData() {
     try {
         const response = await fetch('/dictproj1/App/Model/graphConn/pieConn.php'); 
@@ -24,11 +37,13 @@ async function loadChartData() {
             });
         });
 
-        const labels = Object.keys(officeTotals);
+        // Use display names for labels
+        const labels = Object.keys(officeTotals).map(office => officeDisplayNames[office] || office);
         const values = Object.values(officeTotals);
 
         // Define colors for each office
         const officeColors = {
+<<<<<<< Updated upstream
             'Provincial Office Bulacan': 'rgba(255, 107, 107, 0.7)',
             'Provincial Office Pampanga': 'rgba(107, 203, 119, 0.7)',
             'Provincial Office Aurora': 'rgba(77, 150, 255, 0.7)',
@@ -54,6 +69,20 @@ async function loadChartData() {
 
         const borderColor = backgroundColor.map(color => color.replace('0.7', '1'));
 
+=======
+            'Provincial Office Bulacan': 'rgba(104, 127, 229, 0.7)',
+            'Provincial Office Aurora': 'rgba(252, 216, 205, 0.7)',
+            'Provincial Office Bataan': 'rgba(255, 206, 86, 0.7)',
+            'Provincial Office Pampanga': 'rgba(75, 192, 192, 0.7)',
+            'Provincial Office Tarlac': 'rgba(153, 102, 255, 0.7)',
+            'Provincial Office Zambales': 'rgba(255, 159, 64, 0.7)',
+            'Provincial Office Others': 'rgba(255, 17, 255, 0.7)'
+        };
+        
+        const backgroundColor = labels.map(label => officeColors[label] || 'rgba(200, 200, 200, 0.7)');
+        const borderColor = backgroundColor.map(color => color.replace('0.7', '1'));
+        // Create custom legend
+>>>>>>> Stashed changes
         createCustomLegend(labels, backgroundColor);
 
         const ctx = document.getElementById('papersChart').getContext('2d');

@@ -39,7 +39,7 @@
     }
     ?>
     
-    <form action="../../Model/dbLogin.php" method="POST">
+    <form action="/dictproj1/App/Model/dbLogin.php" method="POST">
         
         <div class="login-container h-screen bg-gray-100 w-full flex items-center justify-center">
            <div class="login-card p-10 px-30 bg-white py-20 flex flex-col border border-gray-400 rounded-sm shadow-xl">

@@ -19,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $podMimeType = null;
     $maxPodSize = 5 * 1024 * 1024; // 5MB
     $allowedPodTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+    $errors = [];
     if (isset($_FILES['podFile']) && $_FILES['podFile']['error'] === UPLOAD_ERR_OK) {
         if ($_FILES['podFile']['size'] > $maxPodSize) {
             $errors[] = "Proof of Document (POD) file must be 5MB or less.";
@@ -29,11 +30,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $podFilename = $_FILES['podFile']['name'];
             $podMimeType = $_FILES['podFile']['type'];
         }
+    } else {
+        $errors[] = "Proof of Document (POD) file is required.";
     }
     
     // Validation
-    $errors = [];
-    
     if (empty($transactionID)) {
         $errors[] = "Transaction ID is required.";
     }
@@ -73,15 +74,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $check_stmt->close();
         
         // Update the document with receipt signature, receiver name, and POD
-        $null = null; // placeholder for blob
         $stmt = $conn->prepare("UPDATE maindoc SET signature = ?, receivedBy = ?, pod = ?, pod_filename = ?, pod_mime_type = ? WHERE transactionID = ? AND filetype = 'incoming'");
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
-        $stmt->bind_param("ssbssi", $signatureBlob, $receiverName, $null, $podFilename, $podMimeType, $transactionID);
-        if ($podBlob !== null) {
-            $stmt->send_long_data(2, $podBlob); // 2 is the zero-based index for pod
-        }
+        // Pass blobs directly as variables
+        $sig = $signatureBlob;
+        $pod = $podBlob;
+        $stmt->bind_param("sssssi", $sig, $receiverName, $pod, $podFilename, $podMimeType, $transactionID);
         // Execute the statement
         if ($stmt->execute()) {
             // After update, check if all three fields are present in the DB

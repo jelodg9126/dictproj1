@@ -7,6 +7,9 @@ if (!isset($_SESSION['uNameLogin'])) {
     exit();
 }
 
+// Check user type for conditional display
+$isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin';
+
 // Include database connection
 include __DIR__ . '/../../Model/connect.php';
 
@@ -20,7 +23,7 @@ $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 
 // Build the SQL query with filters - only received documents
-$sql = "SELECT * FROM maindoc WHERE filetype = 'incoming' AND status = 'Received'";
+$sql = "SELECT * FROM maindoc WHERE filetype = 'incoming' AND status = 'Received' AND (endorsedToName IS NULL OR endorsedToName = '' OR endorsedToSignature IS NULL OR endorsedToSignature = '' OR endorsedDocProof IS NULL OR endorsedDocProof = '')";
 $params = [];
 $types = "";
 
@@ -154,7 +157,9 @@ if ($offices_result) {
                                                     "hasEndorsedSignature" => !empty($row["endorsedToSignature"]),
                                                     "hasEndorsedDocProof" => !empty($row["endorsedDocProof"]),
                                                 ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</a>
-                                                <button class="endorse-btn bg-green-500 text-white px-3 py-1 rounded ml-2" data-id="<?php echo $row['transactionID']; ?>">Endorse</button>
+                                                <?php if ($isSuperAdmin): ?>
+                                                    <button class="endorse-btn bg-green-500 text-white px-3 py-1 rounded ml-2" data-id="<?php echo $row['transactionID']; ?>">Endorse</button>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
@@ -370,6 +375,7 @@ if ($offices_result) {
         document.getElementById('endorseForm').addEventListener('submit', function(e) {
             e.preventDefault();
             var formData = new FormData(this);
+            var transactionID = document.getElementById('endorseTransactionID').value;
             fetch('/dictproj1/modules/endorse_document.php', {
                 method: 'POST',
                 body: formData
@@ -385,6 +391,18 @@ if ($offices_result) {
                         timer: 2000
                     });
                     document.getElementById('endorseModal').style.display = 'none';
+                    // Update the data-row attribute for the corresponding row
+                    var row = document.querySelector('button.endorse-btn[data-id="' + transactionID + '"]').closest('tr');
+                    if (row) {
+                        var viewBtn = row.querySelector('.view-btn');
+                        if (viewBtn) {
+                            var rowData = JSON.parse(viewBtn.getAttribute('data-row'));
+                            rowData.endorsedToName = data.endorsedToName;
+                            rowData.hasEndorsedSignature = data.hasEndorsedSignature;
+                            rowData.hasEndorsedDocProof = data.hasEndorsedDocProof;
+                            viewBtn.setAttribute('data-row', JSON.stringify(rowData));
+                        }
+                    }
                 } else {
                     Swal.fire({
                         icon: 'error',

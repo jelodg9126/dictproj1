@@ -147,6 +147,39 @@ if ($statuses_result) {
         $statuses[] = $row['status'];
     }
 }
+
+$officeDisplayNames = [
+    'dictbulacan' => 'Provincial Office Bulacan',
+    'dictaurora' => 'Provincial Office Aurora',
+    'dictbataan' => 'Provincial Office Bataan',
+    'dictpampanga' => 'Provincial Office Pampanga',
+    'dictPampanga' => 'Provincial Office Pampanga',
+    'dicttarlac' => 'Provincial Office Tarlac',
+    'dictzambales' => 'Provincial Office Zambales',
+    'dictothers' => 'Provincial Office Others',
+    'dictNE' => 'Provincial Office Nueva Ecija',
+    'dictne' => 'Provincial Office Nueva Ecija',
+    'dictNUEVAECIJA' => 'Provincial Office Nueva Ecija',
+    'Rdictpampanga' => 'Provincial Office Pampanga',
+    'RdictPampanga' => 'Provincial Office Pampanga',
+    'RdictTarlac' => 'Provincial Office Tarlac',
+    'RdictBataan' => 'Provincial Office Bataan',
+    'RdictBulacan' => 'Provincial Office Bulacan',
+    'RdictAurora' => 'Provincial Office Aurora',
+    'RdictZambales' => 'Provincial Office Zambales',
+    'RdictNuevaEcija' => 'Provincial Office Nueva Ecija',
+    'RdictNE' => 'Provincial Office Nueva Ecija',
+    // Add more as you encounter new codes!
+];
+
+function getOfficeDisplayNamePHP($code, $map) {
+    if (!$code) return '';
+    $lower = strtolower($code);
+    foreach ($map as $key => $val) {
+        if (strtolower($key) === $lower) return $val;
+    }
+    return $code;
+}
 ?>
 
 <!DOCTYPE html>
@@ -295,7 +328,7 @@ if ($statuses_result) {
                                         <tr class="hover:bg-gray-50 transition-colors clickable-row" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm font-medium text-gray-900">
-                                                    <?php echo htmlspecialchars($row['officeName']); ?>
+                                                    <?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames)); ?>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -487,6 +520,30 @@ if ($statuses_result) {
     }
     </style>
     <script>
+    // Mapping for office codes to display names
+    const officeDisplayNames = {
+        'dictbulacan': 'Provincial Office Bulacan',
+        'dictaurora': 'Provincial Office Aurora',
+        'dictbataan': 'Provincial Office Bataan',
+        'dictpampanga': 'Provincial Office Pampanga',
+        'dictPampanga': 'Provincial Office Pampanga',
+        'dicttarlac': 'Provincial Office Tarlac',
+        'dictzambales': 'Provincial Office Zambales',
+        'dictothers': 'Provincial Office Others',
+        'dictNE': 'Provincial Office Nueva Ecija',
+        'dictne': 'Provincial Office Nueva Ecija',
+        'dictNUEVAECIJA': 'Provincial Office Nueva Ecija',
+        'Rdictpampanga': 'Provincial Office Pampanga',
+        'RdictPampanga': 'Provincial Office Pampanga',
+        'RdictTarlac': 'Provincial Office Tarlac',
+        'RdictBataan': 'Provincial Office Bataan',
+        'RdictBulacan': 'Provincial Office Bulacan',
+        'RdictAurora': 'Provincial Office Aurora',
+        'RdictZambales': 'Provincial Office Zambales',
+        'RdictNuevaEcija': 'Provincial Office Nueva Ecija',
+        'RdictNE': 'Provincial Office Nueva Ecija',
+        // Add more as you encounter new codes!
+    };
     document.addEventListener('DOMContentLoaded', function() {
         // Event delegation for table row and POD preview button
         var tableBody = document.querySelector('tbody');
@@ -511,10 +568,13 @@ if ($statuses_result) {
                     if (!rowData) return;
                     var data = JSON.parse(rowData);
                     console.log('Row data:', data);
-                    document.getElementById('detailsOfficeName').value = data.officeName || '';
+                    // Use mapping for office name
+                    var displayOffice = getOfficeDisplayName(data.officeName);
+                    var displayReceivingOffice = getOfficeDisplayName(data.addressTo);
+                    document.getElementById('detailsOfficeName').value = displayOffice;
                     document.getElementById('detailsSenderName').value = data.senderName || '';
                     document.getElementById('detailsEmailAdd').value = data.emailAdd || '';
-                    document.getElementById('detailsAddressTo').value = data.addressTo || '';
+                    document.getElementById('detailsAddressTo').value = displayReceivingOffice;
                     document.getElementById('detailsModeOfDel').value = data.modeOfDel || '';
                     document.getElementById('detailsCourierName').value = data.courierName || '';
                     document.getElementById('detailsStatus').value = data.status || '';
@@ -524,12 +584,10 @@ if ($statuses_result) {
                     var podNoImage = document.getElementById('podNoImage');
                     if (data.pod) {
                         var podUrl = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
-                        console.log('Setting POD src:', podUrl);
                         podImg.src = podUrl;
                         podImg.style.display = 'inline';
                         podNoImage.style.display = 'none';
                         podImg.onerror = function() {
-                            console.log('POD image failed to load:', podUrl);
                             podImg.style.display = 'none';
                             podNoImage.style.display = 'inline';
                         };
@@ -702,6 +760,15 @@ if ($statuses_result) {
                 });
             }
     })();
+
+    function getOfficeDisplayName(code) {
+        if (!code) return '';
+        var lower = code.toLowerCase();
+        for (var key in officeDisplayNames) {
+            if (key.toLowerCase() === lower) return officeDisplayNames[key];
+        }
+        return code;
+    }
     </script>
 </body>
 </html>

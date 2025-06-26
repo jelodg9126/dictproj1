@@ -10,6 +10,7 @@
     <?php
     // Get current page from URL parameter
     $currentPage = $_GET['page'] ?? 'dashboard';
+    $isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin';
     ?>
     
     <div class="h-screen bg-blue-950 min-w-[20%] flex flex-col justify-between ">
@@ -56,6 +57,15 @@
                             </svg>
                             Received Documents
                         </a>
+                        <?php if ($isSuperAdmin): ?>
+                        <a href="/dictproj1/public/index.php?page=endorsed" class="flex gap-3 items-center p-4 pl-12 transition duration-300 hover:bg-blue-700 <?php echo ($currentPage === 'endorsed') ? 'bg-blue-700' : ''; ?>">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4-4" />
+                            </svg>
+                            Endorsed Documents
+                        </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -100,9 +110,9 @@
                     }
                 });
                 
-                // Keep dropdown open if current page is incoming, outgoing, or received
+                // Keep dropdown open if current page is incoming, outgoing, received, or endorsed
                 const currentPage = '<?php echo $currentPage; ?>';
-                if (currentPage === 'incoming' || currentPage === 'outgoing' || currentPage === 'received') {
+                if (['incoming', 'outgoing', 'received', 'endorsed'].includes(currentPage)) {
                     dropdownMenu.classList.remove('hidden');
                     dropdownArrow.style.transform = 'rotate(180deg)';
                 }

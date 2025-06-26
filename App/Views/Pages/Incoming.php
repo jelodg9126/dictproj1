@@ -147,6 +147,38 @@ if ($statuses_result) {
         $statuses[] = $row['status'];
     }
 }
+
+$officeDisplayNames = [
+    'dictbulacan' => 'Provincial Office Bulacan',
+    'dictaurora' => 'Provincial Office Aurora',
+    'dictbataan' => 'Provincial Office Bataan',
+    'dictpampanga' => 'Provincial Office Pampanga',
+    'dictPampanga' => 'Provincial Office Pampanga',
+    'dicttarlac' => 'Provincial Office Tarlac',
+    'dictzambales' => 'Provincial Office Zambales',
+    'dictothers' => 'Provincial Office Others',
+    'dictNE' => 'Provincial Office Nueva Ecija',
+    'dictne' => 'Provincial Office Nueva Ecija',
+    'dictNUEVAECIJA' => 'Provincial Office Nueva Ecija',
+    'Rdictpampanga' => 'Provincial Office Pampanga',
+    'RdictPampanga' => 'Provincial Office Pampanga',
+    'RdictTarlac' => 'Provincial Office Tarlac',
+    'RdictBataan' => 'Provincial Office Bataan',
+    'RdictBulacan' => 'Provincial Office Bulacan',
+    'RdictAurora' => 'Provincial Office Aurora',
+    'RdictZambales' => 'Provincial Office Zambales',
+    'RdictNuevaEcija' => 'Provincial Office Nueva Ecija',
+    'RdictNE' => 'Provincial Office Nueva Ecija',
+    // Add more as you encounter new codes!
+];
+function getOfficeDisplayNamePHP($code, $map) {
+    if (!$code) return '';
+    $lower = strtolower($code);
+    foreach ($map as $key => $val) {
+        if (strtolower($key) === $lower) return $val;
+    }
+    return $code;
+}
 ?>
 
 <!DOCTYPE html>
@@ -167,12 +199,15 @@ if ($statuses_result) {
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
 
+<<<<<<< Updated upstream
         
         <div class="flex-1 p-6 bg-linear-90 from-[#48517f] to-[#322b5f] min-h-screen overflow-y-auto  " id="docu">
           
             
+=======
+        <div class="flex-1 p-6 bg-gray-50 min-h-screen overflow-y-auto  " id="docu">
+>>>>>>> Stashed changes
             <div class="max-w-7xl mx-auto">
-                
                 <!-- Success Message -->
                 <?php if ($show_success): ?>
                     <script>
@@ -189,12 +224,18 @@ if ($statuses_result) {
                     </script>
                 <?php endif; ?>
 
+<<<<<<< Updated upstream
                  <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
+=======
+>>>>>>> Stashed changes
                 <div class="flex items-center justify-between mb-6">
-                    
                     <div class="items-center">
                         <h1 class="text-3xl font-bold text-blue-800">Incoming Documents</h1>
+<<<<<<< Updated upstream
                         <p class="text-gray-300 mt-2">View and track all incoming documents (read-only)</p>
+=======
+                        <p class="text-gray-600 mt-2">View and track all incoming documents</p>
+>>>>>>> Stashed changes
                     </div>
                     <div class="flex items-center gap-3">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
@@ -202,9 +243,7 @@ if ($statuses_result) {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
                             </svg>
                             <span id="filterToggleText">Show Filters</span>
-                            
                         </button>
-                           
                     </div>
                 </div>
 
@@ -303,11 +342,23 @@ if ($statuses_result) {
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     <?php if ($result && $result->num_rows > 0): ?>
                                         <?php while($row = $result->fetch_assoc()): ?>
+<<<<<<< Updated upstream
                                             <?php $row_for_data = $row; $row_for_data['pod'] = !empty($row['pod_filename']) ? true : false; $row_for_data['hasSignature'] = !empty($row['signature']); unset($row_for_data['signature']); ?>
                                             <tr class="hover:bg-[rgb(203,202,202)] transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
+=======
+                                            <?php 
+                                                $row_for_data = $row; 
+                                                $row_for_data['pod'] = !empty($row['pod_filename']) ? true : false; 
+                                                $row_for_data['hasSignature'] = !empty($row['signature']); 
+                                                $row_for_data['receivedBy'] = $row['receivedBy'] ?? '';
+                                                $row_for_data['pod_filename'] = $row['pod_filename'] ?? '';
+                                                unset($row_for_data['signature']); 
+                                            ?>
+                                            <tr class="hover:bg-gray-50 transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
+>>>>>>> Stashed changes
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="text-sm font-medium text-gray-900">
-                                                        <?php echo htmlspecialchars($row['officeName']); ?>
+                                                        <?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames)); ?>
                                                     </div>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -332,7 +383,9 @@ if ($statuses_result) {
                                                     <?php echo date('M d, Y g:i A', strtotime($row['dateAndTime'])); ?>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    <button class="view-btn bg-blue-500 text-white px-3 py-1 rounded" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</button>
+                                                    <?php if (strtolower($row['status']) !== 'received'): ?>
+                                                        <button class="view-btn bg-blue-500 text-white px-3 py-1 rounded" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</button>
+                                                    <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endwhile; ?>
@@ -485,6 +538,7 @@ if ($statuses_result) {
             </div>
             <div class="modal-body">
                 <form id="addSignatureForm">
+                    <input type="hidden" name="transactionID" id="signatureTransactionID">
                     <div class="form-section">
                         <h3>Document Information</h3>
                         <div class="form-group">
@@ -547,6 +601,38 @@ if ($statuses_result) {
     }
     </style>
     <script>
+    // Mapping for office codes to display names
+    const officeDisplayNames = {
+        'dictbulacan': 'Provincial Office Bulacan',
+        'dictaurora': 'Provincial Office Aurora',
+        'dictbataan': 'Provincial Office Bataan',
+        'dictpampanga': 'Provincial Office Pampanga',
+        'dictPampanga': 'Provincial Office Pampanga',
+        'dicttarlac': 'Provincial Office Tarlac',
+        'dictzambales': 'Provincial Office Zambales',
+        'dictothers': 'Provincial Office Others',
+        'dictNE': 'Provincial Office Nueva Ecija',
+        'dictne': 'Provincial Office Nueva Ecija',
+        'dictNUEVAECIJA': 'Provincial Office Nueva Ecija',
+        'Rdictpampanga': 'Provincial Office Pampanga',
+        'RdictPampanga': 'Provincial Office Pampanga',
+        'RdictTarlac': 'Provincial Office Tarlac',
+        'RdictBataan': 'Provincial Office Bataan',
+        'RdictBulacan': 'Provincial Office Bulacan',
+        'RdictAurora': 'Provincial Office Aurora',
+        'RdictZambales': 'Provincial Office Zambales',
+        'RdictNuevaEcija': 'Provincial Office Nueva Ecija',
+        'RdictNE': 'Provincial Office Nueva Ecija',
+        // Add more as you encounter new codes!
+    };
+    function getOfficeDisplayName(code) {
+        if (!code) return '';
+        var lower = code.toLowerCase();
+        for (var key in officeDisplayNames) {
+            if (key.toLowerCase() === lower) return officeDisplayNames[key];
+        }
+        return code;
+    }
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.view-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
@@ -554,20 +640,33 @@ if ($statuses_result) {
                 var rowData = btn.getAttribute('data-row');
                 if (!rowData) return;
                 var data = JSON.parse(rowData);
-                // Show the add signature modal and populate transactionID
-                var addSignatureModal = document.getElementById('addSignatureModal');
-                var addSignatureForm = document.getElementById('addSignatureForm');
-                addSignatureForm.setAttribute('data-transaction-id', data.transactionID);
-                document.getElementById('receiverName').value = data.receivedBy || '';
-                // Optionally clear signature and pod fields
+                // Prefill Received By if available, always editable
+                var receiverNameInput = document.getElementById('receiverName');
+                if (receiverNameInput) {
+                    receiverNameInput.value = data.receivedBy || '';
+                    receiverNameInput.readOnly = false;
+                }
+                // Always clear signature pad
                 var receiptSignatureInput = document.getElementById('receiptSignatureInput');
                 if (receiptSignatureInput) receiptSignatureInput.value = '';
+                var receiptCanvas = document.getElementById('receiptSignaturePad');
+                if (receiptCanvas && receiptCanvas.getContext) {
+                    var ctx = receiptCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, receiptCanvas.width, receiptCanvas.height);
+                }
+                // Always clear POD file input
                 var podFileInput = document.getElementById('podFile');
                 if (podFileInput) podFileInput.value = '';
+                // Do NOT show any previous signature or POD in the Add Signature modal
+                // Set document info
                 document.getElementById('signatureOfficeName').textContent = data.officeName || '';
                 document.getElementById('signatureSenderName').textContent = data.senderName || '';
                 document.getElementById('signatureDateReceived').textContent = data.dateAndTime ? new Date(data.dateAndTime).toLocaleString() : '';
-                addSignatureModal.style.display = 'flex';
+                // Set transactionID in hidden input
+                var transactionID = data.transactionID;
+                document.getElementById('signatureTransactionID').value = transactionID;
+                // Show the modal
+                document.getElementById('addSignatureModal').style.display = 'flex';
             });
         });
         // Modal close logic for POD preview
@@ -791,9 +890,10 @@ if ($statuses_result) {
             e.preventDefault();
             
             // Get form data
-            var transactionID = this.getAttribute('data-transaction-id');
+            var transactionID = document.getElementById('signatureTransactionID').value;
             var receiverName = document.getElementById('receiverName').value.trim();
             var signatureData = receiptSignatureInput.value;
+            var podFileInput = document.getElementById('podFile');
             
             // Validation
             if (!receiverName) {
@@ -803,6 +903,11 @@ if ($statuses_result) {
             
             if (!signatureData) {
                 alert('Please provide your signature.');
+                return;
+            }
+            
+            if (!podFileInput || podFileInput.files.length === 0) {
+                alert('Please upload a Proof of Document (POD) file.');
                 return;
             }
             
@@ -819,7 +924,6 @@ if ($statuses_result) {
             formData.append('receiptSignature', signatureData);
             
             // Add podFile to form data
-            var podFileInput = document.getElementById('podFile');
             if (podFileInput && podFileInput.files.length > 0) {
                 formData.append('podFile', podFileInput.files[0]);
             }

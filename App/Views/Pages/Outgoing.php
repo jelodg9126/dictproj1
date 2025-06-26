@@ -147,6 +147,38 @@ if ($statuses_result) {
         $statuses[] = $row['status'];
     }
 }
+
+$officeDisplayNames = [
+    'dictbulacan' => 'Provincial Office Bulacan',
+    'dictaurora' => 'Provincial Office Aurora',
+    'dictbataan' => 'Provincial Office Bataan',
+    'dictpampanga' => 'Provincial Office Pampanga',
+    'dictPampanga' => 'Provincial Office Pampanga',
+    'dicttarlac' => 'Provincial Office Tarlac',
+    'dictzambales' => 'Provincial Office Zambales',
+    'dictothers' => 'Provincial Office Others',
+    'dictNE' => 'Provincial Office Nueva Ecija',
+    'dictne' => 'Provincial Office Nueva Ecija',
+    'dictNUEVAECIJA' => 'Provincial Office Nueva Ecija',
+    'Rdictpampanga' => 'Provincial Office Pampanga',
+    'RdictPampanga' => 'Provincial Office Pampanga',
+    'RdictTarlac' => 'Provincial Office Tarlac',
+    'RdictBataan' => 'Provincial Office Bataan',
+    'RdictBulacan' => 'Provincial Office Bulacan',
+    'RdictAurora' => 'Provincial Office Aurora',
+    'RdictZambales' => 'Provincial Office Zambales',
+    'RdictNuevaEcija' => 'Provincial Office Nueva Ecija',
+    'RdictNE' => 'Provincial Office Nueva Ecija',
+    // Add more as you encounter new codes!
+];
+function getOfficeDisplayNamePHP($code, $map) {
+    if (!$code) return '';
+    $lower = strtolower($code);
+    foreach ($map as $key => $val) {
+        if (strtolower($key) === $lower) return $val;
+    }
+    return $code;
+}
 ?>
 
 <!DOCTYPE html>
@@ -286,16 +318,21 @@ if ($statuses_result) {
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Date & Time
                                     </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-[rgb(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php while($row = $result->fetch_assoc()): ?>
                                         <?php $row_for_data = $row; unset($row_for_data['signature']); $row_for_data['pod'] = !empty($row['pod']) ? true : false; ?>
+<<<<<<< Updated upstream
                                         <tr class="hover:bg-[rgb(203,202,202)] backdrop-blur-sm transition-colors clickable-row" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>
+=======
+                                        <tr class="hover:bg-gray-50 transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
+>>>>>>> Stashed changes
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm font-medium text-gray-900">
-                                                    <?php echo htmlspecialchars($row['officeName']); ?>
+                                                    <?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames)); ?>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -315,6 +352,9 @@ if ($statuses_result) {
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 <?php echo date('M d, Y g:i A', strtotime($row['dateAndTime'])); ?>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <button class="view-btn bg-blue-500 text-white px-3 py-1 rounded" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</button>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
@@ -487,8 +527,79 @@ if ($statuses_result) {
     }
     </style>
     <script>
+    // Mapping for office codes to display names
+    const officeDisplayNames = {
+        'dictbulacan': 'Provincial Office Bulacan',
+        'dictaurora': 'Provincial Office Aurora',
+        'dictbataan': 'Provincial Office Bataan',
+        'dictpampanga': 'Provincial Office Pampanga',
+        'dictPampanga': 'Provincial Office Pampanga',
+        'dicttarlac': 'Provincial Office Tarlac',
+        'dictzambales': 'Provincial Office Zambales',
+        'dictothers': 'Provincial Office Others',
+        'dictNE': 'Provincial Office Nueva Ecija',
+        'dictne': 'Provincial Office Nueva Ecija',
+        'dictNUEVAECIJA': 'Provincial Office Nueva Ecija',
+        'Rdictpampanga': 'Provincial Office Pampanga',
+        'RdictPampanga': 'Provincial Office Pampanga',
+        'RdictTarlac': 'Provincial Office Tarlac',
+        'RdictBataan': 'Provincial Office Bataan',
+        'RdictBulacan': 'Provincial Office Bulacan',
+        'RdictAurora': 'Provincial Office Aurora',
+        'RdictZambales': 'Provincial Office Zambales',
+        'RdictNuevaEcija': 'Provincial Office Nueva Ecija',
+        'RdictNE': 'Provincial Office Nueva Ecija',
+        // Add more as you encounter new codes!
+    };
+    function getOfficeDisplayName(code) {
+        if (!code) return '';
+        var lower = code.toLowerCase();
+        for (var key in officeDisplayNames) {
+            if (key.toLowerCase() === lower) return officeDisplayNames[key];
+        }
+        return code;
+    }
     document.addEventListener('DOMContentLoaded', function() {
-        // Event delegation for table row and POD preview button
+        // Handle view button clicks
+        document.querySelectorAll('.view-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var rowData = btn.getAttribute('data-row');
+                if (!rowData) return;
+                var data = JSON.parse(rowData);
+                // Use mapping for office name
+                var displayOffice = getOfficeDisplayName(data.officeName);
+                var displayReceivingOffice = getOfficeDisplayName(data.addressTo);
+                document.getElementById('detailsOfficeName').value = displayOffice;
+                document.getElementById('detailsSenderName').value = data.senderName || '';
+                document.getElementById('detailsEmailAdd').value = data.emailAdd || '';
+                document.getElementById('detailsAddressTo').value = displayReceivingOffice;
+                document.getElementById('detailsModeOfDel').value = data.modeOfDel || '';
+                document.getElementById('detailsCourierName').value = data.courierName || '';
+                document.getElementById('detailsStatus').value = data.status || '';
+                document.getElementById('detailsDateAndTime').value = data.dateAndTime || '';
+                document.getElementById('detailsSignature').src = data.transactionID ? '/dictproj1/modules/get_signature.php?id=' + data.transactionID : '';
+                var podImg = document.getElementById('detailsPod');
+                var podNoImage = document.getElementById('podNoImage');
+                if (data.pod) {
+                    var podUrl = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
+                    podImg.src = podUrl;
+                    podImg.style.display = 'inline';
+                    podNoImage.style.display = 'none';
+                    podImg.onerror = function() {
+                        podImg.style.display = 'none';
+                        podNoImage.style.display = 'inline';
+                    };
+                } else {
+                    podImg.src = '';
+                    podImg.style.display = 'none';
+                    podNoImage.style.display = 'inline';
+                }
+                document.getElementById('detailsModal').style.display = 'flex';
+            });
+        });
+        
+        // Event delegation for POD preview button
         var tableBody = document.querySelector('tbody');
         if (tableBody) {
             tableBody.addEventListener('click', function(e) {
@@ -503,42 +614,6 @@ if ($statuses_result) {
                     img.src = '/dictproj1/modules/get_pod.php?id=' + id;
                     modal.style.display = 'flex';
                     return;
-                }
-                // Otherwise, check if a row was clicked
-                var row = e.target.closest('.clickable-row');
-                if (row) {
-                    var rowData = row.getAttribute('data-row');
-                    if (!rowData) return;
-                    var data = JSON.parse(rowData);
-                    console.log('Row data:', data);
-                    document.getElementById('detailsOfficeName').value = data.officeName || '';
-                    document.getElementById('detailsSenderName').value = data.senderName || '';
-                    document.getElementById('detailsEmailAdd').value = data.emailAdd || '';
-                    document.getElementById('detailsAddressTo').value = data.addressTo || '';
-                    document.getElementById('detailsModeOfDel').value = data.modeOfDel || '';
-                    document.getElementById('detailsCourierName').value = data.courierName || '';
-                    document.getElementById('detailsStatus').value = data.status || '';
-                    document.getElementById('detailsDateAndTime').value = data.dateAndTime || '';
-                    document.getElementById('detailsSignature').src = data.transactionID ? '/dictproj1/modules/get_signature.php?id=' + data.transactionID : '';
-                    var podImg = document.getElementById('detailsPod');
-                    var podNoImage = document.getElementById('podNoImage');
-                    if (data.pod) {
-                        var podUrl = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
-                        console.log('Setting POD src:', podUrl);
-                        podImg.src = podUrl;
-                        podImg.style.display = 'inline';
-                        podNoImage.style.display = 'none';
-                        podImg.onerror = function() {
-                            console.log('POD image failed to load:', podUrl);
-                            podImg.style.display = 'none';
-                            podNoImage.style.display = 'inline';
-                        };
-                    } else {
-                        podImg.src = '';
-                        podImg.style.display = 'none';
-                        podNoImage.style.display = 'inline';
-                    }
-                    document.getElementById('detailsModal').style.display = 'flex';
                 }
             });
         }

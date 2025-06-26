@@ -55,7 +55,20 @@ try {
             $stmt->send_long_data(2, $proofBlob);
         }
         if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Document endorsed successfully!']);
+            // Fetch updated endorsement info
+            $fetch = $conn->prepare('SELECT endorsedToName, endorsedToSignature, endorsedDocProof FROM maindoc WHERE transactionID = ?');
+            $fetch->bind_param('i', $transactionID);
+            $fetch->execute();
+            $fetch->bind_result($endorsedToName, $endorsedToSignature, $endorsedDocProof);
+            $fetch->fetch();
+            $fetch->close();
+            echo json_encode([
+                'success' => true,
+                'message' => 'Document endorsed successfully!',
+                'endorsedToName' => $endorsedToName,
+                'hasEndorsedSignature' => !empty($endorsedToSignature),
+                'hasEndorsedDocProof' => !empty($endorsedDocProof)
+            ]);
         } else {
             throw new Exception('Database error: ' . $stmt->error);
         }
