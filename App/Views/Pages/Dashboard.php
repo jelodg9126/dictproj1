@@ -61,9 +61,15 @@
             $received_count = $row_received['received_count'];
         }
 
+<<<<<<< Updated upstream
         include __DIR__ . '/../components/Sidebar.php';
         ?>
         <div class="dboard-layout opacity-95">
+=======
+include __DIR__ . '/../components/Sidebar.php';
+?>
+     <div class="dboard-layout">
+>>>>>>> Stashed changes
 
             <div class="box1">
                 <div class="flex justify-between w-full items-center">
@@ -150,6 +156,7 @@
             </div>
 
             <div class="box9">
+<<<<<<< Updated upstream
                 <h2 class="text-lg font-semibold pl-1.5">Recent Documents</h2>
                 <div class="overflow-x-auto">
                     <table class="dashboard-table">
@@ -243,6 +250,13 @@
                         </tbody>
                     </table>
                 </div>
+=======
+               <h2 class="text-lg font-semibold pl-1.5">Table 1</h2>
+            </div>
+
+            <div class="box10">
+               <h2 class="text-lg font-semibold pl-1.5">Table 2</h2>
+>>>>>>> Stashed changes
             </div>
         </div>
     </div>

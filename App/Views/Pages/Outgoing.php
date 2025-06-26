@@ -167,7 +167,7 @@ if ($statuses_result) {
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
 
-        <div class="flex-1 p-6 bg-gray-50 min-h-screen overflow-y-auto  " id="docu">
+        <div class="flex-1 p-6 bg-linear-90 from-[#48517f] to-[#322b5f] min-h-screen overflow-y-auto  " id="docu">
             <div class="max-w-7xl mx-auto">
                 <!-- Success Message -->
                 <?php if ($show_success): ?>
@@ -187,8 +187,9 @@ if ($statuses_result) {
 
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
+                        <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
                         <h1 class="text-3xl font-bold text-blue-800">Outgoing Documents</h1>
-                        <p class="text-gray-600 mt-2">Manage and track all outgoing documents</p>
+                        <p class="text-gray-300 mt-2">Manage and track all outgoing documents</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
@@ -259,35 +260,35 @@ if ($statuses_result) {
                 </div>
 
                 <!-- Table Section -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
+                <div class="bg-[rgba(240,240,240,0.4)] backdrop-blur rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto ">
+                        <table class="w-full ">
                             <thead class="bg-gray-50 border-b border-gray-200">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Office
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Sender Name
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Email
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Delivery Mode
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Courier Name
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Date & Time
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-[rgba(255,255,255,0.2)] divide-y divide-gray-200">
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php while($row = $result->fetch_assoc()): ?>
                                         <?php $row_for_data = $row; unset($row_for_data['signature']); $row_for_data['pod'] = !empty($row['pod']) ? true : false; ?>
@@ -319,7 +320,7 @@ if ($statuses_result) {
                                     <?php endwhile; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="8" class="text-center py-12">
+                                        <td colspan="8" class="text-center py-12 ">
                                             <div class="text-gray-500 text-lg">No outgoing documents found</div>
                                             <div class="text-gray-400 text-sm mt-2">Try adjusting your search or filter criteria</div>
                                         </td>

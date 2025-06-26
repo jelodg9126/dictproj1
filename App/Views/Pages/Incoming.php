@@ -167,7 +167,9 @@ if ($statuses_result) {
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
 
-        <div class="flex-1 p-6 bg-gray-50 min-h-screen overflow-y-auto  " id="docu">
+        
+        <div class="flex-1 p-6 bg-linear-90 from-[#48517f] to-[#322b5f] min-h-screen overflow-y-auto  " id="docu">
+          
             
             <div class="max-w-7xl mx-auto">
                 
@@ -187,12 +189,12 @@ if ($statuses_result) {
                     </script>
                 <?php endif; ?>
 
-                 <p class="text-xl text-gray-600 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
+                 <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
                 <div class="flex items-center justify-between mb-6">
                     
                     <div class="items-center">
                         <h1 class="text-3xl font-bold text-blue-800">Incoming Documents</h1>
-                        <p class="text-gray-600 mt-2">View and track all incoming documents (read-only)</p>
+                        <p class="text-gray-300 mt-2">View and track all incoming documents (read-only)</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
@@ -264,12 +266,12 @@ if ($statuses_result) {
                 </div>
 
                 <!-- Incoming Documents Table (default visible) -->
-                <div id="incomingTableSection">
+                <div id="incomingTableSection" >
                     <!-- Table Section -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="bg-[rgba(240,240,240,0.4)] backdrop-blur rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full">
-                                <thead class="bg-gray-50 border-b border-gray-200">
+                                <thead class="bg-gray-50 backdrop-blur border-b border-gray-200">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Office
