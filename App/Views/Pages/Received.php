@@ -22,10 +22,22 @@ $delivery_filter = $_GET['delivery'] ?? '';
 $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 
-// Build the SQL query with filters - only received documents
-$sql = "SELECT * FROM maindoc WHERE filetype = 'incoming' AND status = 'Received' AND (endorsedToName IS NULL OR endorsedToName = '' OR endorsedToSignature IS NULL OR endorsedToSignature = '' OR endorsedDocProof IS NULL OR endorsedDocProof = '')";
+// Build the SQL query with filters - only received documents for the logged-in user
+$sql = "SELECT * FROM maindoc WHERE status = 'Received'";
 $params = [];
 $types = "";
+
+// Add session-based filtering for receiving office (addressTo)
+if (isset($_SESSION['uNameLogin'])) {
+    $username = strtolower($_SESSION['uNameLogin']);
+    // Filter where addressTo (without first character, lowercased) matches username
+    $sql .= " AND LOWER(SUBSTRING(addressTo, 2)) = ?";
+    $params[] = $username;
+    $types .= "s";
+}
+
+// (Optional) Keep endorsement fields filter if needed
+$sql .= " AND (endorsedToName IS NULL OR endorsedToName = '' OR endorsedToSignature IS NULL OR endorsedToSignature = '' OR endorsedDocProof IS NULL OR endorsedDocProof = '')";
 
 if (!empty($search)) {
     $sql .= " AND (officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
@@ -82,14 +94,70 @@ if (!empty($params)) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Get unique offices for filter dropdown (only from received documents)
-$offices_sql = "SELECT DISTINCT officeName FROM maindoc WHERE filetype = 'incoming' AND status = 'Received' ORDER BY officeName";
+// Get unique offices for filter dropdown (only from user's own office)
+$user_office_filter = "";
+if (isset($_SESSION['uNameLogin'])) {
+    $username = $_SESSION['uNameLogin'];
+    $username_to_office = [
+        'dictbulacan' => 'dictBulacan',
+        'dictpampanga' => 'dictPampanga',
+        'dictaurora' => 'dictAurora',
+        'dictbataan' => 'dictBataan',
+        'dictne' => 'dictNE',
+        'dicttarlac' => 'dictTarlac',
+        'dictzambales' => 'dictZambales',
+        'maindoc' => 'maindoc',
+        'others' => 'Others'
+    ];
+    
+    $username_lower = strtolower($username);
+    if (isset($username_to_office[$username_lower])) {
+        $user_office_filter = " AND officeName = '" . $username_to_office[$username_lower] . "'";
+    }
+}
+
+$offices_sql = "SELECT DISTINCT officeName FROM maindoc WHERE filetype = 'incoming' AND status = 'Received'" . $user_office_filter . " ORDER BY officeName";
 $offices_result = $conn->query($offices_sql);
 $offices = [];
 if ($offices_result) {
     while ($row = $offices_result->fetch_assoc()) {
         $offices[] = $row['officeName'];
     }
+}
+
+$officeDisplayNames = [
+    'dictbulacan' => 'Provincial Office Bulacan',
+    'dictaurora' => 'Provincial Office Aurora',
+    'dictbataan' => 'Provincial Office Bataan',
+    'dictpampanga' => 'Provincial Office Pampanga',
+    'dictPampanga' => 'Provincial Office Pampanga',
+    'dicttarlac' => 'Provincial Office Tarlac',
+    'dictzambales' => 'Provincial Office Zambales',
+    'dictothers' => 'Provincial Office Others',
+    'dictNE' => 'Provincial Office Nueva Ecija',
+    'dictne' => 'Provincial Office Nueva Ecija',
+    'dictNUEVAECIJA' => 'Provincial Office Nueva Ecija',
+    'maindoc' => 'DICT Region 3 Office',
+    'Rdictpampanga' => 'Provincial Office Pampanga',
+    'RdictPampanga' => 'Provincial Office Pampanga',
+    'RdictTarlac' => 'Provincial Office Tarlac',
+    'RdictBataan' => 'Provincial Office Bataan',
+    'RdictBulacan' => 'Provincial Office Bulacan',
+    'RdictAurora' => 'Provincial Office Aurora',
+    'RdictZambales' => 'Provincial Office Zambales',
+    'RdictNuevaEcija' => 'Provincial Office Nueva Ecija',
+    'RdictNE' => 'Provincial Office Nueva Ecija',
+    'Rmaindoc' => 'DICT Region 3 Office',
+    // Add more as you encounter new codes!
+];
+
+function getOfficeDisplayNamePHP($code, $map) {
+    if (!$code) return '';
+    $lower = strtolower($code);
+    foreach ($map as $key => $val) {
+        if (strtolower($key) === $lower) return $val;
+    }
+    return $code;
 }
 ?>
 <!DOCTYPE html>
@@ -138,7 +206,7 @@ if ($offices_result) {
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['officeName'] ?? ''); ?></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['senderName'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['emailAdd'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['modeOfDel'] ?? ''); ?></td>
@@ -193,10 +261,18 @@ if ($offices_result) {
                     <div><b>Signature:</b><br>
                         <img id="detailsSignature" src="" alt="Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9;">
                     </div>
-                    <div><b>Proof of Document (POD):</b><br>
-                        <img id="detailsPod" src="" alt="Proof of Document" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9;">
+                    <div><b>Proof of Document (POD) - Sender:</b><br>
+                        <a href="#" id="podEnlargeLink">
+                            <img id="detailsPod" src="" alt="Sender Proof of Document" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9;">
+                        </a>
+                    </div>
+                    <div><b>Proof of Document (POD) - Receiver:</b><br>
+                        <a href="#" id="receiverPodEnlargeLink">
+                            <img id="detailsReceiverPod" src="" alt="Receiver Proof of Document" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9;">
+                        </a>
                     </div>
                 </div>
+                <?php if ($isSuperAdmin): ?>
                 <div class="form-section">
                     <h3>Endorsement Information</h3>
                     <div><b>Endorsed To Name:</b> <span id="detailsEndorsedToName"></span></div>
@@ -207,6 +283,7 @@ if ($offices_result) {
                         <img id="detailsEndorsedDocProof" src="" alt="Endorsed Proof" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9;">
                     </div>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -242,31 +319,91 @@ if ($offices_result) {
             </div>
         </div>
     </div>
+    <!-- Add a new lightbox for receiver POD -->
+    <div id="receiverPodLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedReceiverPod" src="" alt="Enlarged Receiver POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
     <script>
+    // Mapping for office codes to display names
+    const officeDisplayNames = {
+        'dictbulacan': 'Provincial Office Bulacan',
+        'dictaurora': 'Provincial Office Aurora',
+        'dictbataan': 'Provincial Office Bataan',
+        'dictpampanga': 'Provincial Office Pampanga',
+        'dictPampanga': 'Provincial Office Pampanga',
+        'dicttarlac': 'Provincial Office Tarlac',
+        'dictzambales': 'Provincial Office Zambales',
+        'dictothers': 'Provincial Office Others',
+        'dictNE': 'Provincial Office Nueva Ecija',
+        'dictne': 'Provincial Office Nueva Ecija',
+        'dictNUEVAECIJA': 'Provincial Office Nueva Ecija',
+        'maindoc': 'DICT Region 3 Office',
+        'Rdictpampanga': 'Provincial Office Pampanga',
+        'RdictPampanga': 'Provincial Office Pampanga',
+        'RdictTarlac': 'Provincial Office Tarlac',
+        'RdictBataan': 'Provincial Office Bataan',
+        'RdictBulacan': 'Provincial Office Bulacan',
+        'RdictAurora': 'Provincial Office Aurora',
+        'RdictZambales': 'Provincial Office Zambales',
+        'RdictNuevaEcija': 'Provincial Office Nueva Ecija',
+        'RdictNE': 'Provincial Office Nueva Ecija',
+        'Rmaindoc': 'DICT Region 3 Office',
+        // Add more as you encounter new codes!
+    };
+    
+    function getOfficeDisplayName(code) {
+        if (!code) return '';
+        var lower = code.toLowerCase();
+        for (var key in officeDisplayNames) {
+            if (key.toLowerCase() === lower) return officeDisplayNames[key];
+        }
+        return code;
+    }
+    
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.view-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 var rowData = btn.getAttribute('data-row');
                 var data = rowData ? JSON.parse(rowData) : {};
-                document.getElementById('detailsOfficeName').textContent = data.officeName || '';
+                document.getElementById('detailsOfficeName').textContent = getOfficeDisplayName(data.officeName) || '';
                 document.getElementById('detailsSenderName').textContent = data.senderName || '';
                 document.getElementById('detailsDateReceived').textContent = data.dateAndTime || '';
                 document.getElementById('detailsReceivedBy').textContent = data.receivedBy || '';
                 var transactionID = data.transactionID;
                 document.getElementById('detailsSignature').src = '/dictproj1/modules/get_signature.php?id=' + transactionID;
                 document.getElementById('detailsPod').src = '/dictproj1/modules/get_pod.php?id=' + transactionID;
-                // Endorsement fields
-                document.getElementById('detailsEndorsedToName').textContent = data.endorsedToName || '';
-                if (data.hasEndorsedSignature) {
-                    document.getElementById('detailsEndorsedSignature').src = '/dictproj1/modules/get_endorsed_signature.php?id=' + transactionID;
+                var receiverPodImg = document.getElementById('detailsReceiverPod');
+                if (data.transactionID) {
+                    receiverPodImg.src = '/dictproj1/modules/get_receiver_pod.php?id=' + data.transactionID;
+                    receiverPodImg.style.display = 'inline';
+                    receiverPodImg.onerror = function() {
+                        receiverPodImg.style.display = 'none';
+                    };
                 } else {
-                    document.getElementById('detailsEndorsedSignature').src = '';
+                    receiverPodImg.src = '';
+                    receiverPodImg.style.display = 'none';
                 }
-                if (data.hasEndorsedDocProof) {
-                    document.getElementById('detailsEndorsedDocProof').src = '/dictproj1/modules/get_endorsed_doc_proof.php?id=' + transactionID;
-                } else {
-                    document.getElementById('detailsEndorsedDocProof').src = '';
+                // Endorsement fields (only if elements exist)
+                var endorsedToName = document.getElementById('detailsEndorsedToName');
+                if (endorsedToName) {
+                    endorsedToName.textContent = data.endorsedToName || '';
+                }
+                var endorsedSignature = document.getElementById('detailsEndorsedSignature');
+                if (endorsedSignature) {
+                    if (data.hasEndorsedSignature) {
+                        endorsedSignature.src = '/dictproj1/modules/get_endorsed_signature.php?id=' + transactionID;
+                    } else {
+                        endorsedSignature.src = '';
+                    }
+                }
+                var endorsedDocProof = document.getElementById('detailsEndorsedDocProof');
+                if (endorsedDocProof) {
+                    if (data.hasEndorsedDocProof) {
+                        endorsedDocProof.src = '/dictproj1/modules/get_endorsed_doc_proof.php?id=' + transactionID;
+                    } else {
+                        endorsedDocProof.src = '';
+                    }
                 }
                 document.getElementById('receivedDetailsModal').style.display = 'flex';
             });
@@ -417,6 +554,30 @@ if ($offices_result) {
                 alert('An error occurred while processing your request.');
             });
         });
+        // Receiver POD lightbox
+        var receiverPodImg = document.getElementById('detailsReceiverPod');
+        var receiverPodEnlargeLink = document.getElementById('receiverPodEnlargeLink');
+        if (receiverPodEnlargeLink) {
+            receiverPodEnlargeLink.onclick = function(e) {
+                e.preventDefault();
+                if (!receiverPodImg.src || receiverPodImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedReceiverPod');
+                enlarged.src = receiverPodImg.src;
+                var lightbox = document.getElementById('receiverPodLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        document.getElementById('receiverPodLightbox').onclick = function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+                document.getElementById('enlargedReceiverPod').src = '';
+            }
+        };
+        document.getElementById('enlargedReceiverPod').onclick = function(e) {
+            e.stopPropagation();
+        };
     });
     </script>
 </body>

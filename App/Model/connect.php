@@ -12,5 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// This is a migration step, not PHP code. Please run the following SQL in your database:
+// ALTER TABLE maindoc ADD COLUMN receiver_signature LONGBLOB NULL AFTER signature;
 
 ?>

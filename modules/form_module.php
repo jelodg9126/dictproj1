@@ -7,6 +7,11 @@ if (!defined('FORM_MODULE_INCLUDED')) {
     define('FORM_MODULE_INCLUDED', true);
 }
 
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Get current page to pre-select filetype
 $current_page = $_GET['page'] ?? '';
 $pre_selected_filetype = '';
@@ -19,6 +24,33 @@ if ($current_page === 'incoming') {
     $pre_selected_filetype = 'outgoing';
     $filetype_readonly = true;
 }
+
+// Auto-select office based on logged-in user
+$pre_selected_office = '';
+$office_readonly = false;
+
+if (isset($_SESSION['uNameLogin'])) {
+    $username = $_SESSION['uNameLogin'];
+    
+    // Map username to office value
+    $username_to_office = [
+        'dictbulacan' => 'dictBulacan',
+        'dictpampanga' => 'dictPampanga',
+        'dictaurora' => 'dictAurora',
+        'dictbataan' => 'dictBataan',
+        'dictne' => 'dictNE',
+        'dicttarlac' => 'dictTarlac',
+        'dictzambales' => 'dictZambales',
+        'maindoc' => 'maindoc',
+        'others' => 'Others'
+    ];
+    
+    $username_lower = strtolower($username);
+    if (isset($username_to_office[$username_lower])) {
+        $pre_selected_office = $username_to_office[$username_lower];
+        $office_readonly = true; // Make it readonly since it's auto-selected
+    }
+}
 ?>
 
 <div class="form-container" id="documentFormContainer">
@@ -27,17 +59,21 @@ if ($current_page === 'incoming') {
             <h3>Office Information</h3>
             <div class="form-group">
                 <label for="officeName" class="required">Select Office</label>
-                <select name="officeName" id="officeName" required>
+                <select name="officeName" id="officeName" required <?php echo $office_readonly ? 'disabled' : ''; ?>>
                     <option value="">-- Select Office --</option>
-                    <option value="dictBulacan">Provincial Office Bulacan</option>
-                    <option value="dictPampanga">Provincial Office Pampanga</option>
-                    <option value="dictAurora">Provincial Office Aurora</option>
-                    <option value="dictBataan">Provincial Office Bataan</option>
-                    <option value="dictNE">Provincial Office Nueva Ecija</option>
-                    <option value="dictTarlac">Provincial Office Tarlac</option>
-                    <option value="dictZambales">Provincial Office Zambales</option>
-                    <option value="Others">Others</option>
+                    <option value="dictBulacan" <?php echo $pre_selected_office === 'dictBulacan' ? 'selected' : ''; ?>>Provincial Office Bulacan</option>
+                    <option value="dictPampanga" <?php echo $pre_selected_office === 'dictPampanga' ? 'selected' : ''; ?>>Provincial Office Pampanga</option>
+                    <option value="dictAurora" <?php echo $pre_selected_office === 'dictAurora' ? 'selected' : ''; ?>>Provincial Office Aurora</option>
+                    <option value="dictBataan" <?php echo $pre_selected_office === 'dictBataan' ? 'selected' : ''; ?>>Provincial Office Bataan</option>
+                    <option value="dictNE" <?php echo $pre_selected_office === 'dictNE' ? 'selected' : ''; ?>>Provincial Office Nueva Ecija</option>
+                    <option value="dictTarlac" <?php echo $pre_selected_office === 'dictTarlac' ? 'selected' : ''; ?>>Provincial Office Tarlac</option>
+                    <option value="dictZambales" <?php echo $pre_selected_office === 'dictZambales' ? 'selected' : ''; ?>>Provincial Office Zambales</option>
+                    <option value="maindoc" <?php echo $pre_selected_office === 'maindoc' ? 'selected' : ''; ?>>DICT Region 3 Office</option>
+                    <option value="Others" <?php echo $pre_selected_office === 'Others' ? 'selected' : ''; ?>>Others</option>
                 </select>
+                <?php if ($office_readonly): ?>
+                    <input type="hidden" name="officeName" value="<?php echo htmlspecialchars($pre_selected_office); ?>">
+                <?php endif; ?>
             </div>
             <div class="form-group">
                 <label for="filetype" class="required">Document Type</label>
@@ -78,6 +114,7 @@ if ($current_page === 'incoming') {
                     <option value="RdictNE">Provincial Office Nueva Ecija</option>
                     <option value="RdictTarlac">Provincial Office Tarlac</option>
                     <option value="RdictZambales">Provincial Office Zambales</option>
+                    <option value="Rmaindoc">DICT Region 3 Office</option>
                     <option value="ROthers">Others</option>
                 </select>
             </div>

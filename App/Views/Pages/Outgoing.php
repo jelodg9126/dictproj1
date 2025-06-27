@@ -32,6 +32,35 @@ $types = "";
 $count_params = [];
 $count_types = "";
 
+// Add session-based filtering for office
+if (isset($_SESSION['uNameLogin'])) {
+    $username = $_SESSION['uNameLogin'];
+    
+    // Map username to office value (same mapping as in form_module.php)
+    $username_to_office = [
+        'dictbulacan' => 'dictBulacan',
+        'dictpampanga' => 'dictPampanga',
+        'dictaurora' => 'dictAurora',
+        'dictbataan' => 'dictBataan',
+        'dictne' => 'dictNE',
+        'dicttarlac' => 'dictTarlac',
+        'dictzambales' => 'dictZambales',
+        'maindoc' => 'maindoc',
+        'others' => 'Others'
+    ];
+    
+    $username_lower = strtolower($username);
+    if (isset($username_to_office[$username_lower])) {
+        $user_office = $username_to_office[$username_lower];
+        $sql .= " AND officeName = ?";
+        $count_sql .= " AND officeName = ?";
+        $params[] = $user_office;
+        $types .= "s";
+        $count_params[] = $user_office;
+        $count_types .= "s";
+    }
+}
+
 if (!empty($search)) {
     $sql .= " AND (officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
     $count_sql .= " AND (officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
@@ -128,8 +157,29 @@ $result = $stmt->get_result();
 // Get total count for display
 $total_records = $result ? $result->num_rows : 0;
 
-// Get unique offices for filter dropdown (only from outgoing documents)
-$offices_sql = "SELECT DISTINCT officeName FROM maindoc WHERE filetype = 'outgoing' ORDER BY officeName";
+// Get unique offices for filter dropdown (only from user's own office)
+$user_office_filter = "";
+if (isset($_SESSION['uNameLogin'])) {
+    $username = $_SESSION['uNameLogin'];
+    $username_to_office = [
+        'dictbulacan' => 'dictBulacan',
+        'dictpampanga' => 'dictPampanga',
+        'dictaurora' => 'dictAurora',
+        'dictbataan' => 'dictBataan',
+        'dictne' => 'dictNE',
+        'dicttarlac' => 'dictTarlac',
+        'dictzambales' => 'dictZambales',
+        'maindoc' => 'maindoc',
+        'others' => 'Others'
+    ];
+    
+    $username_lower = strtolower($username);
+    if (isset($username_to_office[$username_lower])) {
+        $user_office_filter = " AND officeName = '" . $username_to_office[$username_lower] . "'";
+    }
+}
+
+$offices_sql = "SELECT DISTINCT officeName FROM maindoc WHERE filetype = 'outgoing'" . $user_office_filter . " ORDER BY officeName";
 $offices_result = $conn->query($offices_sql);
 $offices = [];
 if ($offices_result) {
@@ -138,8 +188,8 @@ if ($offices_result) {
     }
 }
 
-// Get unique statuses for filter dropdown (only from outgoing documents)
-$statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE filetype = 'outgoing' AND status IS NOT NULL AND status != '' ORDER BY status";
+// Get unique statuses for filter dropdown (only from user's own office)
+$statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE filetype = 'outgoing' AND status IS NOT NULL AND status != ''" . $user_office_filter . " ORDER BY status";
 $statuses_result = $conn->query($statuses_sql);
 $statuses = [];
 if ($statuses_result) {
@@ -160,6 +210,7 @@ $officeDisplayNames = [
     'dictNE' => 'Provincial Office Nueva Ecija',
     'dictne' => 'Provincial Office Nueva Ecija',
     'dictNUEVAECIJA' => 'Provincial Office Nueva Ecija',
+    'maindoc' => 'DICT Region 3 Office',
     'Rdictpampanga' => 'Provincial Office Pampanga',
     'RdictPampanga' => 'Provincial Office Pampanga',
     'RdictTarlac' => 'Provincial Office Tarlac',
@@ -169,6 +220,7 @@ $officeDisplayNames = [
     'RdictZambales' => 'Provincial Office Zambales',
     'RdictNuevaEcija' => 'Provincial Office Nueva Ecija',
     'RdictNE' => 'Provincial Office Nueva Ecija',
+    'Rmaindoc' => 'DICT Region 3 Office',
     // Add more as you encounter new codes!
 ];
 function getOfficeDisplayNamePHP($code, $map) {
@@ -251,17 +303,6 @@ function getOfficeDisplayNamePHP($code, $map) {
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <select
-                                        name="office"
-                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                        <option value="">All Offices</option>
-                                        <?php foreach ($offices as $office): ?>
-                                            <option value="<?php echo htmlspecialchars($office); ?>" 
-                                                    <?php echo $office_filter === $office ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($office); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <select
                                         name="delivery"
                                         class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">All Modes</option>
@@ -325,11 +366,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php while($row = $result->fetch_assoc()): ?>
                                         <?php $row_for_data = $row; unset($row_for_data['signature']); $row_for_data['pod'] = !empty($row['pod']) ? true : false; ?>
-<<<<<<< Updated upstream
-                                        <tr class="hover:bg-[rgb(203,202,202)] backdrop-blur-sm transition-colors clickable-row" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>
-=======
                                         <tr class="hover:bg-gray-50 transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
->>>>>>> Stashed changes
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm font-medium text-gray-900">
                                                     <?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames)); ?>
@@ -540,6 +577,7 @@ function getOfficeDisplayNamePHP($code, $map) {
         'dictNE': 'Provincial Office Nueva Ecija',
         'dictne': 'Provincial Office Nueva Ecija',
         'dictNUEVAECIJA': 'Provincial Office Nueva Ecija',
+        'maindoc': 'DICT Region 3 Office',
         'Rdictpampanga': 'Provincial Office Pampanga',
         'RdictPampanga': 'Provincial Office Pampanga',
         'RdictTarlac': 'Provincial Office Tarlac',
@@ -549,6 +587,7 @@ function getOfficeDisplayNamePHP($code, $map) {
         'RdictZambales': 'Provincial Office Zambales',
         'RdictNuevaEcija': 'Provincial Office Nueva Ecija',
         'RdictNE': 'Provincial Office Nueva Ecija',
+        'Rmaindoc': 'DICT Region 3 Office',
         // Add more as you encounter new codes!
     };
     function getOfficeDisplayName(code) {

@@ -61,27 +61,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $signatureBlob = base64_decode(str_replace('data:image/png;base64,', '', $signatureData));
     
     try {
-        // First, verify this is an incoming document
-        $check_stmt = $conn->prepare("SELECT transactionID, filetype FROM maindoc WHERE transactionID = ? AND filetype = 'incoming'");
+        // First, verify this is a valid document (no filetype check)
+        $check_stmt = $conn->prepare("SELECT transactionID, filetype FROM maindoc WHERE transactionID = ?");
         $check_stmt->bind_param("i", $transactionID);
         $check_stmt->execute();
         $check_result = $check_stmt->get_result();
         
         if ($check_result->num_rows === 0) {
-            throw new Exception("Document not found or not an incoming document.");
+            throw new Exception("Document not found.");
         }
         
         $check_stmt->close();
         
-        // Update the document with receipt signature, receiver name, and POD
-        $stmt = $conn->prepare("UPDATE maindoc SET signature = ?, receivedBy = ?, pod = ?, pod_filename = ?, pod_mime_type = ? WHERE transactionID = ? AND filetype = 'incoming'");
+        // Update the document with receipt signature, receiver name, and receiver POD (store in new columns)
+        $stmt = $conn->prepare("UPDATE maindoc SET receiver_signature = ?, receivedBy = ?, receiver_pod = ?, receiver_pod_filename = ?, receiver_pod_mime_type = ? WHERE transactionID = ?");
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
         // Pass blobs directly as variables
         $sig = $signatureBlob;
-        $pod = $podBlob;
-        $stmt->bind_param("sssssi", $sig, $receiverName, $pod, $podFilename, $podMimeType, $transactionID);
+        $receiverPod = $podBlob;
+        $stmt->bind_param("sssssi", $sig, $receiverName, $receiverPod, $podFilename, $podMimeType, $transactionID);
         // Execute the statement
         if ($stmt->execute()) {
             // After update, check if all three fields are present in the DB

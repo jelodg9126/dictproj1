@@ -24,13 +24,25 @@ $status_filter = $_GET['status'] ?? '';
 $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 
-// Build the SQL query with filters - only incoming documents
-$sql = "SELECT * FROM maindoc WHERE filetype = 'incoming' AND status != 'Received'";
-$count_sql = "SELECT COUNT(*) as total FROM maindoc WHERE filetype = 'incoming' AND status != 'Received'";
+// Build the SQL query with filters - show all documents addressed to the logged-in user
+$sql = "SELECT * FROM maindoc WHERE 1";
+$count_sql = "SELECT COUNT(*) as total FROM maindoc WHERE 1";
 $params = [];
 $types = "";
 $count_params = [];
 $count_types = "";
+
+// Add session-based filtering for receiving office (addressTo)
+if (isset($_SESSION['uNameLogin'])) {
+    $username = strtolower($_SESSION['uNameLogin']);
+    // Filter where addressTo (without first character, lowercased) matches username
+    $sql .= " AND LOWER(SUBSTRING(addressTo, 2)) = ?";
+    $count_sql .= " AND LOWER(SUBSTRING(addressTo, 2)) = ?";
+    $params[] = $username;
+    $types .= "s";
+    $count_params[] = $username;
+    $count_types .= "s";
+}
 
 if (!empty($search)) {
     $sql .= " AND (officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
@@ -128,8 +140,30 @@ $result = $stmt->get_result();
 // Get total count for display
 $total_records = $result ? $result->num_rows : 0;
 
-// Get unique offices for filter dropdown (only from incoming documents)
-$offices_sql = "SELECT DISTINCT officeName FROM maindoc WHERE filetype = 'incoming' ORDER BY officeName";
+// Get unique offices for filter dropdown (only from user's own receiving office)
+$user_receiving_office_filter = "";
+if (isset($_SESSION['uNameLogin'])) {
+    $username = $_SESSION['uNameLogin'];
+    $username_to_receiving_office = [
+        'dictbulacan' => 'RdictBulacan',
+        'dictpampanga' => 'RdictPampanga',
+        'dictaurora' => 'RdictAurora',
+        'dictbataan' => 'RdictBataan',
+        'dictne' => 'RdictNE',
+        'dicttarlac' => 'RdictTarlac',
+        'dictzambales' => 'RdictZambales',
+        'maindoc' => 'Rmaindoc',
+        'others' => 'ROthers'
+    ];
+    
+    $username_lower = strtolower($username);
+    if (isset($username_to_receiving_office[$username_lower])) {
+        $user_receiving_office = $username_to_receiving_office[$username_lower];
+        $user_receiving_office_filter = " AND addressTo = '" . $user_receiving_office . "'";
+    }
+}
+
+$offices_sql = "SELECT DISTINCT officeName FROM maindoc WHERE filetype = 'incoming'" . $user_receiving_office_filter . " ORDER BY officeName";
 $offices_result = $conn->query($offices_sql);
 $offices = [];
 if ($offices_result) {
@@ -138,8 +172,8 @@ if ($offices_result) {
     }
 }
 
-// Get unique statuses for filter dropdown (only from incoming documents)
-$statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE filetype = 'incoming' AND status IS NOT NULL AND status != '' ORDER BY status";
+// Get unique statuses for filter dropdown (only from user's own receiving office)
+$statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE filetype = 'incoming' AND status IS NOT NULL AND status != ''" . $user_receiving_office_filter . " ORDER BY status";
 $statuses_result = $conn->query($statuses_sql);
 $statuses = [];
 if ($statuses_result) {
@@ -160,6 +194,7 @@ $officeDisplayNames = [
     'dictNE' => 'Provincial Office Nueva Ecija',
     'dictne' => 'Provincial Office Nueva Ecija',
     'dictNUEVAECIJA' => 'Provincial Office Nueva Ecija',
+    'maindoc' => 'DICT Region 3 Office',
     'Rdictpampanga' => 'Provincial Office Pampanga',
     'RdictPampanga' => 'Provincial Office Pampanga',
     'RdictTarlac' => 'Provincial Office Tarlac',
@@ -169,6 +204,7 @@ $officeDisplayNames = [
     'RdictZambales' => 'Provincial Office Zambales',
     'RdictNuevaEcija' => 'Provincial Office Nueva Ecija',
     'RdictNE' => 'Provincial Office Nueva Ecija',
+    'Rmaindoc' => 'DICT Region 3 Office',
     // Add more as you encounter new codes!
 ];
 function getOfficeDisplayNamePHP($code, $map) {
@@ -199,14 +235,7 @@ function getOfficeDisplayNamePHP($code, $map) {
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
 
-<<<<<<< Updated upstream
-        
-        <div class="flex-1 p-6 bg-linear-90 from-[#48517f] to-[#322b5f] min-h-screen overflow-y-auto  " id="docu">
-          
-            
-=======
         <div class="flex-1 p-6 bg-gray-50 min-h-screen overflow-y-auto  " id="docu">
->>>>>>> Stashed changes
             <div class="max-w-7xl mx-auto">
                 <!-- Success Message -->
                 <?php if ($show_success): ?>
@@ -224,18 +253,10 @@ function getOfficeDisplayNamePHP($code, $map) {
                     </script>
                 <?php endif; ?>
 
-<<<<<<< Updated upstream
-                 <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
-=======
->>>>>>> Stashed changes
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
                         <h1 class="text-3xl font-bold text-blue-800">Incoming Documents</h1>
-<<<<<<< Updated upstream
-                        <p class="text-gray-300 mt-2">View and track all incoming documents (read-only)</p>
-=======
                         <p class="text-gray-600 mt-2">View and track all incoming documents</p>
->>>>>>> Stashed changes
                     </div>
                     <div class="flex items-center gap-3">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
@@ -263,17 +284,6 @@ function getOfficeDisplayNamePHP($code, $map) {
                                     />
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <select
-                                        name="office"
-                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                        <option value="">All Offices</option>
-                                        <?php foreach ($offices as $office): ?>
-                                            <option value="<?php echo htmlspecialchars($office); ?>" 
-                                                    <?php echo $office_filter === $office ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($office); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
                                     <select
                                         name="delivery"
                                         class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -342,20 +352,15 @@ function getOfficeDisplayNamePHP($code, $map) {
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     <?php if ($result && $result->num_rows > 0): ?>
                                         <?php while($row = $result->fetch_assoc()): ?>
-<<<<<<< Updated upstream
-                                            <?php $row_for_data = $row; $row_for_data['pod'] = !empty($row['pod_filename']) ? true : false; $row_for_data['hasSignature'] = !empty($row['signature']); unset($row_for_data['signature']); ?>
-                                            <tr class="hover:bg-[rgb(203,202,202)] transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
-=======
                                             <?php 
                                                 $row_for_data = $row; 
-                                                $row_for_data['pod'] = !empty($row['pod_filename']) ? true : false; 
+                                                $row_for_data['pod'] = (!empty($row['pod']) || !empty($row['pod_filename'])) ? true : false; 
                                                 $row_for_data['hasSignature'] = !empty($row['signature']); 
                                                 $row_for_data['receivedBy'] = $row['receivedBy'] ?? '';
                                                 $row_for_data['pod_filename'] = $row['pod_filename'] ?? '';
                                                 unset($row_for_data['signature']); 
                                             ?>
                                             <tr class="hover:bg-gray-50 transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
->>>>>>> Stashed changes
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="text-sm font-medium text-gray-900">
                                                         <?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames)); ?>
@@ -487,18 +492,38 @@ function getOfficeDisplayNamePHP($code, $map) {
                         </div>
                     </div>
                     <div class="form-section">
-                        <h3>Signature</h3>
+                        <h3>Signature - Sender</h3>
                         <div class="form-group">
                             <a href="#" id="signatureEnlargeLink">
-                                <img id="detailsSignature" src="" alt="Signature" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
+                                <img id="detailsSignature" src="" alt="Sender Signature" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
                             </a>
                         </div>
                     </div>
                     <div class="form-section">
-                        <h3>Proof of Document (POD)</h3>
+                        <h3>Signature - Receiver</h3>
                         <div class="form-group">
-                            <img id="detailsPod" src="" alt="Proof of Document" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; display:none; cursor:pointer;">
+                            <a href="#" id="receiverSignatureEnlargeLink">
+                                <img id="detailsReceiverSignature" src="" alt="Receiver Signature" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer; display:none;">
+                            </a>
+                            <span id="receiverSignatureNoImage" style="color:#aaa;">No Receiver Signature</span>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3>Proof of Document (POD) - Sender</h3>
+                        <div class="form-group">
+                            <a href="#" id="podEnlargeLink">
+                                <img id="detailsPod" src="" alt="Sender Proof of Document" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; display:none; cursor:pointer;">
+                            </a>
                             <span id="podNoImage" style="color:#aaa;">No POD</span>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3>Proof of Document (POD) - Receiver</h3>
+                        <div class="form-group">
+                            <a href="#" id="receiverPodEnlargeLink">
+                                <img id="detailsReceiverPod" src="" alt="Receiver Proof of Document" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; display:none; cursor:pointer;">
+                            </a>
+                            <span id="receiverPodNoImage" style="color:#aaa;">No Receiver POD</span>
                         </div>
                     </div>
                 </form>
@@ -542,13 +567,20 @@ function getOfficeDisplayNamePHP($code, $map) {
                     <div class="form-section">
                         <h3>Document Information</h3>
                         <div class="form-group">
-                            <label>Office: <span id="signatureOfficeName"></span></label>
+                            <label>From Office: <span id="signatureOfficeName"></span></label>
                         </div>
                         <div class="form-group">
                             <label>Sender: <span id="signatureSenderName"></span></label>
                         </div>
                         <div class="form-group">
-                            <label>Date Received: <span id="signatureDateReceived"></span></label>
+                            <label>Time Sent: <span id="signatureDateReceived"></span></label>
+                        </div>
+                        <div class="form-group">
+                            <label>Sender's Proof of Document (POD)</label>
+                            <a href="#" id="addSignatureSenderPodEnlargeLink">
+                                <img id="addSignatureSenderPodPreview" src="" alt="Sender POD Preview" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; display:none; margin-bottom:8px; cursor:pointer;">
+                            </a>
+                            <span id="addSignatureSenderPodNoImage" style="color:#aaa; display:none;">No POD</span>
                         </div>
                     </div>
                     <div class="form-section">
@@ -566,9 +598,8 @@ function getOfficeDisplayNamePHP($code, $map) {
                             <input type="hidden" name="receiptSignature" id="receiptSignatureInput">
                         </div>
                         <div class="form-group">
-                            <label for="podFile">Upload Proof of Document (POD)</label>
-                            <input type="file" name="podFile" id="podFile" accept="image/*,application/pdf">
-                            <small>Max file size: 5MB</small>
+                            <label for="podFile" class="required">Upload Your Proof of Document (POD)</label>
+                            <input type="file" name="podFile" id="podFile" accept="image/*,application/pdf" required>
                         </div>
                     </div>
                     <div class="submit-section">
@@ -578,6 +609,16 @@ function getOfficeDisplayNamePHP($code, $map) {
                 </form>
             </div>
         </div>
+    </div>
+
+    <!-- Add a new lightbox for receiver POD -->
+    <div id="receiverPodLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedReceiverPod" src="" alt="Enlarged Receiver POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
+
+    <!-- Add a lightbox modal for the sender POD preview -->
+    <div id="addSignatureSenderPodLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="addSignatureSenderPodEnlarged" src="" alt="Enlarged Sender POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
 
     <style>
@@ -614,6 +655,7 @@ function getOfficeDisplayNamePHP($code, $map) {
         'dictNE': 'Provincial Office Nueva Ecija',
         'dictne': 'Provincial Office Nueva Ecija',
         'dictNUEVAECIJA': 'Provincial Office Nueva Ecija',
+        'maindoc': 'DICT Region 3 Office',
         'Rdictpampanga': 'Provincial Office Pampanga',
         'RdictPampanga': 'Provincial Office Pampanga',
         'RdictTarlac': 'Provincial Office Tarlac',
@@ -623,6 +665,7 @@ function getOfficeDisplayNamePHP($code, $map) {
         'RdictZambales': 'Provincial Office Zambales',
         'RdictNuevaEcija': 'Provincial Office Nueva Ecija',
         'RdictNE': 'Provincial Office Nueva Ecija',
+        'Rmaindoc': 'DICT Region 3 Office',
         // Add more as you encounter new codes!
     };
     function getOfficeDisplayName(code) {
@@ -659,14 +702,96 @@ function getOfficeDisplayNamePHP($code, $map) {
                 if (podFileInput) podFileInput.value = '';
                 // Do NOT show any previous signature or POD in the Add Signature modal
                 // Set document info
-                document.getElementById('signatureOfficeName').textContent = data.officeName || '';
+                document.getElementById('signatureOfficeName').textContent = getOfficeDisplayName(data.officeName) || '';
                 document.getElementById('signatureSenderName').textContent = data.senderName || '';
                 document.getElementById('signatureDateReceived').textContent = data.dateAndTime ? new Date(data.dateAndTime).toLocaleString() : '';
                 // Set transactionID in hidden input
                 var transactionID = data.transactionID;
                 document.getElementById('signatureTransactionID').value = transactionID;
+                
+                // Set sender POD preview in Add Signature modal
+                var addSignatureSenderPodPreview = document.getElementById('addSignatureSenderPodPreview');
+                var addSignatureSenderPodNoImage = document.getElementById('addSignatureSenderPodNoImage');
+                if (data.pod && data.transactionID) {
+                    addSignatureSenderPodPreview.src = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
+                    addSignatureSenderPodPreview.style.display = 'inline';
+                    addSignatureSenderPodNoImage.style.display = 'none';
+                    addSignatureSenderPodPreview.onerror = function() {
+                        addSignatureSenderPodPreview.style.display = 'none';
+                        addSignatureSenderPodNoImage.style.display = 'inline';
+                    };
+                } else {
+                    addSignatureSenderPodPreview.src = '';
+                    addSignatureSenderPodPreview.style.display = 'none';
+                    addSignatureSenderPodNoImage.style.display = 'inline';
+                }
                 // Show the modal
                 document.getElementById('addSignatureModal').style.display = 'flex';
+                // In the JS view-btn click handler, after setting detailsPod, add:
+                var receiverPodImg = document.getElementById('detailsReceiverPod');
+                var receiverPodEnlargeLink = document.getElementById('receiverPodEnlargeLink');
+                if (receiverPodEnlargeLink) {
+                    receiverPodEnlargeLink.onclick = function(e) {
+                        e.preventDefault();
+                        if (!receiverPodImg.src || receiverPodImg.style.display === 'none') return;
+                        var enlarged = document.getElementById('enlargedReceiverPod');
+                        enlarged.src = receiverPodImg.src;
+                        var lightbox = document.getElementById('receiverPodLightbox');
+                        lightbox.style.display = 'flex';
+                        lightbox.style.opacity = 0;
+                        setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+                    };
+                }
+                document.getElementById('receiverPodLightbox').onclick = function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                        document.getElementById('enlargedReceiverPod').src = '';
+                    }
+                };
+                document.getElementById('enlargedReceiverPod').onclick = function(e) {
+                    e.stopPropagation();
+                };
+                // Signature preview
+                var detailsSignature = document.getElementById('detailsSignature');
+                if (data.hasSignature && data.transactionID) {
+                    detailsSignature.src = '/dictproj1/modules/get_signature.php?id=' + data.transactionID;
+                    detailsSignature.style.display = 'inline';
+                } else {
+                    detailsSignature.src = '';
+                    detailsSignature.style.display = 'none';
+                }
+                // POD preview
+                var podImg = document.getElementById('detailsPod');
+                var podNoImage = document.getElementById('podNoImage');
+                if (data.pod && data.transactionID) {
+                    podImg.src = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
+                    podImg.style.display = 'inline';
+                    podNoImage.style.display = 'none';
+                    podImg.onerror = function() {
+                        podImg.style.display = 'none';
+                        podNoImage.style.display = 'inline';
+                    };
+                } else {
+                    podImg.src = '';
+                    podImg.style.display = 'none';
+                    podNoImage.style.display = 'inline';
+                }
+                // In JS, after setting detailsSignature, add:
+                var receiverSignatureImg = document.getElementById('detailsReceiverSignature');
+                var receiverSignatureNoImage = document.getElementById('receiverSignatureNoImage');
+                if (data.transactionID) {
+                    receiverSignatureImg.src = '/dictproj1/modules/get_signature.php?id=' + data.transactionID + '&type=receiver';
+                    receiverSignatureImg.style.display = 'inline';
+                    receiverSignatureNoImage.style.display = 'none';
+                    receiverSignatureImg.onerror = function() {
+                        receiverSignatureImg.style.display = 'none';
+                        receiverSignatureNoImage.style.display = 'inline';
+                    };
+                } else {
+                    receiverSignatureImg.src = '';
+                    receiverSignatureImg.style.display = 'none';
+                    receiverSignatureNoImage.style.display = 'inline';
+                }
             });
         });
         // Modal close logic for POD preview
@@ -968,6 +1093,31 @@ function getOfficeDisplayNamePHP($code, $map) {
                 submitBtn.disabled = false;
             });
         });
+        // Add JS for sender POD lightbox
+        var addSignatureSenderPodEnlargeLink = document.getElementById('addSignatureSenderPodEnlargeLink');
+        var addSignatureSenderPodPreview = document.getElementById('addSignatureSenderPodPreview');
+        var addSignatureSenderPodNoImage = document.getElementById('addSignatureSenderPodNoImage');
+        if (addSignatureSenderPodEnlargeLink) {
+            addSignatureSenderPodEnlargeLink.onclick = function(e) {
+                e.preventDefault();
+                if (!addSignatureSenderPodPreview.src || addSignatureSenderPodPreview.style.display === 'none') return;
+                var enlarged = document.getElementById('addSignatureSenderPodEnlarged');
+                enlarged.src = addSignatureSenderPodPreview.src;
+                var lightbox = document.getElementById('addSignatureSenderPodLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        document.getElementById('addSignatureSenderPodLightbox').onclick = function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+                document.getElementById('addSignatureSenderPodEnlarged').src = '';
+            }
+        };
+        document.getElementById('addSignatureSenderPodEnlarged').onclick = function(e) {
+            e.stopPropagation();
+        };
     });
 
     // Fallback for Show Filters button if external JS fails

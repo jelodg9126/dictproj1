@@ -7,10 +7,12 @@ if ($id <= 0) {
     exit('Invalid ID');
 }
 
-$stmt = $conn->prepare("SELECT signature FROM maindoc WHERE transactionID = ?");
+$type = isset($_GET['type']) && $_GET['type'] === 'receiver' ? 'receiver_signature' : 'signature';
+$sql = "SELECT $type, transactionID FROM maindoc WHERE transactionID = ?";
+$stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$stmt->bind_result($signature);
+$stmt->bind_result($signature, $transactionID);
 $stmt->fetch();
 $stmt->close();
 $conn->close();

@@ -160,6 +160,7 @@ $officeDisplayNames = [
     'dictNE' => 'Provincial Office Nueva Ecija',
     'dictne' => 'Provincial Office Nueva Ecija',
     'dictNUEVAECIJA' => 'Provincial Office Nueva Ecija',
+    'maindoc' => 'DICT Region 3 Office',
     'Rdictpampanga' => 'Provincial Office Pampanga',
     'RdictPampanga' => 'Provincial Office Pampanga',
     'RdictTarlac' => 'Provincial Office Tarlac',
@@ -169,6 +170,7 @@ $officeDisplayNames = [
     'RdictZambales' => 'Provincial Office Zambales',
     'RdictNuevaEcija' => 'Provincial Office Nueva Ecija',
     'RdictNE' => 'Provincial Office Nueva Ecija',
+    'Rmaindoc' => 'DICT Region 3 Office',
     // Add more as you encounter new codes!
 ];
 
@@ -533,6 +535,7 @@ function getOfficeDisplayNamePHP($code, $map) {
         'dictNE': 'Provincial Office Nueva Ecija',
         'dictne': 'Provincial Office Nueva Ecija',
         'dictNUEVAECIJA': 'Provincial Office Nueva Ecija',
+        'maindoc': 'DICT Region 3 Office',
         'Rdictpampanga': 'Provincial Office Pampanga',
         'RdictPampanga': 'Provincial Office Pampanga',
         'RdictTarlac': 'Provincial Office Tarlac',
@@ -542,6 +545,7 @@ function getOfficeDisplayNamePHP($code, $map) {
         'RdictZambales': 'Provincial Office Zambales',
         'RdictNuevaEcija': 'Provincial Office Nueva Ecija',
         'RdictNE': 'Provincial Office Nueva Ecija',
+        'Rmaindoc': 'DICT Region 3 Office',
         // Add more as you encounter new codes!
     };
     document.addEventListener('DOMContentLoaded', function() {
