@@ -240,6 +240,10 @@ function getOfficeDisplayNamePHP($code, $map) {
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
 
         <div class="flex-1 p-6 bg-gray-50 min-h-screen overflow-y-auto  " id="docu">
+        
+        <div class="flex-1 p-6 bg-linear-90 from-[#48517f] to-[#322b5f] min-h-screen overflow-y-auto  " id="docu">
+          
+            
             <div class="max-w-7xl mx-auto">
                 <!-- Success Message -->
                 <?php if ($show_success): ?>
@@ -257,10 +261,12 @@ function getOfficeDisplayNamePHP($code, $map) {
                     </script>
                 <?php endif; ?>
 
+                 <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
                         <h1 class="text-3xl font-bold text-blue-800">Incoming Documents</h1>
                         <p class="text-gray-600 mt-2">View and track all incoming documents</p>
+                        <p class="text-gray-300 mt-2">View and track all incoming documents (read-only)</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
@@ -365,6 +371,8 @@ function getOfficeDisplayNamePHP($code, $map) {
                                                 unset($row_for_data['signature']); 
                                             ?>
                                             <tr class="hover:bg-gray-50 transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
+                                            <?php $row_for_data = $row; $row_for_data['pod'] = !empty($row['pod_filename']) ? true : false; $row_for_data['hasSignature'] = !empty($row['signature']); unset($row_for_data['signature']); ?>
+                                            <tr class="hover:bg-[rgb(203,202,202)] transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
                                                 <td class="px-6 py-4 whitespace-nowrap">
                                                     <div class="text-sm font-medium text-gray-900">
                                                         <?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames)); ?>
