@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $hasReceivedBy = !empty($row['receivedBy']);
             $hasPod = !empty($row['pod']);
             if ($hasSignature && $hasReceivedBy && $hasPod) {
-                $status_stmt = $conn->prepare("UPDATE maindoc SET status = 'Received' WHERE transactionID = ?");
+                $status_stmt = $conn->prepare("UPDATE maindoc SET status = 'Received', dateReceived = NOW() WHERE transactionID = ?");
                 $status_stmt->bind_param("i", $transactionID);
                 $status_stmt->execute();
                 $status_stmt->close();

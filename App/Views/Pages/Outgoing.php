@@ -339,7 +339,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                             <thead class="bg-[rgba(240,240,240,0.51)] backdrop-blur border-b border-gray-200">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                                        Office
+                                        Destination Office
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                                         Sender Name
@@ -365,11 +365,27 @@ function getOfficeDisplayNamePHP($code, $map) {
                             <tbody class="bg-[rgb(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php while($row = $result->fetch_assoc()): ?>
-                                        <?php $row_for_data = $row; unset($row_for_data['signature']); $row_for_data['pod'] = !empty($row['pod']) ? true : false; ?>
+                                        <?php 
+                                            // Always include all expected fields for the modal
+                                            $row_for_data = [
+                                                'officeName' => $row['officeName'] ?? '',
+                                                'senderName' => $row['senderName'] ?? '',
+                                                'emailAdd' => $row['emailAdd'] ?? '',
+                                                'modeOfDel' => $row['modeOfDel'] ?? '',
+                                                'courierName' => $row['courierName'] ?? '',
+                                                'status' => $row['status'] ?? '',
+                                                'dateAndTime' => $row['dateAndTime'] ?? '',
+                                                'dateReceived' => $row['dateReceived'] ?? '',
+                                                'transactionID' => $row['transactionID'] ?? '',
+                                                'addressTo' => $row['addressTo'] ?? '',
+                                                'pod' => !empty($row['pod']) ? true : false,
+                                                'receivedBy' => $row['receivedBy'] ?? ''
+                                            ];
+                                        ?>
                                         <tr class="hover:bg-gray-50 transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm font-medium text-gray-900">
-                                                    <?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames)); ?>
+                                                    <?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['addressTo'], $officeDisplayNames)); ?>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -455,7 +471,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                     <div class="form-section">
                         <h3>Office Information</h3>
                         <div class="form-group">
-                            <label for="detailsOfficeName">Select Office</label>
+                            <label for="detailsOfficeName">Originating Office</label>
                             <input type="text" id="detailsOfficeName" readonly class="input-readonly">
                         </div>
                     </div>
@@ -471,20 +487,35 @@ function getOfficeDisplayNamePHP($code, $map) {
                                 <input type="text" id="detailsEmailAdd" readonly class="input-readonly">
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label>Sender Signature</label><br>
+                            <img id="detailsSenderSignature" src="" alt="Sender Signature" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9;">
+                        </div>
+                        <div class="form-group">
+                            <label>Sender POD</label><br>
+                            <img id="detailsSenderPod" src="" alt="Sender POD" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9;">
+                            <span id="senderPodNoImage" style="color:#aaa;">No POD</span>
+                        </div>
                     </div>
                     <div class="form-section">
-                        <h3>Delivery Information</h3>
+                        <h3>Receiver Information</h3>
                         <div class="form-group">
-                            <label for="detailsAddressTo">Receiving Office</label>
-                            <input type="text" id="detailsAddressTo" readonly class="input-readonly">
+                            <label for="detailsReceiverName">Receiver Name</label>
+                            <input type="text" id="detailsReceiverName" readonly class="input-readonly">
                         </div>
                         <div class="form-group">
-                            <label for="detailsModeOfDel">Mode of Delivery</label>
-                            <input type="text" id="detailsModeOfDel" readonly class="input-readonly">
+                            <label for="detailsDestinationOffice">Destination Office</label>
+                            <input type="text" id="detailsDestinationOffice" readonly class="input-readonly">
                         </div>
                         <div class="form-group">
-                            <label for="detailsCourierName">Courier Name</label>
-                            <input type="text" id="detailsCourierName" readonly class="input-readonly">
+                            <label>Receiver Signature</label><br>
+                            <img id="detailsReceiverSignature" src="" alt="Receiver Signature" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9;">
+                            <span id="receiverSignatureNoImage" style="color:#aaa;">No receiver signature</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Receiver POD</label><br>
+                            <img id="detailsReceiverPod" src="" alt="Receiver POD" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9;">
+                            <span id="receiverPodNoImage" style="color:#aaa;">No receiver POD</span>
                         </div>
                     </div>
                     <div class="form-section">
@@ -495,24 +526,9 @@ function getOfficeDisplayNamePHP($code, $map) {
                                 <input type="text" id="detailsStatus" readonly class="input-readonly">
                             </div>
                             <div class="form-group">
-                                <label for="detailsDateAndTime">Date & Time</label>
+                                <label for="detailsDateAndTime" id="detailsDateAndTimeLabel">Date & Time</label>
                                 <input type="text" id="detailsDateAndTime" readonly class="input-readonly">
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h3>Signature</h3>
-                        <div class="form-group">
-                            <a href="#" id="signatureEnlargeLink">
-                                <img id="detailsSignature" src="" alt="Signature" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
-                            </a>
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h3>Proof of Document (POD)</h3>
-                        <div class="form-group">
-                            <img id="detailsPod" src="" alt="Proof of Document" style="max-width:300px; max-height:120px; border:1px solid #ccc; background:#f9f9f9; display:none; cursor:pointer;">
-                            <span id="podNoImage" style="color:#aaa;">No POD</span>
                         </div>
                     </div>
                 </form>
@@ -563,6 +579,7 @@ function getOfficeDisplayNamePHP($code, $map) {
         display: flex !important;
     }
     </style>
+    <script src="/dictproj1/modal.js"></script>
     <script>
     // Mapping for office codes to display names
     const officeDisplayNames = {
@@ -606,34 +623,79 @@ function getOfficeDisplayNamePHP($code, $map) {
                 var rowData = btn.getAttribute('data-row');
                 if (!rowData) return;
                 var data = JSON.parse(rowData);
-                // Use mapping for office name
                 var displayOffice = getOfficeDisplayName(data.officeName);
                 var displayReceivingOffice = getOfficeDisplayName(data.addressTo);
                 document.getElementById('detailsOfficeName').value = displayOffice;
                 document.getElementById('detailsSenderName').value = data.senderName || '';
                 document.getElementById('detailsEmailAdd').value = data.emailAdd || '';
-                document.getElementById('detailsAddressTo').value = displayReceivingOffice;
-                document.getElementById('detailsModeOfDel').value = data.modeOfDel || '';
-                document.getElementById('detailsCourierName').value = data.courierName || '';
                 document.getElementById('detailsStatus').value = data.status || '';
-                document.getElementById('detailsDateAndTime').value = data.dateAndTime || '';
-                document.getElementById('detailsSignature').src = data.transactionID ? '/dictproj1/modules/get_signature.php?id=' + data.transactionID : '';
-                var podImg = document.getElementById('detailsPod');
-                var podNoImage = document.getElementById('podNoImage');
-                if (data.pod) {
-                    var podUrl = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
-                    podImg.src = podUrl;
-                    podImg.style.display = 'inline';
-                    podNoImage.style.display = 'none';
-                    podImg.onerror = function() {
-                        podImg.style.display = 'none';
-                        podNoImage.style.display = 'inline';
+                var dateTimeInput = document.getElementById('detailsDateAndTime');
+                var dateTimeLabel = document.getElementById('detailsDateAndTimeLabel');
+                if (data.status && data.status.toLowerCase() === 'received' && data.dateReceived) {
+                    dateTimeInput.value = data.dateReceived ? new Date(data.dateReceived).toLocaleString() : '';
+                    dateTimeLabel.textContent = 'Date & Time Received';
+                } else {
+                    dateTimeInput.value = data.dateAndTime ? new Date(data.dateAndTime).toLocaleString() : '';
+                    dateTimeLabel.textContent = 'Date & Time Created';
+                }
+                // Sender signature
+                var senderSig = document.getElementById('detailsSenderSignature');
+                if (data.transactionID) {
+                    senderSig.src = '/dictproj1/modules/get_signature.php?id=' + data.transactionID;
+                    senderSig.style.display = 'inline';
+                } else {
+                    senderSig.src = '';
+                    senderSig.style.display = 'none';
+                }
+                // Sender POD
+                var senderPodImg = document.getElementById('detailsSenderPod');
+                var senderPodNoImage = document.getElementById('senderPodNoImage');
+                if (data.pod && data.transactionID) {
+                    senderPodImg.src = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
+                    senderPodImg.style.display = 'inline';
+                    senderPodNoImage.style.display = 'none';
+                } else {
+                    senderPodImg.src = '';
+                    senderPodImg.style.display = 'none';
+                    senderPodNoImage.style.display = 'inline';
+                }
+                // Receiver name
+                var receiverNameInput = document.getElementById('detailsReceiverName');
+                receiverNameInput.value = data.receivedBy || '';
+                if (!data.receivedBy) receiverNameInput.placeholder = 'No receiver';
+                // Receiver signature
+                var receiverSig = document.getElementById('detailsReceiverSignature');
+                var receiverSigNoImage = document.getElementById('receiverSignatureNoImage');
+                if (data.transactionID) {
+                    receiverSig.src = '/dictproj1/modules/get_signature.php?id=' + data.transactionID + '&type=receiver';
+                    receiverSig.style.display = 'inline';
+                    receiverSigNoImage.style.display = 'none';
+                    receiverSig.onerror = function() {
+                        receiverSig.style.display = 'none';
+                        receiverSigNoImage.style.display = 'inline';
                     };
                 } else {
-                    podImg.src = '';
-                    podImg.style.display = 'none';
-                    podNoImage.style.display = 'inline';
+                    receiverSig.src = '';
+                    receiverSig.style.display = 'none';
+                    receiverSigNoImage.style.display = 'inline';
                 }
+                // Receiver POD
+                var receiverPodImg = document.getElementById('detailsReceiverPod');
+                var receiverPodNoImage = document.getElementById('receiverPodNoImage');
+                if (data.transactionID) {
+                    receiverPodImg.src = '/dictproj1/modules/get_receiver_pod.php?id=' + data.transactionID;
+                    receiverPodImg.style.display = 'inline';
+                    receiverPodNoImage.style.display = 'none';
+                    receiverPodImg.onerror = function() {
+                        receiverPodImg.style.display = 'none';
+                        receiverPodNoImage.style.display = 'inline';
+                    };
+                } else {
+                    receiverPodImg.src = '';
+                    receiverPodImg.style.display = 'none';
+                    receiverPodNoImage.style.display = 'inline';
+                }
+                document.getElementById('detailsDestinationOffice').value = getOfficeDisplayName(data.addressTo) || '';
                 document.getElementById('detailsModal').style.display = 'flex';
             });
         });
@@ -657,68 +719,97 @@ function getOfficeDisplayNamePHP($code, $map) {
             });
         }
         // Modal close logic for POD preview
-        document.getElementById('closePodPreviewModal').onclick = function() {
-            document.getElementById('podPreviewModal').style.display = 'none';
-            document.getElementById('podPreviewImg').src = '';
-        };
-        document.getElementById('podPreviewModal').onclick = function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
+        var closePodPreviewModal = document.getElementById('closePodPreviewModal');
+        if (closePodPreviewModal) {
+            closePodPreviewModal.onclick = function() {
+                document.getElementById('podPreviewModal').style.display = 'none';
                 document.getElementById('podPreviewImg').src = '';
-            }
-        };
+            };
+        }
+        var podPreviewModal = document.getElementById('podPreviewModal');
+        if (podPreviewModal) {
+            podPreviewModal.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('podPreviewImg').src = '';
+                }
+            };
+        }
         // Modal close logic for detailsModal
-        document.getElementById('closeDetailsModal').onclick = function() {
-            document.getElementById('detailsModal').style.display = 'none';
-        };
-        document.getElementById('detailsModal').onclick = function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-            }
-        };
+        var closeDetailsModal = document.getElementById('closeDetailsModal');
+        if (closeDetailsModal) {
+            closeDetailsModal.onclick = function() {
+                document.getElementById('detailsModal').style.display = 'none';
+            };
+        }
+        var detailsModal = document.getElementById('detailsModal');
+        if (detailsModal) {
+            detailsModal.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            };
+        }
         // Signature enlarge (lightbox) feature
-        document.getElementById('signatureEnlargeLink').onclick = function(e) {
-            e.preventDefault();
-            var sigImg = document.getElementById('detailsSignature');
-            if (!sigImg.src || sigImg.src.endsWith('get_signature.php?id=')) {
-                return;
-            }
-            var enlarged = document.getElementById('enlargedSignature');
-            enlarged.src = sigImg.src;
-            var lightbox = document.getElementById('signatureLightbox');
-            lightbox.style.display = 'flex';
-            lightbox.style.opacity = 0;
-            setTimeout(() => { lightbox.style.opacity = 1; }, 10);
-        };
-        document.getElementById('signatureLightbox').onclick = function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-                document.getElementById('enlargedSignature').src = '';
-            }
-        };
-        document.getElementById('enlargedSignature').onclick = function(e) {
-            e.stopPropagation();
-        };
+        var signatureEnlargeLink = document.getElementById('signatureEnlargeLink');
+        if (signatureEnlargeLink) {
+            signatureEnlargeLink.onclick = function(e) {
+                e.preventDefault();
+                var sigImg = document.getElementById('detailsSignature');
+                if (!sigImg.src || sigImg.src.endsWith('get_signature.php?id=')) {
+                    return;
+                }
+                var enlarged = document.getElementById('enlargedSignature');
+                enlarged.src = sigImg.src;
+                var lightbox = document.getElementById('signatureLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var signatureLightbox = document.getElementById('signatureLightbox');
+        if (signatureLightbox) {
+            signatureLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedSignature').src = '';
+                }
+            };
+        }
+        var enlargedSignature = document.getElementById('enlargedSignature');
+        if (enlargedSignature) {
+            enlargedSignature.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
         // POD lightbox
         var podImg = document.getElementById('detailsPod');
-        podImg.onclick = function() {
-            if (!podImg.src || podImg.style.display === 'none') return;
-            var enlarged = document.getElementById('enlargedPod');
-            enlarged.src = podImg.src;
-            var lightbox = document.getElementById('podLightbox');
-            lightbox.style.display = 'flex';
-            lightbox.style.opacity = 0;
-            setTimeout(() => { lightbox.style.opacity = 1; }, 10);
-        };
-        document.getElementById('podLightbox').onclick = function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-                document.getElementById('enlargedPod').src = '';
-            }
-        };
-        document.getElementById('enlargedPod').onclick = function(e) {
-            e.stopPropagation();
-        };
+        if (podImg) {
+            podImg.onclick = function() {
+                if (!podImg.src || podImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedPod');
+                enlarged.src = podImg.src;
+                var lightbox = document.getElementById('podLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var podLightbox = document.getElementById('podLightbox');
+        if (podLightbox) {
+            podLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedPod').src = '';
+                }
+            };
+        }
+        var enlargedPod = document.getElementById('enlargedPod');
+        if (enlargedPod) {
+            enlargedPod.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
         // Live filter: auto-submit on input/change
         function debounce(func, wait) {
             let timeout;
@@ -779,11 +870,6 @@ function getOfficeDisplayNamePHP($code, $map) {
                 setTimeout(() => { lightbox.style.opacity = 1; }, 10);
             };
         }
-        // Add New Record button logic
-        document.getElementById('openFormModal').onclick = function() {
-            document.getElementById('formModal').style.display = 'flex';
-        };
-        
         // Modal close logic for formModal
         document.querySelectorAll('#formModal .close').forEach(function(closeBtn) {
             closeBtn.onclick = function() {

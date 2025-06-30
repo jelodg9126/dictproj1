@@ -616,9 +616,12 @@ function getOfficeDisplayNamePHP($code, $map) {
             }
         };
         // Add New Record button logic
-        document.getElementById('openFormModal').onclick = function() {
-            document.getElementById('formModal').style.display = 'flex';
-        };
+        var openFormBtn = document.getElementById('openFormModal');
+        if (openFormBtn) {
+            openFormBtn.onclick = function() {
+                document.getElementById('formModal').style.display = 'flex';
+            };
+        }
         // Modal close logic for formModal
         document.querySelectorAll('#formModal .close').forEach(function(closeBtn) {
             closeBtn.onclick = function() {

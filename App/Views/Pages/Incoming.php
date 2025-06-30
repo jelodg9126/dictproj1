@@ -87,6 +87,10 @@ if (!empty($status_filter)) {
     $count_types .= "s";
 }
 
+// Exclude documents with status 'Received' from Incoming Documents
+$sql .= " AND (status IS NULL OR status != 'Received')";
+$count_sql .= " AND (status IS NULL OR status != 'Received')";
+
 if (!empty($date_from)) {
     $sql .= " AND DATE(dateAndTime) >= ?";
     $count_sql .= " AND DATE(dateAndTime) >= ?";

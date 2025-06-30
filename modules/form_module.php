@@ -51,6 +51,25 @@ if (isset($_SESSION['uNameLogin'])) {
         $office_readonly = true; // Make it readonly since it's auto-selected
     }
 }
+
+// Before rendering the Receiving Office dropdown, determine the user's own receiving office code
+$exclude_receiving_office = '';
+if (isset($pre_selected_office)) {
+    $office_to_receiving = [
+        'dictBulacan' => 'RdictBulacan',
+        'dictPampanga' => 'RdictPampanga',
+        'dictAurora' => 'RdictAurora',
+        'dictBataan' => 'RdictBataan',
+        'dictNE' => 'RdictNE',
+        'dictTarlac' => 'RdictTarlac',
+        'dictZambales' => 'RdictZambales',
+        'maindoc' => 'Rmaindoc',
+        'Others' => 'ROthers'
+    ];
+    if (isset($office_to_receiving[$pre_selected_office])) {
+        $exclude_receiving_office = $office_to_receiving[$pre_selected_office];
+    }
+}
 ?>
 
 <div class="form-container" id="documentFormContainer">
@@ -106,16 +125,16 @@ if (isset($_SESSION['uNameLogin'])) {
             <h3>Delivery Information</h3>
             <div class="form-group">
                 <label for="addressTo" class="required">Receiving Office</label>
-                    <select name="addressTo" id="addressTo" required>
-                    <option value="RdictBulacan">Provincial Office Bulacan</option>
-                    <option value="RdictPampanga">Provincial Office Pampanga</option>
-                    <option value="RdictAurora">Provincial Office Aurora</option>
-                    <option value="RdictBataan">Provincial Office Bataan</option>
-                    <option value="RdictNE">Provincial Office Nueva Ecija</option>
-                    <option value="RdictTarlac">Provincial Office Tarlac</option>
-                    <option value="RdictZambales">Provincial Office Zambales</option>
-                    <option value="Rmaindoc">DICT Region 3 Office</option>
-                    <option value="ROthers">Others</option>
+                <select name="addressTo" id="addressTo" required>
+                    <?php if ($exclude_receiving_office !== 'RdictBulacan'): ?><option value="RdictBulacan">Provincial Office Bulacan</option><?php endif; ?>
+                    <?php if ($exclude_receiving_office !== 'RdictPampanga'): ?><option value="RdictPampanga">Provincial Office Pampanga</option><?php endif; ?>
+                    <?php if ($exclude_receiving_office !== 'RdictAurora'): ?><option value="RdictAurora">Provincial Office Aurora</option><?php endif; ?>
+                    <?php if ($exclude_receiving_office !== 'RdictBataan'): ?><option value="RdictBataan">Provincial Office Bataan</option><?php endif; ?>
+                    <?php if ($exclude_receiving_office !== 'RdictNE'): ?><option value="RdictNE">Provincial Office Nueva Ecija</option><?php endif; ?>
+                    <?php if ($exclude_receiving_office !== 'RdictTarlac'): ?><option value="RdictTarlac">Provincial Office Tarlac</option><?php endif; ?>
+                    <?php if ($exclude_receiving_office !== 'RdictZambales'): ?><option value="RdictZambales">Provincial Office Zambales</option><?php endif; ?>
+                    <?php if ($exclude_receiving_office !== 'Rmaindoc'): ?><option value="Rmaindoc">DICT Region 3 Office</option><?php endif; ?>
+                    <?php if ($exclude_receiving_office !== 'ROthers'): ?><option value="ROthers">Others</option><?php endif; ?>
                 </select>
             </div>
             
