@@ -61,7 +61,7 @@
             </div>
 
             <div class="mt-12 text-gray-100">
-                <a class="flex gap-3 items-center p-5 transition-transform duration-200 transform  hover:text-[17.5px] <?php echo ($currentPage === 'logout') ? 'bg-blue-600' : ''; ?>" href="/dictproj1/App/Model/logout.php">
+                <a class="flex gap-3 items-center p-5 transition-transform duration-200 transform  hover:text-[17.5px] <?php echo ($currentPage === 'logout') ? 'bg-blue-600' : ''; ?>" id="logout" href="/dictproj1/App/Model/logout.php" oncli">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
@@ -114,7 +114,9 @@
             lucide.createIcons();
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/dictproj1/public/Scripts/LogoutConfirm.js"></script>
 </body>
 
 </html>

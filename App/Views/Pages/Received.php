@@ -181,7 +181,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
                         <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
-                        <h1 class="text-3xl font-bold text-blue-800">Received Documents</h1>
+                        <h1 class="text-3xl font-bold text-indigo-500">Received Documents</h1>
                         <p class="text-gray-300 mt-2">View and track all documents that have been received.</p>
                     </div>
                 </div>

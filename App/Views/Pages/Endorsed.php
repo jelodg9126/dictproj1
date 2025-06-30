@@ -31,12 +31,12 @@ $result = $conn->query($sql);
 <body>
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
-        <div class="flex-1 p-6 bg-gray-50 min-h-screen overflow-y-auto" id="docu">
+        <div class="flex-1 p-6 min-h-screen overflow-y-auto" id="docu">
             <div class="max-w-7xl mx-auto">
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
-                        <h1 class="text-3xl font-bold text-blue-800">Endorsed Documents</h1>
-                        <p class="text-gray-600 mt-2">View all documents that have been endorsed.</p>
+                        <h1 class="text-3xl font-bold text-indigo-500">Endorsed Documents</h1>
+                        <p class="text-gray-300 mt-2">View all documents that have been endorsed.</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">

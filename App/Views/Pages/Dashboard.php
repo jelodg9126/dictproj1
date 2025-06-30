@@ -68,7 +68,10 @@ include __DIR__ . '/../components/Sidebar.php';
             <div class="box1">
                 <div class="flex justify-between w-full items-center">
                     <h1 class="text-3xl font-bold px-3 text-blue-900">Dashboard</h1>
-                    <p class="text-sm text-gray-600 p-3 border rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
+                  <div class="pr-5">
+                    <p class="text-lg font-normal text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
+                    <p class="text-gray-500 font-semibold">ADMIN</p>
+                  </div>
                 </div>
 
             </div>
