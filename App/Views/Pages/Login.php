@@ -47,8 +47,8 @@
 
            <div class="login-card p-10 px-30 bg-[rgba(240,240,240,0.1)] py-18 flex flex-col border absolute border-gray-300 rounded-sm shadow-2xl">
                 <img src="/dictproj1/public/assets/images/dictStandard2.png" class="mx-auto max-w-auto w-full h-36 min-w-0 object-cover" alt="dict logo"/>
-                <h1 class="text-4xl font-bold text-blue-900 text-center mb-2 mt-8">Welcome Back!</h1> 
-                <p class="text-center font-regular text-blue-800 text-xl">Sign In to your Account.</p>
+                <h1 class="text-4xl font-bold text-blue-900 text-center mb-1 mt-8">Welcome Back!</h1> 
+                <p class="text-center font-regular text-blue-800 text-xl mb-5">Sign In to your Account.</p>
                 <?php if (!empty($error_message)): ?>
                     <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                         <?php echo htmlspecialchars($error_message); ?>
