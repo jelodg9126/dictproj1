@@ -35,12 +35,15 @@
   <!-- <button class="button" onclick="resetCamera()">Reset Camera</button> -->
   <br><img id="imgElem"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+  <!-- <script src="../../webcam.min.js"></script> -->
   <script>
     Webcam.set({
+      // force_flash: false;
       width: 320,
       height: 240,
       image_format: 'jpeg',
-      jpeg_quality: 90
+      jpeg_quality: 90,
+      flip_horiz: true
     });
     
     Webcam.attach('#camera-container');
