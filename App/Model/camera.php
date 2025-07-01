@@ -1,36 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Camera</title>
+  <title>Image Capture</title>
+  <style>
+    /* Add some basic styling to make the UI look decent */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    
+    #camera-container {
+      width: 500px;
+      height: 375px;
+      border: 1px solid #ccc;
+      margin: 20px auto;
+    }
+    
+    .button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    .button:hover {
+      background-color: #eee;
+    }
+  </style>
 </head>
 <body>
-  <video id="video"></video>
-  <button id="snap">Take Snapshot</button>
+  <h1>Image Capture</h1>
+  
+  <div id="camera-container"></div>
+  <button class="button" onclick="captureImage()">Capture Image</button>
+  <!-- <button class="button" onclick="resetCamera()">Reset Camera</button> -->
+  <br><img id="imgElem"/>
+  <br>
+  <!-- <button class="button" onclick="sendImage()">Submit Image</button> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+  <!-- <script src="webcam.min.js"></script> -->
   <script>
-    const video = document.getElementById('video');
-    navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
-    video.srcObject = stream;
-  })
-  .catch(err => console.error("Error:", err));
-  
-  document.getElementById('snap').addEventListener('click', () => {
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0);
-  const dataURL = canvas.toDataURL();
-  
-  // sending the captured image to process_form.php
-  const formData = new FormData();
-  formData.append('image', dataURL);
-  fetch('process_form.php', { method: 'POST', body: formData })
-    .then(response => response.text())
-    .then(data => console.log(data));
-});
+    Webcam.set({
+      width: 500,
+      height: 375,
+      image_format: 'jpeg',
+      jpeg_quality: 100,
+    });
+    
+    Webcam.attach('#camera-container');
+    
+    function captureImage() {
+      Webcam.snap((data_uri) => {
+        console.log(data_uri);
+        imgElem.setAttribute('src',data_uri);
+        
+        // data_uri = data_uri.replace('data:image/jpeg;base64,', '');
+      });
+    }
+    
+    // function resetCamera() {
+    //   Webcam.reset();
+    //   Webcam.attach('#camera-container');
+
+    // }
   </script>
 </body>
 </html>
