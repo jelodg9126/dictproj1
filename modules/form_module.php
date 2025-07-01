@@ -322,6 +322,9 @@ document.addEventListener('DOMContentLoaded', function() {
             showConfirmButton: false,
             cancelButtonText: 'Cancel',
             didOpen: () => {
+                // Ensure modal is always in front
+                const swalPopup = document.querySelector('.swal2-popup');
+                if (swalPopup) swalPopup.style.zIndex = '999999';
                 Webcam.set({
                     width: 320,
                     height: 240,
@@ -359,6 +362,29 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('podCameraImage').value = capturedData;
                         document.getElementById('capturedImagePreview').src = capturedData;
                         document.getElementById('capturedImagePreview').style.display = 'block';
+                        // Hide upload and camera button, show remove btn
+                        document.getElementById('podFile').style.display = 'none';
+                        document.getElementById('useCameraBtn').style.display = 'none';
+                        let removeBtn = document.getElementById('removeCapturedImageBtn');
+                        if (!removeBtn) {
+                            removeBtn = document.createElement('button');
+                            removeBtn.type = 'button';
+                            removeBtn.id = 'removeCapturedImageBtn';
+                            removeBtn.className = 'btn btn-secondary';
+                            removeBtn.style.marginLeft = '10px';
+                            removeBtn.textContent = 'Remove';
+                            document.getElementById('capturedImagePreview').after(removeBtn);
+                        } else {
+                            removeBtn.style.display = 'inline-block';
+                        }
+                        removeBtn.onclick = function() {
+                            document.getElementById('podCameraImage').value = '';
+                            document.getElementById('capturedImagePreview').src = '';
+                            document.getElementById('capturedImagePreview').style.display = 'none';
+                            document.getElementById('podFile').style.display = 'inline-block';
+                            document.getElementById('useCameraBtn').style.display = 'inline-flex';
+                            removeBtn.style.display = 'none';
+                        };
                     }
                 };
             },
@@ -367,5 +393,35 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     };
+
+    // Reset camera/upload fields when modal is closed/cancelled
+    const formModal = document.getElementById('formModal');
+    if (formModal) {
+        formModal.addEventListener('transitionend', function(e) {
+            if (formModal.style.display === 'none') {
+                // Reset camera/upload fields
+                document.getElementById('podCameraImage').value = '';
+                document.getElementById('capturedImagePreview').src = '';
+                document.getElementById('capturedImagePreview').style.display = 'none';
+                document.getElementById('podFile').style.display = 'inline-block';
+                document.getElementById('useCameraBtn').style.display = 'inline-flex';
+                let removeBtn = document.getElementById('removeCapturedImageBtn');
+                if (removeBtn) removeBtn.style.display = 'none';
+            }
+        });
+        // Also reset on cancel button click (for instant feedback)
+        const cancelBtn = document.getElementById('cancelForm');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                document.getElementById('podCameraImage').value = '';
+                document.getElementById('capturedImagePreview').src = '';
+                document.getElementById('capturedImagePreview').style.display = 'none';
+                document.getElementById('podFile').style.display = 'inline-block';
+                document.getElementById('useCameraBtn').style.display = 'inline-flex';
+                let removeBtn = document.getElementById('removeCapturedImageBtn');
+                if (removeBtn) removeBtn.style.display = 'none';
+            });
+        }
+    }
 });
-    </script> 
+</script> 
