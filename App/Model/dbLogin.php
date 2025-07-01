@@ -1,11 +1,4 @@
 <?php
-// Prevent any output before redirects
-ob_start();
-
-// Enable error reporting for debugging
-ini_set('display_errors', 0); // Turn off display errors to prevent output
-ini_set('log_errors', 1);
-error_reporting(E_ALL);
 
 // Set session cookie parameters
 ini_set('session.cookie_httponly', 1);
@@ -19,7 +12,7 @@ include_once '../Model/connect.php';
 
 // Check if form was submitted
 if (!isset($_POST['uNameLogin']) || !isset($_POST['pNameLogin'])) {
-    header("Location: /dictproj1/App/Views/Pages/Login.php?error=missing_data");
+    header("Location: ../Views/Pages/Login.php?error=missing_data");
     exit();
 }
 
@@ -33,8 +26,9 @@ $stmt->bind_param("ss", $username, $password);
 $stmt->execute();
 $result = $stmt->get_result();
 
+
 if (!$result) {
-    header("Location: /dictproj1/App/Views/Pages/Login.php?error=db_error");
+    header("Location: ../Views/Pages/Login.php?error=db_error");
     exit();
 }
 
@@ -44,51 +38,34 @@ if ($result && $result->num_rows > 0) {
     $_SESSION['uNameLogin'] = $row["userName"];
     $_SESSION['user_id'] = $row["id"]; // Assuming there's an id column
     $_SESSION['login_time'] = time();
-    
-    // Check if userType column exists, if not set default to superAdmin
-    if (isset($row['usertype'])) {
-        $_SESSION['userAuthLevel'] = $row['usertype'];
-    } else {
-        // If userType column doesn't exist, set default user type
-        $_SESSION['userAuthLevel'] = 'superAdmin';
-        
-        // Add userType column to users table if it doesn't exist
-        $check_column = $conn->query("SHOW COLUMNS FROM users LIKE 'usertype'");
-        if ($check_column->num_rows == 0) {
-            $add_column = "ALTER TABLE users ADD COLUMN usertype VARCHAR(20) DEFAULT 'superAdmin'";
-            $conn->query($add_column);
-            
-            // Update existing users to have superAdmin type
-            $update_users = "UPDATE users SET usertype = 'superAdmin' WHERE usertype IS NULL OR usertype = ''";
-            $conn->query($update_users);
-        }
-    }
-    
-    // Debug: Log the user type
-    error_log("User type: " . $_SESSION['userAuthLevel']);
-    
+    $_SESSION['userAuthLevel'] = $row['userType'];
     // Clear any output buffer to ensure clean redirect
     if (ob_get_level()) {
         ob_end_clean();
     }
     
-    // Redirect all users to the same dashboard
-    ob_end_clean();
-    header("Location: /dictproj1/App/Views/Pages/Dashboard.php");
-    exit();
+    switch($_SESSION['userAuthLevel']){
+        case 'superAdmin':
+            //redirect to dashboard
+            header("Location: ../Views/Pages/Dashboard.php");
+            exit();
+        case 'provincial':
+            //redirect to dashboard
+            header("Location: ../Views/RegionalPages/DashboardPO.php");
+            exit();                                                                   
+
+    }
 } else {
     // Clear any output buffer
-    ob_end_clean();
+    if (ob_get_level()) {
+        ob_end_clean();
+    }
     
-    header("Location: /dictproj1/App/Views/Pages/Login.php?error=invalid_credentials");
+    header("Location: ../Views/Pages/Login.php?error=invalid_credentials");
     exit();
 }
-
-// If we get here, something went wrong - redirect to login
-ob_end_clean();
-header("Location: /dictproj1/App/Views/Pages/Login.php?error=db_error");
-exit();
 
 // Close Connection
 mysqli_close($conn);
 ?>
+==]]
