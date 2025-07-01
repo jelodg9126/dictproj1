@@ -169,7 +169,13 @@ if (isset($pre_selected_office)) {
             <h3>Proof of Document (POD)</h3>
             <div class="form-group">
                 <label for="podFile">Upload Proof of Document</label>
-                <input type="file" name="podFile" id="podFile" accept="image/*,application/pdf" required>
+                <input type="file" name="podFile" id="podFile" accept="image/*,application/pdf">
+                <button type="button" id="useCameraBtn" class="btn btn-secondary" style="margin-top:8px; display:inline-flex; align-items:center; gap:6px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A2 2 0 0122 9.618V17a2 2 0 01-2 2H4a2 2 0 01-2-2V9.618a2 2 0 012.447-1.894L9 10m6 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v4m6 0H9" /></svg>
+                    <span>Use Camera</span>
+                </button>
+                <img id="capturedImagePreview" src="" style="display:none; max-width:300px; margin-top:8px;"/>
+                <input type="hidden" name="podCameraImage" id="podCameraImage">
                 <small>Max file size: 5MB</small>
             </div>
         </div>
@@ -181,6 +187,7 @@ if (isset($pre_selected_office)) {
     </form>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
 <script>
 // Form-specific JavaScript
 document.addEventListener('DOMContentLoaded', function() {
@@ -296,5 +303,69 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+
+    document.getElementById('useCameraBtn').onclick = function() {
+        Swal.fire({
+            title: 'Capture Proof of Document',
+            html: `
+              <div style="display: flex; flex-direction: column; align-items: center;">
+                <div id="swalCamera" style="margin-bottom:12px;"></div>
+                <img id="swalCapturedPreview" src="" style="display:none; max-width:100%; margin-bottom:12px;"/>
+                <div>
+                  <button type="button" id="swalCaptureBtn" class="swal2-confirm swal2-styled" style="margin-right:8px;">Capture</button>
+                  <button type="button" id="swalRetakeBtn" class="swal2-cancel swal2-styled" style="display:none; margin-right:8px;">Retake</button>
+                  <button type="button" id="swalAcceptBtn" class="swal2-confirm swal2-styled" style="display:none; background:#16a34a;">Accept</button>
+                </div>
+              </div>
+            `,
+            showCancelButton: true,
+            showConfirmButton: false,
+            cancelButtonText: 'Cancel',
+            didOpen: () => {
+                Webcam.set({
+                    width: 320,
+                    height: 240,
+                    image_format: 'jpeg',
+                    jpeg_quality: 90
+                });
+                Webcam.attach('#swalCamera');
+                const captureBtn = document.getElementById('swalCaptureBtn');
+                const retakeBtn = document.getElementById('swalRetakeBtn');
+                const acceptBtn = document.getElementById('swalAcceptBtn');
+                const previewImg = document.getElementById('swalCapturedPreview');
+                let capturedData = '';
+                captureBtn.onclick = function() {
+                    Webcam.snap(function(data_uri) {
+                        previewImg.src = data_uri;
+                        previewImg.style.display = 'block';
+                        document.getElementById('swalCamera').style.display = 'none';
+                        captureBtn.style.display = 'none';
+                        retakeBtn.style.display = 'inline-block';
+                        acceptBtn.style.display = 'inline-block';
+                        capturedData = data_uri;
+                    });
+                };
+                retakeBtn.onclick = function() {
+                    previewImg.style.display = 'none';
+                    document.getElementById('swalCamera').style.display = 'block';
+                    captureBtn.style.display = 'inline-block';
+                    retakeBtn.style.display = 'none';
+                    acceptBtn.style.display = 'none';
+                    capturedData = '';
+                };
+                acceptBtn.onclick = function() {
+                    if (capturedData) {
+                        Swal.close();
+                        document.getElementById('podCameraImage').value = capturedData;
+                        document.getElementById('capturedImagePreview').src = capturedData;
+                        document.getElementById('capturedImagePreview').style.display = 'block';
+                    }
+                };
+            },
+            willClose: () => {
+                Webcam.reset();
+            }
+        });
+    };
 });
     </script> 

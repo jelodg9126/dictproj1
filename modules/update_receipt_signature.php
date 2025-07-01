@@ -13,13 +13,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $receiverName = trim($_POST['receiverName'] ?? '');
     $signatureData = $_POST['receiptSignature'] ?? '';
     
-    // POD file handling
+    // POD file or camera image handling
     $podBlob = null;
     $podFilename = null;
     $podMimeType = null;
     $maxPodSize = 5 * 1024 * 1024; // 5MB
     $allowedPodTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
     $errors = [];
+
     if (isset($_FILES['podFile']) && $_FILES['podFile']['error'] === UPLOAD_ERR_OK) {
         if ($_FILES['podFile']['size'] > $maxPodSize) {
             $errors[] = "Proof of Document (POD) file must be 5MB or less.";
@@ -30,8 +31,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $podFilename = $_FILES['podFile']['name'];
             $podMimeType = $_FILES['podFile']['type'];
         }
+    } else if (!empty($_POST['podCameraImage'])) {
+        // Handle camera image (base64)
+        $data_uri = $_POST['podCameraImage'];
+        if (preg_match('/^data:image\/(\w+);base64,/', $data_uri, $type)) {
+            $data = substr($data_uri, strpos($data_uri, ',') + 1);
+            $data = base64_decode($data);
+            $ext = strtolower($type[1]);
+            if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $errors[] = "Camera image must be JPG, PNG, GIF, or WEBP.";
+            } else if (strlen($data) > $maxPodSize) {
+                $errors[] = "Camera image must be 5MB or less.";
+            } else {
+                $podBlob = $data;
+                $podFilename = 'camera_pod_' . uniqid() . '.' . $ext;
+                $podMimeType = 'image/' . $ext;
+            }
+        } else {
+            $errors[] = "Invalid camera image format.";
+        }
     } else {
-        $errors[] = "Proof of Document (POD) file is required.";
+        $errors[] = "Proof of Document (POD) file or camera image is required.";
     }
     
     // Validation
