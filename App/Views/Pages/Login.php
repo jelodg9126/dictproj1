@@ -50,7 +50,7 @@
                 <h1 class="text-4xl font-bold text-blue-900 text-center mb-1 mt-8">Welcome Back!</h1> 
                 <p class="text-center font-regular text-blue-800 text-xl mb-5">Sign In to your Account.</p>
                 <?php if (!empty($error_message)): ?>
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <div id="error-message" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                         <?php echo htmlspecialchars($error_message); ?>
                     </div>
                 <?php endif; ?>
@@ -70,6 +70,13 @@
      <script>
         document.addEventListener("DOMContentLoaded", function() {
             lucide.createIcons();
+            // Hide error message after 3 seconds
+            var errorMsg = document.getElementById('error-message');
+            if (errorMsg) {
+                setTimeout(function() {
+                    errorMsg.style.display = 'none';
+                }, 3000);
+            }
         });
     </script>
 
