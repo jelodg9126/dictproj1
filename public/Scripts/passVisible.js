@@ -9,27 +9,27 @@ document.addEventListener('DOMContentLoaded', function(){
      icon.addEventListener('click', function(){
          
           if(input.type === 'password'){
-
-               input.type= 'text'
-              
-
+               input.type= 'text'              
           } else{
-             
-                 input.type ='password'
-              
-              
+               input.type ='password'
+          }
+               icon.classList.toggle('hidden')
+               icon2.classList.toggle('hidden')
+     })
+
+     icon2.addEventListener('click', function(){
+          if(input.type === 'password'){
+               input.type= 'text'              
+          
+          } else{   
+                 input.type ='password'       
           }
 
-
-
-
+           icon.classList.toggle('hidden')
+               icon2.classList.toggle('hidden')
+     })
+           
 
      })
 
 
-
-
-
-
-
-})

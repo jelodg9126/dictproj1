@@ -56,9 +56,14 @@
                 <?php endif; ?>
           
             <div class="flex flex-col gap-3">
-              <input type="text" name="uNameLogin" class="border border-gray-400 rounded-xl p-2 pl-3 w-[350px] mx-auto focus:outline-blue-800 invalid:outline-red-700" placeholder="Username" required/>
+                <div class="relative">
+              <input type="text" name="uNameLogin" class="border border-gray-400 rounded-xl p-2 pl-10 w-[350px] mx-auto focus:outline-blue-800 invalid:outline-red-700" placeholder="Username" required/>
+              <i data-lucide="circle-user" id="user" class="absolute top-2.5 left-1.5 cursor-pointer w-8 h-5.5 text-blue-900" style="stroke-width:2.5;"></i>
+                </div>
               <div class="relative">
-              <input type="password" id="password" name="pNameLogin" class="border border-gray-400 rounded-xl p-2 pl-3 w-[350px] mx-auto focus:outline-blue-800" placeholder="Password" required/>
+              <input type="password" id="password" name="pNameLogin" class="border border-gray-400 rounded-xl p-2 pl-10 w-[350px] mx-auto focus:outline-blue-800" placeholder="Password" required/>
+                 <i data-lucide="lock-keyhole" id="password" class="absolute top-2.5 left-1.5 cursor-pointer w-8 h-5.5 text-blue-900" style="stroke-width:2.5;"></i>
+                
                <i data-lucide="eye" id="eye" class="absolute top-2 right-2 cursor-pointer w-8 h-7 text-gray-500" style="stroke-width:1.5;"></i>
                 <i data-lucide="eye-off" id="eye2" class="absolute hidden top-2 right-2 cursor-pointer w-8 h-7 text-gray-500" style="stroke-width:1.5;"></i>
                 </div>
