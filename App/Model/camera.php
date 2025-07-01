@@ -1,135 +1,67 @@
-
+<!DOCTYPE html>
 <html>
-
-    <head>
-
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-
-        <title>Camera app by Code-Arc</title>
-
-        
-
-    </head>
-
-    <body>
-
-    <div class="camera">
-
-      <video id="video"></video>
-
-      <canvas id="canvas"></canvas>
-
-      <div class="controls">
-
-        <button id="capture-button">Capture</button>
-
-        <button id="gallery-button">Submit Image</button>
-
-        <button id="switch-camera-button">Switch Camera</button>
-      </div>
-
-      <div id="gallery"></div>
-
-    </div>
-    <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const captureButton = document.getElementById('capture-button');
-        const galleryButton = document.getElementById('gallery-button');
-        const gallery = document.getElementById('gallery');
-        const switchCameraButton = document.getElementById('switch-camera-button');
-
-        let galleryImages = "";
-        let facingMode = 'enviroment';
-
-// Access the user's webcam
-
-function startCamera() {
+<head>
+  <title>Image Capture</title>
+  <style>
+    /* Add some basic styling to make the UI look decent */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    
+    #camera-container {
+      width: 500px;
+      height: 375px;
+      border: 1px solid #ccc;
+      margin: 20px auto;
+    }
+    
+    .button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    .button:hover {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Capture</h1>
   
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode} })
-    .then(stream => {
-      
-      video.srcObject = stream;
-
-      video.play();
-
-    })
-
-    .catch(error => {
-
-      console.error('Error accessing the webcam:', error);
-
+  <div id="camera-container"></div>
+  <button class="button" onclick="captureImage()">Capture Image</button>
+  <!-- <button class="button" onclick="resetCamera()">Reset Camera</button> -->
+  <br><img id="imgElem"/>
+  <br>
+  <!-- <button class="button" onclick="sendImage()">Submit Image</button> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+  <!-- <script src="webcam.min.js"></script> -->
+  <script>
+    Webcam.set({
+      width: 500,
+      height: 375,
+      image_format: 'jpeg',
+      jpeg_quality: 100,
     });
+    
+    Webcam.attach('#camera-container');
+    
+    function captureImage() {
+      Webcam.snap((data_uri) => {
+        console.log(data_uri);
+        imgElem.setAttribute('src',data_uri);
+        
+        // data_uri = data_uri.replace('data:image/jpeg;base64,', '');
+      });
+    }
+    
+    // function resetCamera() {
+    //   Webcam.reset();
+    //   Webcam.attach('#camera-container');
 
-}
-
-// Switch between the front and rear camera
-
-switchCameraButton.addEventListener('click', () => {
-
-  facingMode = facingMode === 'user' ? 'environment' : 'user';
-
-  video.pause();
-
-  video.srcObject.getTracks().forEach(track => {
-
-    track.stop();
-
-  });
-
-  startCamera();
-
-});
-
-// Take a photo when the capture button is clicked
-
-captureButton.addEventListener('click', () => {
-
-  // Set the canvas dimensions to match the video element
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  // Draw the video frame onto the canvas
-  const context = canvas.getContext('2d');
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  // Convert the canvas image to a data URL and store it in the galleryImages array
-  const dataURL = canvas.toDataURL();
-  galleryImages.push(dataURL);
-
-});
-
-// Save all the captured images to the gallery button
-
-galleryButton.addEventListener('click', () => {
-
-  // Clear the existing gallery
-
-  gallery.innerHTML = '';
-
-  if (galleryImages.length > 0) {
-
-    // Display all the images in the gallery
-
-    galleryImages.forEach(image => {
-
-      const img = document.createElement('img');
-
-      img.src = image;
-
-      gallery.appendChild(img);
-
-      
-    });
-
-  }
-
-});
-
-// Start the camera on page loading 
-
-startCamera();
-
-
-    </script>
-    </body>
-
+    // }
+  </script>
+</body>
 </html>
