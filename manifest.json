@@ -3,5 +3,21 @@
     "name": "DICT Documents Tracker",
     "short_name": "Docs Tracker",
     "description": "Web app used for monitoring and tracking documents",
-    "start_url": "/"
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#007bff",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
 }
