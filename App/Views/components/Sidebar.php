@@ -87,7 +87,7 @@ $isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userA
 
     <!-- Footer -->
     <div class="text-white">
-      <a class="flex gap-3 items-center p-5 mb-1 transition duration-300 hover:bg-blue-800 
+      <a id="logout" class="flex gap-3 items-center p-5 mb-1 transition duration-300 hover:bg-blue-800 
         <?php echo ($currentPage === 'logout') ? 'bg-blue-600' : ''; ?>" 
         href="/dictproj1/App/Model/logout.php">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,52 +105,9 @@ $isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userA
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  lucide.createIcons();
-
-  const sidebar = document.getElementById("sidebar");
-  const toggleBtn = document.getElementById("toggleSidebar");
-  const iconWrapper = document.getElementById("rotateWrapper"); // rotate this
-  const icon = iconWrapper.querySelector("i");
-  const logoCollapsed = document.getElementById("logoCollapsed");
-  const logoExpanded = document.getElementById("logoExpanded");
-  const sidebarLabels = document.querySelectorAll(".sidebar-label");
-
-  let expanded = false;
-
-  toggleBtn.addEventListener("click", () => {
-    expanded = !expanded;
-
-    // Sidebar width
-    sidebar.classList.toggle("w-[8%]", !expanded);
-    sidebar.classList.toggle("w-[20%]", expanded);
-
-    // Logo transitions
-    logoCollapsed.classList.toggle("opacity-0", expanded);
-    logoCollapsed.classList.toggle("opacity-100", !expanded);
-    logoExpanded.classList.toggle("opacity-100", expanded);
-    logoExpanded.classList.toggle("opacity-0", !expanded);
-
-    // Label show/hide
-    sidebarLabels.forEach(label => {
-      label.classList.toggle("hidden", !expanded);
-      label.classList.toggle("inline", expanded);
-    });
-
-    // Rotate button wrapper
-    iconWrapper.classList.toggle("rotate-180", expanded);
-
-    // Change icon direction (chevrons-left/right)
-    icon.setAttribute("data-lucide", expanded ? "chevrons-left" : "chevrons-right");
-    lucide.createIcons(); // re-render icon only
-  });
-});
-</script>
-
-<script src="Scripts/SidebarDropdown.js"></script>
+<script src="/dictproj1/public/Scripts/sidebar.js"> </script>
+<script src="/dictproj1/public/Scripts/SidebarDropdown.js"></script>
+<script src="/dictproj1/public/Scripts/LogoutConfirm.js"></script> 
 
 </body>
 </html>

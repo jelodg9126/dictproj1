@@ -271,11 +271,10 @@
 .chart-legend {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
     font-size: 0.55rem;
     color: #374151;
     margin-top: 0;
-    min-width: 100px;
+    min-width: 50px;
 }
 
 .legend-item {

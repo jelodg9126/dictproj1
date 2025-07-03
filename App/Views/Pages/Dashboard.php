@@ -68,17 +68,17 @@
             $received_count = $row_received['received_count'];
         }
 
-include __DIR__ . '/../components/Sidebar.php';
-?>
-     <div class="dboard-layout">
+        include __DIR__ . '/../components/Sidebar.php';
+        ?>
+        <div class="dboard-layout">
 
             <div class="box1">
                 <div class="flex justify-between w-full items-center">
                     <h1 class="text-3xl font-bold px-3 text-blue-900">Dashboard</h1>
-                  <div class="pr-5">
-                    <p class="text-lg font-normal text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
-                    <p class="text-gray-500 font-semibold">ADMIN</p>
-                  </div>
+                    <div class="pr-5">
+                        <p class="text-lg font-normal text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
+                        <p class="text-gray-500 font-semibold">ADMIN</p>
+                    </div>
                 </div>
 
             </div>
@@ -88,7 +88,7 @@ include __DIR__ . '/../components/Sidebar.php';
                 <h2 class="text-lg font-semibold mb-4 pl-1.5">Total Received</h2>
                 <div class="flex items-center gap-2">
                     <div class="bg-white/30 border border-white/20 backdrop-blur-md p-4 rounded-full flex items-center justify-center shadow-lg">
-                        <i data-lucide="file-check-2" class="w-6 h-6 text-[#4E9F3D]"style="stroke-width:2.5;"  ></i>
+                        <i data-lucide="file-check-2" class="w-6 h-6 text-[#4E9F3D]" style="stroke-width:2.5;"></i>
                     </div>
                     <p class="text-2xl  font-bold text-white pl-1.5"><?php echo $received_count; ?></p>
 
@@ -130,15 +130,11 @@ include __DIR__ . '/../components/Sidebar.php';
                 <h2 class="text-lg font-semibold pl-1.5">Sent per PO</h2>
 
                 <div class="chart-container">
-
                     <div class="chartWrapper">
-                        <canvas id="papersChart" width="80" height="140"></canvas>
+                        <canvas id="papersChart" width="60" height="140"></canvas>
                     </div>
-
                     <div id="chartLegend" class="chart-legend text-white"></div>
-
                 </div>
-
                 <div id="errorMessage" class="error" style="display: none;"></div>
 
             </div>

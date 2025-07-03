@@ -2,7 +2,7 @@ let papersChart;
 
 // Mapping for office codes to display names
 const officeDisplayNames = {
-    'dictBulacan': 'Provincial Office Bulacan',     
+    'dictBulacan': 'Provincial Office Bulacan',
     'dictAurora': 'Provincial Office Aurora',
     'dictBataan': 'Provincial Office Bataan',
     'dictPampanga': 'Provincial Office Pampanga',
@@ -19,7 +19,7 @@ const officeDisplayNames = {
     'RdictBulacan': 'Provincial Office Bulacan',
     'RdictNe': 'Provincial Office Nueva Ecija',
     'Rmaindoc': 'DICT Region 3 Office',
-    'others': 'Others',
+    'Others': 'Others',
     // Add more as needed
 };
 
@@ -61,7 +61,7 @@ async function loadChartData() {
             'Provincial Office Tarlac': 'rgba(249, 248, 113, 0.7)',
             'Provincial Office Zambales': 'rgba(249, 132, 239, 0.7)',
             'DICT Region 3 Office': 'rgba(0, 201, 167, 0.7)',
-            'Others': 'rgba(200, 200, 200, 0.7)'
+            'Others': 'rgba(1, 31, 255, 0.7)'
         };
 
         // Normalize labels for consistent matching
