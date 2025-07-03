@@ -7,6 +7,13 @@ if (!isset($_SESSION['uNameLogin'])) {
     exit();
 }
 
+// Check user type for validation
+if (!isset($_SESSION['userAuthLevel'])) {
+    // Redirect to login if no auth level is set
+    header("Location: Login.php");
+    exit();
+}
+
 // Check user type for conditional display
 $isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin';
 

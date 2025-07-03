@@ -42,30 +42,30 @@ if ($result && $result->num_rows > 0) {
     // If a match is found, session variables are set
     $row = $result->fetch_assoc();
     $_SESSION['uNameLogin'] = $row["userName"];
-    $_SESSION['user_id'] = $row["id"]; // Assuming there's an id column
+    $_SESSION['user_id'] = $row["userID"]; // Use correct column name
     $_SESSION['login_time'] = time();
     
-    // Check if userType column exists, if not set default to superAdmin
-    if (isset($row['userType'])) {
-        $_SESSION['userAuthLevel'] = $row['userType'];
+    // Check if usertype column exists (note: lowercase in database)
+    if (isset($row['usertype'])) {
+        $_SESSION['userAuthLevel'] = $row['usertype'];
     } else {
-        // If userType column doesn't exist, set default user type
+        // If usertype column doesn't exist, set default user type
         $_SESSION['userAuthLevel'] = 'superAdmin';
         
-        // Add userType column to users table if it doesn't exist
-        $check_column = $conn->query("SHOW COLUMNS FROM users LIKE 'userType'");
+        // Add usertype column to users table if it doesn't exist
+        $check_column = $conn->query("SHOW COLUMNS FROM users LIKE 'usertype'");
         if ($check_column->num_rows == 0) {
-            $add_column = "ALTER TABLE users ADD COLUMN userType VARCHAR(20) DEFAULT 'superAdmin'";
+            $add_column = "ALTER TABLE users ADD COLUMN usertype VARCHAR(20) DEFAULT 'superAdmin'";
             $conn->query($add_column);
             
             // Update existing users to have superAdmin type
-            $update_users = "UPDATE users SET userType = 'superAdmin' WHERE userType IS NULL OR userType = ''";
+            $update_users = "UPDATE users SET usertype = 'superAdmin' WHERE usertype IS NULL OR usertype = ''";
             $conn->query($update_users);
         }
     }
     
-    // Debug: Log the user type
-    error_log("User type: " . $_SESSION['userAuthLevel']);
+    // Set user type in session
+    $_SESSION['userAuthLevel'] = $row['usertype'];
     
     // Clear any output buffer to ensure clean redirect
     if (ob_get_level()) {
@@ -75,20 +75,17 @@ if ($result && $result->num_rows > 0) {
     switch($_SESSION['userAuthLevel']){
         case 'superAdmin':
             //redirect to dashboard
-            error_log("Redirecting superAdmin to dashboard");
             ob_end_clean(); // Clear any output buffer
             header("Location: /dictproj1/App/Views/Pages/Dashboard.php");
             exit();
             break;
         case 'provincial':
             //redirect to dashboard
-            error_log("Redirecting provincial to DashboardPO");
             ob_end_clean(); // Clear any output buffer
             header("Location: /dictproj1/App/Views/RegionalPages/DashboardPO.php");
             exit();
             break;
         default:
-            error_log("Unknown user type: " . $_SESSION['userAuthLevel'] . " - defaulting to superAdmin");
             ob_end_clean(); // Clear any output buffer
             header("Location: /dictproj1/App/Views/Pages/Dashboard.php");
             exit();

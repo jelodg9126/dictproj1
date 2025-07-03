@@ -7,6 +7,13 @@ if (!isset($_SESSION['uNameLogin'])) {
     exit();
 }
 
+// Check user type for validation
+if (!isset($_SESSION['userAuthLevel'])) {
+    // Redirect to login if no auth level is set
+    header("Location: Login.php");
+    exit();
+}
+
 // Include database connection
 include __DIR__ . '/../../Model/connect.php';
 
@@ -610,7 +617,13 @@ function getOfficeDisplayNamePHP($code, $map) {
                         </div>
                         <div class="form-group">
                             <label for="podFile" class="required">Upload Your Proof of Document (POD)</label>
-                            <input type="file" name="podFile" id="podFile" accept="image/*,application/pdf" required>
+                            <input type="file" name="podFile" id="podFile" accept="image/*,application/pdf">
+                            <button type="button" id="useCameraBtn" class="btn btn-secondary" style="margin-top:8px; display:inline-flex; align-items:center; gap:6px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A2 2 0 0122 9.618V17a2 2 0 01-2 2H4a2 2 0 01-2-2V9.618a2 2 0 012.447-1.894L9 10m6 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v4m6 0H9" /></svg>
+                                <span>Use Camera</span>
+                            </button>
+                            <img id="capturedImagePreview" src="" style="display:none; max-width:300px; margin-top:8px;"/>
+                            <input type="hidden" name="podCameraImage" id="podCameraImage">
                         </div>
                     </div>
                     <div class="submit-section">
@@ -652,6 +665,7 @@ function getOfficeDisplayNamePHP($code, $map) {
         display: flex !important;
     }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     <script>
     // Mapping for office codes to display names
     const officeDisplayNames = {
@@ -1024,12 +1038,20 @@ function getOfficeDisplayNamePHP($code, $map) {
         // Handle add signature form submission
         document.getElementById('addSignatureForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            // Get form data
+
+            // Always update the hidden signature input before collecting its value
+            var receiptCanvas = document.getElementById('receiptSignaturePad');
+            var receiptSignatureInput = document.getElementById('receiptSignatureInput');
+            if (receiptCanvas && receiptSignatureInput) {
+                receiptSignatureInput.value = receiptCanvas.toDataURL('image/png');
+            }
+
+            // Now collect all form data as before
             var transactionID = document.getElementById('signatureTransactionID').value;
             var receiverName = document.getElementById('receiverName').value.trim();
             var signatureData = receiptSignatureInput.value;
             var podFileInput = document.getElementById('podFile');
+            var podCameraImage = document.getElementById('podCameraImage').value;
             
             // Validation
             if (!receiverName) {
@@ -1042,8 +1064,9 @@ function getOfficeDisplayNamePHP($code, $map) {
                 return;
             }
             
-            if (!podFileInput || podFileInput.files.length === 0) {
-                alert('Please upload a Proof of Document (POD) file.');
+            // Allow either file upload or camera image
+            if ((!podFileInput || podFileInput.files.length === 0) && !podCameraImage) {
+                alert('Please upload a Proof of Document (POD) file or use the camera.');
                 return;
             }
             
@@ -1063,6 +1086,10 @@ function getOfficeDisplayNamePHP($code, $map) {
             if (podFileInput && podFileInput.files.length > 0) {
                 formData.append('podFile', podFileInput.files[0]);
             }
+            // Add camera image to form data if present
+            if (podCameraImage) {
+                formData.append('podCameraImage', podCameraImage);
+            }
             
             // Submit to server
             fetch('/dictproj1/modules/update_receipt_signature.php', {
@@ -1072,18 +1099,16 @@ function getOfficeDisplayNamePHP($code, $map) {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Success - show success message and close modal
+                    // Success - show success message and close modal after SweetAlert is dismissed
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
                         text: data.message,
                         confirmButtonColor: '#3085d6',
                         timer: 2000
+                    }).then(() => {
+                        window.location.reload();
                     });
-                    document.getElementById('addSignatureModal').style.display = 'none';
-                    // Remove the row from Incoming table
-                    var rowToRemove = document.querySelector('tr[data-transaction-id="' + transactionID + '"]');
-                    if (rowToRemove) rowToRemove.remove();
                 } else {
                     // Error - show error message
                     Swal.fire({
@@ -1129,6 +1154,94 @@ function getOfficeDisplayNamePHP($code, $map) {
         document.getElementById('addSignatureSenderPodEnlarged').onclick = function(e) {
             e.stopPropagation();
         };
+        var useCameraBtn = document.getElementById('useCameraBtn');
+        if (useCameraBtn) {
+            useCameraBtn.onclick = function() {
+                Swal.fire({
+                    title: 'Capture Proof of Document',
+                    html: `
+                      <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div id="swalCamera" style="margin-bottom:12px;"></div>
+                        <img id="swalCapturedPreview" src="" style="display:none; max-width:100%; margin-bottom:12px;"/>
+                        <div>
+                          <button type="button" id="swalCaptureBtn" class="swal2-confirm swal2-styled" style="margin-right:8px;">Capture</button>
+                          <button type="button" id="swalRetakeBtn" class="swal2-cancel swal2-styled" style="display:none; margin-right:8px;">Retake</button>
+                          <button type="button" id="swalAcceptBtn" class="swal2-confirm swal2-styled" style="display:none; background:#16a34a;">Accept</button>
+                        </div>
+                      </div>
+                    `,
+                    showCancelButton: true,
+                    showConfirmButton: false,
+                    cancelButtonText: 'Cancel',
+                    didOpen: () => {
+                        Webcam.set({
+                            width: 320,
+                            height: 240,
+                            image_format: 'jpeg',
+                            jpeg_quality: 90
+                        });
+                        Webcam.attach('#swalCamera');
+                        const captureBtn = document.getElementById('swalCaptureBtn');
+                        const retakeBtn = document.getElementById('swalRetakeBtn');
+                        const acceptBtn = document.getElementById('swalAcceptBtn');
+                        const previewImg = document.getElementById('swalCapturedPreview');
+                        let capturedData = '';
+                        captureBtn.onclick = function() {
+                            Webcam.snap(function(data_uri) {
+                                previewImg.src = data_uri;
+                                previewImg.style.display = 'block';
+                                document.getElementById('swalCamera').style.display = 'none';
+                                captureBtn.style.display = 'none';
+                                retakeBtn.style.display = 'inline-block';
+                                acceptBtn.style.display = 'inline-block';
+                                capturedData = data_uri;
+                            });
+                        };
+                        retakeBtn.onclick = function() {
+                            previewImg.style.display = 'none';
+                            document.getElementById('swalCamera').style.display = 'block';
+                            captureBtn.style.display = 'inline-block';
+                            retakeBtn.style.display = 'none';
+                            acceptBtn.style.display = 'none';
+                            capturedData = '';
+                        };
+                        acceptBtn.onclick = function() {
+                            if (capturedData) {
+                                Swal.close();
+                                document.getElementById('podCameraImage').value = capturedData;
+                                document.getElementById('capturedImagePreview').src = capturedData;
+                                document.getElementById('capturedImagePreview').style.display = 'block';
+                                document.getElementById('podFile').style.display = 'none';
+                                document.getElementById('useCameraBtn').style.display = 'none';
+                                let removeBtn = document.getElementById('removeCapturedImageBtn');
+                                if (!removeBtn) {
+                                    removeBtn = document.createElement('button');
+                                    removeBtn.type = 'button';
+                                    removeBtn.id = 'removeCapturedImageBtn';
+                                    removeBtn.className = 'btn btn-secondary';
+                                    removeBtn.style.marginLeft = '10px';
+                                    removeBtn.textContent = 'Remove';
+                                    document.getElementById('capturedImagePreview').after(removeBtn);
+                                } else {
+                                    removeBtn.style.display = 'inline-block';
+                                }
+                                removeBtn.onclick = function() {
+                                    document.getElementById('podCameraImage').value = '';
+                                    document.getElementById('capturedImagePreview').src = '';
+                                    document.getElementById('capturedImagePreview').style.display = 'none';
+                                    document.getElementById('podFile').style.display = 'inline-block';
+                                    document.getElementById('useCameraBtn').style.display = 'inline-flex';
+                                    removeBtn.style.display = 'none';
+                                };
+                            }
+                        };
+                    },
+                    willClose: () => {
+                        Webcam.reset();
+                    }
+                });
+            };
+        }
     });
 
     // Fallback for Show Filters button if external JS fails
