@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Proceed'
+                confirmButtonText: 'Proceed'
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = logoutLink.href; 

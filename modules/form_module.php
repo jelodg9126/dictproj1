@@ -41,6 +41,7 @@ if (isset($_SESSION['uNameLogin'])) {
         'dictne' => 'dictNE',
         'dicttarlac' => 'dictTarlac',
         'dictzambales' => 'dictZambales',
+        'superadmin' => 'maindoc',
         'maindoc' => 'maindoc',
         'others' => 'Others'
     ];

@@ -41,9 +41,7 @@ $count_types = "";
 
 // Add session-based filtering for office
 if (isset($_SESSION['uNameLogin'])) {
-    $username = $_SESSION['uNameLogin'];
-    
-    // Map username to office value (same mapping as in form_module.php)
+    $username = strtolower($_SESSION['uNameLogin']);
     $username_to_office = [
         'dictbulacan' => 'dictBulacan',
         'dictpampanga' => 'dictPampanga',
@@ -52,13 +50,12 @@ if (isset($_SESSION['uNameLogin'])) {
         'dictne' => 'dictNE',
         'dicttarlac' => 'dictTarlac',
         'dictzambales' => 'dictZambales',
+        'superadmin' => 'maindoc',
         'maindoc' => 'maindoc',
         'others' => 'Others'
     ];
-    
-    $username_lower = strtolower($username);
-    if (isset($username_to_office[$username_lower])) {
-        $user_office = $username_to_office[$username_lower];
+    if (isset($username_to_office[$username])) {
+        $user_office = $username_to_office[$username];
         $sql .= " AND officeName = ?";
         $count_sql .= " AND officeName = ?";
         $params[] = $user_office;
@@ -176,6 +173,7 @@ if (isset($_SESSION['uNameLogin'])) {
         'dictne' => 'dictNE',
         'dicttarlac' => 'dictTarlac',
         'dictzambales' => 'dictZambales',
+        'superadmin' => 'maindoc',
         'maindoc' => 'maindoc',
         'others' => 'Others'
     ];

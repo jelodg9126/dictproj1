@@ -12,7 +12,7 @@ date_default_timezone_set('Asia/Manila');
 $currentPage = 'endorsed';
 
 // Query for endorsed documents
-$sql = "SELECT * FROM maindoc WHERE filetype = 'incoming' AND status = 'Received' AND endorsedToName IS NOT NULL AND endorsedToName != '' AND endorsedToSignature IS NOT NULL AND endorsedToSignature != '' AND endorsedDocProof IS NOT NULL AND endorsedDocProof != '' ORDER BY dateAndTime DESC";
+$sql = "SELECT * FROM maindoc WHERE filetype = 'outgoing' AND status = 'Endorsed' AND endorsedToName IS NOT NULL AND endorsedToName != '' AND endorsedToSignature IS NOT NULL AND endorsedToSignature != '' AND endorsedDocProof IS NOT NULL AND endorsedDocProof != '' ORDER BY dateAndTime DESC";
 $result = $conn->query($sql);
 ?>
 <!DOCTYPE html>

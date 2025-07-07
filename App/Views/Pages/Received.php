@@ -30,17 +30,31 @@ $date_from = $_GET['date_from'] ?? '';
 $date_to = $_GET['date_to'] ?? '';
 
 // Build the SQL query with filters - only received documents for the logged-in user
-$sql = "SELECT * FROM maindoc WHERE status = 'Received'";
+$sql = "SELECT * FROM maindoc WHERE status = 'Received' AND (endorsedToName IS NULL OR endorsedToName = '' OR endorsedToSignature IS NULL OR endorsedToSignature = '' OR endorsedDocProof IS NULL OR endorsedDocProof = '')";
 $params = [];
 $types = "";
 
 // Add session-based filtering for receiving office (addressTo)
 if (isset($_SESSION['uNameLogin'])) {
     $username = strtolower($_SESSION['uNameLogin']);
-    // Filter where addressTo (without first character, lowercased) matches username
-    $sql .= " AND LOWER(SUBSTRING(addressTo, 2)) = ?";
-    $params[] = $username;
-    $types .= "s";
+    $username_to_office = [
+        'dictbulacan' => 'dictbulacan',
+        'dictpampanga' => 'dictpampanga',
+        'dictaurora' => 'dictaurora',
+        'dictbataan' => 'dictbataan',
+        'dictne' => 'dictne',
+        'dicttarlac' => 'dicttarlac',
+        'dictzambales' => 'dictzambales',
+        'superadmin' => 'maindoc',
+        'maindoc' => 'maindoc',
+        'others' => 'others'
+    ];
+    if (isset($username_to_office[$username])) {
+        $office_match = $username_to_office[$username];
+        $sql .= " AND LOWER(SUBSTRING(addressTo, 2)) = ?";
+        $params[] = $office_match;
+        $types .= "s";
+    }
 }
 
 // (Optional) Keep endorsement fields filter if needed
@@ -113,6 +127,7 @@ if (isset($_SESSION['uNameLogin'])) {
         'dictne' => 'dictNE',
         'dicttarlac' => 'dictTarlac',
         'dictzambales' => 'dictZambales',
+        'superadmin' => 'Rmaindoc',
         'maindoc' => 'maindoc',
         'others' => 'Others'
     ];
@@ -317,6 +332,12 @@ function getOfficeDisplayNamePHP($code, $map) {
                     <div class="form-group">
                         <label for="endorseDocProof">Endorsed Document Proof (Image/PDF)</label>
                         <input type="file" id="endorseDocProof" name="endorsedDocProof" accept="image/*,application/pdf">
+                        <button type="button" id="useEndorseCameraBtn" class="btn btn-secondary" style="margin-top:8px; display:inline-flex; align-items:center; gap:6px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A2 2 0 0122 9.618V17a2 2 0 01-2 2H4a2 2 0 01-2-2V9.618a2 2 0 012.447-1.894L9 10m6 0V6a2 2 0 00-2-2H9a2 2 0 00-2 2v4m6 0H9" /></svg>
+                            <span>Use Camera</span>
+                        </button>
+                        <img id="endorseCapturedImagePreview" src="" style="display:none; max-width:300px; margin-top:8px;"/>
+                        <input type="hidden" name="endorseCameraImage" id="endorseCameraImage">
                     </div>
                     <div class="submit-section">
                         <button type="submit" class="btn">Submit Endorsement</button>
@@ -330,6 +351,11 @@ function getOfficeDisplayNamePHP($code, $map) {
     <div id="receiverPodLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
       <img id="enlargedReceiverPod" src="" alt="Enlarged Receiver POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
+    <!-- Add a new lightbox for sender POD -->
+    <div id="senderPodLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedSenderPod" src="" alt="Enlarged Sender POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     <script>
     // Mapping for office codes to display names
     const officeDisplayNames = {
@@ -585,6 +611,121 @@ function getOfficeDisplayNamePHP($code, $map) {
         document.getElementById('enlargedReceiverPod').onclick = function(e) {
             e.stopPropagation();
         };
+        var useEndorseCameraBtn = document.getElementById('useEndorseCameraBtn');
+        if (useEndorseCameraBtn) {
+            useEndorseCameraBtn.onclick = function() {
+                Swal.fire({
+                    title: 'Capture Endorsed Document Proof',
+                    html: `
+                      <div style="display: flex; flex-direction: column; align-items: center;">
+                        <div id="swalEndorseCamera" style="margin-bottom:12px;"></div>
+                        <img id="swalEndorseCapturedPreview" src="" style="display:none; max-width:100%; margin-bottom:12px;"/>
+                        <div>
+                          <button type="button" id="swalEndorseCaptureBtn" class="swal2-confirm swal2-styled" style="margin-right:8px;">Capture</button>
+                          <button type="button" id="swalEndorseRetakeBtn" class="swal2-cancel swal2-styled" style="display:none; margin-right:8px;">Retake</button>
+                          <button type="button" id="swalEndorseAcceptBtn" class="swal2-confirm swal2-styled" style="display:none; background:#16a34a;">Accept</button>
+                        </div>
+                      </div>
+                    `,
+                    showCancelButton: true,
+                    showConfirmButton: false,
+                    cancelButtonText: 'Cancel',
+                    didOpen: () => {
+                        Webcam.set({
+                            width: 320,
+                            height: 240,
+                            image_format: 'jpeg',
+                            jpeg_quality: 90
+                        });
+                        Webcam.attach('#swalEndorseCamera');
+                        const captureBtn = document.getElementById('swalEndorseCaptureBtn');
+                        const retakeBtn = document.getElementById('swalEndorseRetakeBtn');
+                        const acceptBtn = document.getElementById('swalEndorseAcceptBtn');
+                        const previewImg = document.getElementById('swalEndorseCapturedPreview');
+                        let capturedData = '';
+                        captureBtn.onclick = function() {
+                            Webcam.snap(function(data_uri) {
+                                previewImg.src = data_uri;
+                                previewImg.style.display = 'block';
+                                document.getElementById('swalEndorseCamera').style.display = 'none';
+                                captureBtn.style.display = 'none';
+                                retakeBtn.style.display = 'inline-block';
+                                acceptBtn.style.display = 'inline-block';
+                                capturedData = data_uri;
+                            });
+                        };
+                        retakeBtn.onclick = function() {
+                            previewImg.style.display = 'none';
+                            document.getElementById('swalEndorseCamera').style.display = 'block';
+                            captureBtn.style.display = 'inline-block';
+                            retakeBtn.style.display = 'none';
+                            acceptBtn.style.display = 'none';
+                            capturedData = '';
+                        };
+                        acceptBtn.onclick = function() {
+                            if (capturedData) {
+                                Swal.close();
+                                document.getElementById('endorseCameraImage').value = capturedData;
+                                document.getElementById('endorseCapturedImagePreview').src = capturedData;
+                                document.getElementById('endorseCapturedImagePreview').style.display = 'block';
+                                document.getElementById('endorseDocProof').style.display = 'none';
+                                useEndorseCameraBtn.style.display = 'none';
+                                let removeBtn = document.getElementById('removeEndorseCapturedImageBtn');
+                                if (!removeBtn) {
+                                    removeBtn = document.createElement('button');
+                                    removeBtn.type = 'button';
+                                    removeBtn.id = 'removeEndorseCapturedImageBtn';
+                                    removeBtn.className = 'btn btn-secondary';
+                                    removeBtn.style.marginLeft = '10px';
+                                    removeBtn.textContent = 'Remove';
+                                    document.getElementById('endorseCapturedImagePreview').after(removeBtn);
+                                } else {
+                                    removeBtn.style.display = 'inline-block';
+                                }
+                                removeBtn.onclick = function() {
+                                    document.getElementById('endorseCameraImage').value = '';
+                                    document.getElementById('endorseCapturedImagePreview').src = '';
+                                    document.getElementById('endorseCapturedImagePreview').style.display = 'none';
+                                    document.getElementById('endorseDocProof').style.display = 'inline-block';
+                                    useEndorseCameraBtn.style.display = 'inline-flex';
+                                    removeBtn.style.display = 'none';
+                                };
+                            }
+                        };
+                    },
+                    willClose: () => {
+                        Webcam.reset();
+                    }
+                });
+            };
+        }
+        var senderPodImg = document.getElementById('detailsPod');
+        if (senderPodImg) {
+            senderPodImg.onclick = function() {
+                if (!senderPodImg.src || senderPodImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedSenderPod');
+                enlarged.src = senderPodImg.src;
+                var lightbox = document.getElementById('senderPodLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var senderPodLightbox = document.getElementById('senderPodLightbox');
+        if (senderPodLightbox) {
+            senderPodLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedSenderPod').src = '';
+                }
+            };
+        }
+        var enlargedSenderPod = document.getElementById('enlargedSenderPod');
+        if (enlargedSenderPod) {
+            enlargedSenderPod.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
     });
     </script>
 </body>

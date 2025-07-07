@@ -13,7 +13,15 @@ try {
         $proofMimeType = null;
         $maxProofSize = 5 * 1024 * 1024;
         $allowedProofTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
-        if (isset($_FILES['endorsedDocProof']) && $_FILES['endorsedDocProof']['error'] === UPLOAD_ERR_OK) {
+        if (!empty($_POST['endorseCameraImage'])) {
+            $data = $_POST['endorseCameraImage'];
+            if (strpos($data, 'data:image') === 0) {
+                $data = explode(',', $data)[1];
+            }
+            $proofBlob = base64_decode($data);
+            $proofFilename = 'camera_capture_' . date('Ymd_His') . '.jpg';
+            $proofMimeType = 'image/jpeg';
+        } elseif (isset($_FILES['endorsedDocProof']) && $_FILES['endorsedDocProof']['error'] === UPLOAD_ERR_OK) {
             if ($_FILES['endorsedDocProof']['size'] > $maxProofSize) {
                 echo json_encode(['success' => false, 'errors' => ['Proof file must be 5MB or less.']]);
                 exit;
@@ -36,7 +44,7 @@ try {
         }
         $signatureBlob = base64_decode(str_replace('data:image/png;base64,', '', $signatureData));
         $null = null;
-        $stmt = $conn->prepare("UPDATE maindoc SET endorsedToName=?, endorsedToSignature=?, endorsedDocProof=?, endorsedDocProof_filename=?, endorsedDocProof_mime_type=? WHERE transactionID=?");
+        $stmt = $conn->prepare("UPDATE maindoc SET endorsedToName=?, endorsedToSignature=?, endorsedDocProof=?, endorsedDocProof_filename=?, endorsedDocProof_mime_type=?, status='Endorsed' WHERE transactionID=?");
         if (!$stmt) {
             throw new Exception('Prepare failed: ' . $conn->error);
         }

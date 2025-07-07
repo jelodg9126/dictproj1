@@ -42,13 +42,27 @@ $count_types = "";
 // Add session-based filtering for receiving office (addressTo)
 if (isset($_SESSION['uNameLogin'])) {
     $username = strtolower($_SESSION['uNameLogin']);
-    // Filter where addressTo (without first character, lowercased) matches username
-    $sql .= " AND LOWER(SUBSTRING(addressTo, 2)) = ?";
-    $count_sql .= " AND LOWER(SUBSTRING(addressTo, 2)) = ?";
-    $params[] = $username;
-    $types .= "s";
-    $count_params[] = $username;
-    $count_types .= "s";
+    $username_to_office = [
+        'dictbulacan' => 'dictbulacan',
+        'dictpampanga' => 'dictpampanga',
+        'dictaurora' => 'dictaurora',
+        'dictbataan' => 'dictbataan',
+        'dictne' => 'dictne',
+        'dicttarlac' => 'dicttarlac',
+        'dictzambales' => 'dictzambales',
+        'superadmin' => 'maindoc',
+        'maindoc' => 'maindoc',
+        'others' => 'others'
+    ];
+    if (isset($username_to_office[$username])) {
+        $office_match = $username_to_office[$username];
+        $sql .= " AND LOWER(SUBSTRING(addressTo, 2)) = ?";
+        $count_sql .= " AND LOWER(SUBSTRING(addressTo, 2)) = ?";
+        $params[] = $office_match;
+        $types .= "s";
+        $count_params[] = $office_match;
+        $count_types .= "s";
+    }
 }
 
 if (!empty($search)) {
@@ -94,9 +108,9 @@ if (!empty($status_filter)) {
     $count_types .= "s";
 }
 
-// Exclude documents with status 'Received' from Incoming Documents
-$sql .= " AND (status IS NULL OR status != 'Received')";
-$count_sql .= " AND (status IS NULL OR status != 'Received')";
+// Exclude documents with status 'Received' or 'Endorsed' from Incoming Documents
+$sql .= " AND (status IS NULL OR (status != 'Received' AND status != 'Endorsed'))";
+$count_sql .= " AND (status IS NULL OR (status != 'Received' AND status != 'Endorsed'))";
 
 if (!empty($date_from)) {
     $sql .= " AND DATE(dateAndTime) >= ?";
@@ -163,6 +177,7 @@ if (isset($_SESSION['uNameLogin'])) {
         'dictne' => 'RdictNE',
         'dicttarlac' => 'RdictTarlac',
         'dictzambales' => 'RdictZambales',
+        'superadmin' => 'Rmaindoc',
         'maindoc' => 'Rmaindoc',
         'others' => 'ROthers'
     ];
@@ -957,6 +972,16 @@ function getOfficeDisplayNamePHP($code, $map) {
         // Cancel button for add signature modal
         document.getElementById('cancelReceiptSignature').onclick = function() {
             document.getElementById('addSignatureModal').style.display = 'none';
+            // Clear camera image and preview
+            document.getElementById('podCameraImage').value = '';
+            document.getElementById('capturedImagePreview').src = '';
+            document.getElementById('capturedImagePreview').style.display = 'none';
+            document.getElementById('podFile').style.display = 'inline-block';
+            document.getElementById('useCameraBtn').style.display = 'inline-flex';
+            var removeBtn = document.getElementById('removeCapturedImageBtn');
+            if (removeBtn) {
+                removeBtn.style.display = 'none';
+            }
         };
         
         // Receipt Signature Pad
