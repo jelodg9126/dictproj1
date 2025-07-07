@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
     iconWrapper.classList.toggle("rotate-180", expanded);
 
     // Change icon direction (chevrons-left/right)
-    icon.setAttribute("data-lucide", expanded ? "chevrons-left" : "chevrons-right");
+    icon.setAttribute("data-lucide", expanded ? "chevrons-left" : "chevrons-left");
     lucide.createIcons(); // re-render icon only
   });
 });
