@@ -47,7 +47,7 @@ $result = $conn->query($sql);
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Office</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sender Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endorsed To</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endorsed Date & Time</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
@@ -58,7 +58,9 @@ $result = $conn->query($sql);
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['officeName'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['senderName'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['endorsedToName'] ?? ''); ?></td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo isset($row['dateAndTime']) ? date('M d, Y h:i A', strtotime($row['dateAndTime'])) : ''; ?></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <?php echo !empty($row['endorsementTimestamp']) ? date('M d, Y g:i A', strtotime($row['endorsementTimestamp'])) : '-'; ?>
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 <a href="#" class="view-btn bg-blue-500 text-white px-3 py-1 rounded" data-row='<?php echo json_encode([
                                                     "officeName" => $row["officeName"] ?? '',
@@ -67,6 +69,7 @@ $result = $conn->query($sql);
                                                     "receivedBy" => $row["receivedBy"] ?? '',
                                                     "transactionID" => $row["transactionID"],
                                                     "endorsedToName" => $row["endorsedToName"] ?? '',
+                                                    "endorsementTimestamp" => isset($row["endorsementTimestamp"]) && $row["endorsementTimestamp"] ? (string)$row["endorsementTimestamp"] : '',
                                                     "hasEndorsedSignature" => !empty($row["endorsedToSignature"]),
                                                     "hasEndorsedDocProof" => !empty($row["endorsedDocProof"]),
                                                 ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</a>
@@ -101,24 +104,41 @@ $result = $conn->query($sql);
                     <h3>Receipt Information</h3>
                     <div><b>Received By:</b> <span id="detailsReceivedBy"></span></div>
                     <div><b>Signature:</b><br>
-                        <img id="detailsSignature" src="" alt="Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9;">
+                        <img id="detailsSignature" src="" alt="Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
                     </div>
                     <div><b>Proof of Document (POD):</b><br>
-                        <img id="detailsPod" src="" alt="Proof of Document" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9;">
+                        <img id="detailsPod" src="" alt="Proof of Document" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
                     </div>
                 </div>
                 <div class="form-section">
                     <h3>Endorsement Information</h3>
                     <div><b>Endorsed To Name:</b> <span id="detailsEndorsedToName"></span></div>
+                    <div><b>Endorsement Date & Time:</b> <span id="detailsEndorsementTimestamp"></span></div>
                     <div><b>Endorsed To Signature:</b><br>
-                        <img id="detailsEndorsedSignature" src="" alt="Endorsed Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9;">
+                        <img id="detailsEndorsedSignature" src="" alt="Endorsed Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
                     </div>
                     <div><b>Endorsed Document Proof:</b><br>
-                        <img id="detailsEndorsedDocProof" src="" alt="Endorsed Proof" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9;">
+                        <img id="detailsEndorsedDocProof" src="" alt="Endorsed Proof" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Add lightbox for signature -->
+    <div id="signatureLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedSignature" src="" alt="Enlarged Signature" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
+    <!-- Add lightbox for POD -->
+    <div id="podLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedPod" src="" alt="Enlarged POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
+    <!-- Add lightbox for endorsed signature -->
+    <div id="endorsedSignatureLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedEndorsedSignature" src="" alt="Enlarged Endorsed Signature" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
+    <!-- Add lightbox for endorsed document proof -->
+    <div id="endorsedDocProofLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedEndorsedDocProof" src="" alt="Enlarged Endorsed Document Proof" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -135,6 +155,22 @@ $result = $conn->query($sql);
                 document.getElementById('detailsSignature').src = '/dictproj1/modules/get_signature.php?id=' + transactionID;
                 document.getElementById('detailsPod').src = '/dictproj1/modules/get_pod.php?id=' + transactionID;
                 document.getElementById('detailsEndorsedToName').textContent = data.endorsedToName || '';
+                // Format and display endorsement timestamp
+                var endorsementTimestamp = data.endorsementTimestamp || '';
+                if (endorsementTimestamp) {
+                    var date = new Date(endorsementTimestamp);
+                    var formattedDate = date.toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                    document.getElementById('detailsEndorsementTimestamp').textContent = formattedDate;
+                } else {
+                    document.getElementById('detailsEndorsementTimestamp').textContent = 'Not available';
+                }
                 if (data.hasEndorsedSignature) {
                     document.getElementById('detailsEndorsedSignature').src = '/dictproj1/modules/get_endorsed_signature.php?id=' + transactionID;
                 } else {
@@ -156,6 +192,122 @@ $result = $conn->query($sql);
                 this.style.display = 'none';
             }
         };
+        
+        // Signature lightbox functionality
+        var signatureImg = document.getElementById('detailsSignature');
+        if (signatureImg) {
+            signatureImg.onclick = function() {
+                if (!signatureImg.src || signatureImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedSignature');
+                enlarged.src = signatureImg.src;
+                var lightbox = document.getElementById('signatureLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var signatureLightbox = document.getElementById('signatureLightbox');
+        if (signatureLightbox) {
+            signatureLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedSignature').src = '';
+                }
+            };
+        }
+        var enlargedSignature = document.getElementById('enlargedSignature');
+        if (enlargedSignature) {
+            enlargedSignature.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
+        
+        // POD lightbox functionality
+        var podImg = document.getElementById('detailsPod');
+        if (podImg) {
+            podImg.onclick = function() {
+                if (!podImg.src || podImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedPod');
+                enlarged.src = podImg.src;
+                var lightbox = document.getElementById('podLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var podLightbox = document.getElementById('podLightbox');
+        if (podLightbox) {
+            podLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedPod').src = '';
+                }
+            };
+        }
+        var enlargedPod = document.getElementById('enlargedPod');
+        if (enlargedPod) {
+            enlargedPod.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
+        
+        // Endorsed Signature lightbox functionality
+        var endorsedSignatureImg = document.getElementById('detailsEndorsedSignature');
+        if (endorsedSignatureImg) {
+            endorsedSignatureImg.onclick = function() {
+                if (!endorsedSignatureImg.src || endorsedSignatureImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedEndorsedSignature');
+                enlarged.src = endorsedSignatureImg.src;
+                var lightbox = document.getElementById('endorsedSignatureLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var endorsedSignatureLightbox = document.getElementById('endorsedSignatureLightbox');
+        if (endorsedSignatureLightbox) {
+            endorsedSignatureLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedEndorsedSignature').src = '';
+                }
+            };
+        }
+        var enlargedEndorsedSignature = document.getElementById('enlargedEndorsedSignature');
+        if (enlargedEndorsedSignature) {
+            enlargedEndorsedSignature.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
+        
+        // Endorsed Document Proof lightbox functionality
+        var endorsedDocProofImg = document.getElementById('detailsEndorsedDocProof');
+        if (endorsedDocProofImg) {
+            endorsedDocProofImg.onclick = function() {
+                if (!endorsedDocProofImg.src || endorsedDocProofImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedEndorsedDocProof');
+                enlarged.src = endorsedDocProofImg.src;
+                var lightbox = document.getElementById('endorsedDocProofLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var endorsedDocProofLightbox = document.getElementById('endorsedDocProofLightbox');
+        if (endorsedDocProofLightbox) {
+            endorsedDocProofLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedEndorsedDocProof').src = '';
+                }
+            };
+        }
+        var enlargedEndorsedDocProof = document.getElementById('enlargedEndorsedDocProof');
+        if (enlargedEndorsedDocProof) {
+            enlargedEndorsedDocProof.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
     });
     </script>
 </body>
