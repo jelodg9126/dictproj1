@@ -1,15 +1,15 @@
 <?php
-// Database connection (update credentials as needed)
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "documents";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+session_start();
+// Only allow superadmin
+if (!isset($_SESSION['userAuthLevel']) || strtolower($_SESSION['userAuthLevel']) !== 'superadmin') {
+    header('Location: /dictproj1/App/Views/Pages/Documents.php');
+    exit();
 }
+
+include __DIR__ . '/../../Model/connect.php';
+
+//set current page for sidebar highlighting
+$current_page = 'addUser';
 
 // Handle form submission
 $message = '';
