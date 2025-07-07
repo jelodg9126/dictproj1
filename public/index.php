@@ -12,6 +12,8 @@ if ($page === 'dashboard') {
     include __DIR__ . '/../App/Views/Pages/Received.php';
 } elseif ($page === 'logout') {
     include __DIR__ . 'location: ../../App/Views/Pages/Login.php';
+} elseif ($page === 'addUser') {
+    include __DIR__ . '/../App/Views/Pages/addUser.php';
 } elseif ($page === 'endorsed') {
     session_start();
     if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin') {
