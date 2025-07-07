@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
     <link rel="stylesheet" href="/dictproj1/src/input.css">
-
     <title>Document</title>
 </head>
 
@@ -73,10 +72,13 @@
         <div class="dboard-layout">
 
             <div class="box1">
-                <div class="flex justify-between w-full items-center">
-                    <h1 class="text-3xl font-bold px-3 text-blue-900">Dashboard</h1>
-                    <div class="pr-5">
-                        <p class="text-lg font-normal text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
+                <div class="box1-wrapper flex justify-between min-w-full items-center max-sm:justify-start">
+    
+                    <i data-lucide="menu" id="burger" class="burg w-7 h-10 hidden text-gray-400 stroke-[3.5] max-sm:block" ></i>
+                    <h1 class="text-4xl font-bold px-3 text-blue-900">Dashboard</h1>
+                 
+                    <div class="acc pr-5 max-sm:hidden">
+                        <p class="text-lg font-normal capitalize text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
                         <p class="text-gray-500 font-semibold">ADMIN</p>
                     </div>
                 </div>
@@ -85,7 +87,7 @@
 
 
             <div class="box2">
-                <h2 class="text-lg font-semibold mb-4 pl-1.5">Total Received</h2>
+                <h2 class="text-md font-semibold mb-4 pl-1.5">Total Received</h2>
                 <div class="flex items-center gap-2">
                     <div class="bg-white/30 border border-white/20 backdrop-blur-md p-4 rounded-full flex items-center justify-center shadow-lg">
                         <i data-lucide="file-check-2" class="w-6 h-6 text-[#4E9F3D]" style="stroke-width:2.5;"></i>
@@ -97,7 +99,7 @@
 
 
             <div class="box3">
-                <h2 class="text-lg font-semibold mb-4 pl-1.5">Pending</h2>
+                <h2 class="text-md font-semibold mb-4 pl-1.5">Pending</h2>
                 <div class="flex items-center gap-2">
                     <div class="bg-white/30 border border-white/20 backdrop-blur-md p-4 rounded-full flex items-center justify-center shadow-lg">
                         <i data-lucide="list-todo" class="w-6 h-6 text-[#222831]"></i>
@@ -107,7 +109,7 @@
             </div>
 
             <div class="box4">
-                <h2 class="text-lg font-semibold mb-4 pl-1.5">Total Sent</h2>
+                <h2 class="text-md font-semibold mb-4 pl-1.5">Total Sent</h2>
                 <div class="flex items-center gap-2">
                     <div class="bg-white/30 border border-white/20 backdrop-blur-md p-4 rounded-full flex items-center justify-center shadow-lg">
                         <i data-lucide="send" class="w-6 h-6 text-[#C62300]"></i>
@@ -117,7 +119,7 @@
             </div>
 
             <div class="box5">
-                <h2 class="text-lg font-semibold mb-4 pl-1.5">Daily Sent</h2>
+                <h2 class="text-md font-semibold mb-4 pl-1.5">Daily Sent</h2>
                 <div class="flex items-center gap-2">
                     <div class="bg-white/30 border border-white/20 backdrop-blur-md p-4 rounded-full flex items-center justify-center shadow-lg">
                         <i data-lucide="truck" class="w-6 h-6 text-[#7A1CAC]"></i>
@@ -129,21 +131,19 @@
             <div class="box6">
                 <h2 class="text-lg font-semibold pl-1.5">Sent per PO</h2>
 
-                <div class="chart-container">
-                    <div class="chartWrapper">
-                        <canvas id="papersChart" width="60" height="140"></canvas>
+                <div class="chart-container flex min-h-[90%]">
+                    <div class="chartWrapper m-auto w-full h-[230px] min-w-0 mr-2">
+                        <canvas id="papersChart" class="w-full h-full"></canvas>
                     </div>
-                    <div id="chartLegend" class="chart-legend text-white"></div>
+             <div id="chartLegend" class="chart-legend text-white gap-1.5 flex flex-col justify-center text-[0.6rem]"></div>
                 </div>
-                <div id="errorMessage" class="error" style="display: none;"></div>
+               
 
             </div>
 
-
-
             <div class="box7 ">
-                <h2 class="text-lg font-semibold pl-1.5 ">Delivery Modes</h2>
-                <div class="m-auto h-60 max-w-full flex items-center ">
+                <h2 class="text-lg font-semibold pl-1.5">Delivery Modes</h2>
+                <div class= "m-auto h-60 max-w-full flex items-center">
                     <canvas id="myChart" class="h-auto w-full max-w-full"></canvas>
                 </div>
             </div>
@@ -155,9 +155,9 @@
                 </div>
             </div>
 
-            <div class="box9">
+            <div class="box9 ">
                 <h2 class="text-lg font-semibold pl-1.5">Recent Documents</h2>
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto max-h-[360px]">
                     <table class="dashboard-table">
                         <thead>
                             <tr>
@@ -216,7 +216,7 @@
             <div class="box10">
                 <h2 class="text-lg font-semibold pl-1.5">Documents by Status</h2>
                 <div class="overflow-x-auto">
-                    <table class="dashboard-table">
+                    <table class="dashboard-table min-w-full">
                         <thead>
                             <tr>
                                 <th>Status</th>
@@ -259,6 +259,7 @@
     <script src="/dictproj1/public/Scripts/pieGraph.js"></script>
     <script src="/dictproj1/public/Scripts/barGraph.js"></script>
     <script src="/dictproj1/public/Scripts/lineGraph.js"></script>
+    <script src="/dictproj1/public/Scripts/toggleSidebar.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             lucide.createIcons();

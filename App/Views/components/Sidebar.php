@@ -15,7 +15,7 @@ $currentPage = $_GET['page'] ?? 'dashboard';
 $isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin';
 ?>
 
-<div id="sidebar" class="h-screen bg-blue-950 w-[8%] transition-all duration-500 flex flex-col justify-between relative overflow-hidden">
+<div id="sidebar" class="h-screen bg-blue-950 w-[8%] transition-all duration-500 flex flex-col justify-between relative overflow-hidden max-sm:hidden">
 
   <!-- Toggle Button -->
  <button id="toggleSidebar"
@@ -122,6 +122,5 @@ $isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userA
 <script src="/dictproj1/public/Scripts/sidebar.js"> </script>
 <script src="/dictproj1/public/Scripts/SidebarDropdown.js"></script>
 <script src="/dictproj1/public/Scripts/LogoutConfirm.js"></script> 
-
 </body>
 </html>
