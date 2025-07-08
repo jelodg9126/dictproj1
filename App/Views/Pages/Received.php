@@ -189,6 +189,8 @@ function getOfficeDisplayNamePHP($code, $map) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="/dictproj1/public/Scripts/pwa-init.js"></script>
+    <link rel="manifest" href="/dictproj1/manifest.json">
     <link rel="stylesheet" href="/dictproj1/src/input.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/modal.css">
@@ -281,7 +283,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                     <h3>Receipt Information</h3>
                     <div><b>Received By:</b> <span id="detailsReceivedBy"></span></div>
                     <div><b>Signature:</b><br>
-                        <img id="detailsSignature" src="" alt="Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9;">
+                        <img id="detailsSignature" src="" alt="Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
                     </div>
                     <div><b>Proof of Document (POD) - Sender:</b><br>
                         <a href="#" id="podEnlargeLink">
@@ -299,10 +301,10 @@ function getOfficeDisplayNamePHP($code, $map) {
                     <h3>Endorsement Information</h3>
                     <div><b>Endorsed To Name:</b> <span id="detailsEndorsedToName"></span></div>
                     <div><b>Endorsed To Signature:</b><br>
-                        <img id="detailsEndorsedSignature" src="" alt="Endorsed Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9;">
+                        <img id="detailsEndorsedSignature" src="" alt="Endorsed Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
                     </div>
                     <div><b>Endorsed Document Proof:</b><br>
-                        <img id="detailsEndorsedDocProof" src="" alt="Endorsed Proof" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9;">
+                        <img id="detailsEndorsedDocProof" src="" alt="Endorsed Proof" style="max-width:200px; max-height:200px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
                     </div>
                 </div>
                 <?php endif; ?>
@@ -354,6 +356,18 @@ function getOfficeDisplayNamePHP($code, $map) {
     <!-- Add a new lightbox for sender POD -->
     <div id="senderPodLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
       <img id="enlargedSenderPod" src="" alt="Enlarged Sender POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
+    <!-- Add lightbox for signature -->
+    <div id="signatureLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedSignature" src="" alt="Enlarged Signature" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
+    <!-- Add lightbox for endorsed signature -->
+    <div id="endorsedSignatureLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedEndorsedSignature" src="" alt="Enlarged Endorsed Signature" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+    </div>
+    <!-- Add lightbox for endorsed document proof -->
+    <div id="endorsedDocProofLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
+      <img id="enlargedEndorsedDocProof" src="" alt="Enlarged Endorsed Document Proof" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     <script>
@@ -723,6 +737,93 @@ function getOfficeDisplayNamePHP($code, $map) {
         var enlargedSenderPod = document.getElementById('enlargedSenderPod');
         if (enlargedSenderPod) {
             enlargedSenderPod.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
+        
+        // Signature lightbox functionality
+        var signatureImg = document.getElementById('detailsSignature');
+        if (signatureImg) {
+            signatureImg.onclick = function() {
+                if (!signatureImg.src || signatureImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedSignature');
+                enlarged.src = signatureImg.src;
+                var lightbox = document.getElementById('signatureLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var signatureLightbox = document.getElementById('signatureLightbox');
+        if (signatureLightbox) {
+            signatureLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedSignature').src = '';
+                }
+            };
+        }
+        var enlargedSignature = document.getElementById('enlargedSignature');
+        if (enlargedSignature) {
+            enlargedSignature.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
+        
+        // Endorsed Signature lightbox functionality
+        var endorsedSignatureImg = document.getElementById('detailsEndorsedSignature');
+        if (endorsedSignatureImg) {
+            endorsedSignatureImg.onclick = function() {
+                if (!endorsedSignatureImg.src || endorsedSignatureImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedEndorsedSignature');
+                enlarged.src = endorsedSignatureImg.src;
+                var lightbox = document.getElementById('endorsedSignatureLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var endorsedSignatureLightbox = document.getElementById('endorsedSignatureLightbox');
+        if (endorsedSignatureLightbox) {
+            endorsedSignatureLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedEndorsedSignature').src = '';
+                }
+            };
+        }
+        var enlargedEndorsedSignature = document.getElementById('enlargedEndorsedSignature');
+        if (enlargedEndorsedSignature) {
+            enlargedEndorsedSignature.onclick = function(e) {
+                e.stopPropagation();
+            };
+        }
+        
+        // Endorsed Document Proof lightbox functionality
+        var endorsedDocProofImg = document.getElementById('detailsEndorsedDocProof');
+        if (endorsedDocProofImg) {
+            endorsedDocProofImg.onclick = function() {
+                if (!endorsedDocProofImg.src || endorsedDocProofImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedEndorsedDocProof');
+                enlarged.src = endorsedDocProofImg.src;
+                var lightbox = document.getElementById('endorsedDocProofLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        var endorsedDocProofLightbox = document.getElementById('endorsedDocProofLightbox');
+        if (endorsedDocProofLightbox) {
+            endorsedDocProofLightbox.onclick = function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                    document.getElementById('enlargedEndorsedDocProof').src = '';
+                }
+            };
+        }
+        var enlargedEndorsedDocProof = document.getElementById('enlargedEndorsedDocProof');
+        if (enlargedEndorsedDocProof) {
+            enlargedEndorsedDocProof.onclick = function(e) {
                 e.stopPropagation();
             };
         }

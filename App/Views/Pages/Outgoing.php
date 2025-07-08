@@ -245,6 +245,8 @@ function getOfficeDisplayNamePHP($code, $map) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="/dictproj1/src/input.css">
+    <script src="/dictproj1/public/Scripts/pwa-init.js"></script>
+    <link rel="manifest" href="/dictproj1/manifest.json">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/modal.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
@@ -362,7 +364,10 @@ function getOfficeDisplayNamePHP($code, $map) {
                                         Status
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                                        Date & Time
+                                        Date & Time Created
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                                        Date & Time Received
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                 </tr>
@@ -412,13 +417,16 @@ function getOfficeDisplayNamePHP($code, $map) {
                                                 <?php echo date('M d, Y g:i A', strtotime($row['dateAndTime'])); ?>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <?php echo !empty($row['dateReceived']) ? date('M d, Y g:i A', strtotime($row['dateReceived'])) : '-'; ?>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 <button class="view-btn bg-blue-500 text-white px-3 py-1 rounded" data-row='<?php echo json_encode($row_for_data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</button>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="8" class="text-center py-12 ">
+                                        <td colspan="9" class="text-center py-12 ">
                                             <div class="text-gray-500 text-lg">No outgoing documents found</div>
                                             <div class="text-gray-400 text-sm mt-2">Try adjusting your search or filter criteria</div>
                                         </td>

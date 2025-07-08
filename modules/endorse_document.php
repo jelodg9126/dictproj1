@@ -1,6 +1,7 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+date_default_timezone_set('Asia/Manila');
 include __DIR__ . '/../App/Model/connect.php';
 header('Content-Type: application/json');
 try {
@@ -44,17 +45,19 @@ try {
         }
         $signatureBlob = base64_decode(str_replace('data:image/png;base64,', '', $signatureData));
         $null = null;
-        $stmt = $conn->prepare("UPDATE maindoc SET endorsedToName=?, endorsedToSignature=?, endorsedDocProof=?, endorsedDocProof_filename=?, endorsedDocProof_mime_type=?, status='Endorsed' WHERE transactionID=?");
+        $currentTimestamp = date('Y-m-d H:i:s');
+        $stmt = $conn->prepare("UPDATE maindoc SET endorsedToName=?, endorsedToSignature=?, endorsedDocProof=?, endorsedDocProof_filename=?, endorsedDocProof_mime_type=?, endorsementTimestamp=?, status='Endorsed' WHERE transactionID=?");
         if (!$stmt) {
             throw new Exception('Prepare failed: ' . $conn->error);
         }
         $stmt->bind_param(
-            "ssbssi",
+            "ssbsssi",
             $endorsedToName,
             $signatureBlob,
             $null, // placeholder for blob
             $proofFilename,
             $proofMimeType,
+            $currentTimestamp,
             $transactionID
         );
         // Send signature blob (index 1) and proof blob (index 2)
