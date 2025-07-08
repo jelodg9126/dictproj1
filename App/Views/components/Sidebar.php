@@ -88,7 +88,8 @@ $isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userA
 
       
       <!-- add user - only show for superAdmin -->
-      <!-- <?php if ($isSuperAdmin): ?>
+      <?php /*
+      if ($isSuperAdmin): ?>
       <div>
         <a href="/dictproj1/public/index.php?page=addUser"
           class="flex items-center gap-3 p-5 transition duration-300 hover:bg-blue-800 
@@ -98,7 +99,8 @@ $isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userA
         </a>
       </div>
       <?php endif; ?>
-    </div> -->
+      */ ?>
+    </div>
 
     <!-- Footer -->
     <div class="text-white">
