@@ -46,6 +46,18 @@ $isProvincial = $userType === 'provincial';
           <i data-lucide="user-plus" class="w-6 h-6 text-white"></i>
           <span class="sidebar-label hidden transition-opacity duration-300">Add User</span>
         </a>
+
+         <a href="/dictproj1/index.php?page=auditLog"
+          class="flex items-center gap-3 p-5 transition duration-300 hover:bg-blue-800 <?php echo ($currentPage === 'auditLog') ? 'bg-blue-700' : ''; ?>">
+          <i data-lucide="file-sliders" class="w-6 h-6 text-white"></i>
+          <span class="sidebar-label hidden transition-opacity duration-300">Audit Log</span>
+        </a>
+
+         <a href="/dictproj1/index.php?page=logHistory"
+          class="flex items-center gap-3 p-5 transition duration-300 hover:bg-blue-800 <?php echo ($currentPage === 'logHistory') ? 'bg-blue-700' : ''; ?>">
+          <i data-lucide="history" class="w-6 h-6 text-white"></i>
+          <span class="sidebar-label hidden transition-opacity duration-300">Log History</span>
+        </a>
       <?php elseif ($isAdmin || $isProvincial): ?>
         <!-- Dashboard for Admin and Provincial -->
         <a class="flex items-center gap-3 p-5 transition duration-300 hover:bg-blue-800 active:bg-blue-700 active:scale-95 <?php echo ($currentPage === 'dashboard') ? 'bg-blue-800 border-l-4 border-white' : 'border-l-4 border-transparent'; ?>"

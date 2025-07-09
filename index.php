@@ -1,10 +1,5 @@
 <?php
-// Secure session settings
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
 session_start();
-
-// If superadmin and no ?page or ?page=dashboard, redirect to addUser
 if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin') {
     $page = $_GET['page'] ?? '';
     if ($page === '' || $page === 'dashboard') {
@@ -36,6 +31,12 @@ switch ($page) {
         break;
     case 'addUser':
         include __DIR__ . '/App/Views/Pages/addUser.php';
+        break;
+    case 'auditLog':
+        include __DIR__ . '/App/Views/Pages/auditLog.php';
+        break;
+    case 'logHistory':
+        include __DIR__ . '/App/Views/Pages/logHistory.php';
         break;
     case 'endorsed':
         if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'admin') {

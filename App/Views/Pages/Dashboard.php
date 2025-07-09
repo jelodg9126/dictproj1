@@ -17,9 +17,7 @@
     <div class="app-container">
 
         <?php
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        session_start();
 
         // Check if user is logged in
         if (!isset($_SESSION['uNameLogin'])) {
@@ -88,7 +86,7 @@
                  
                     <div class="acc pr-5 max-sm:hidden">
                         <p class="text-lg font-normal capitalize text-gray-600">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
-                        <p class="text-gray-500 font-semibold">ADMIN</p>
+                        <p class="text-gray-500 font-semibold uppercase"><?php echo htmlspecialchars($_SESSION['userAuthLevel']); ?></p>
                     </div>
                 </div>
 

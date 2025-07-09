@@ -99,7 +99,7 @@ if ($result && $result->num_rows > 0) {
                         <h1 class="text-3xl font-bold text-indigo-500">Users</h1>
                         <p class="text-gray-300 mt-2">Manage and track all users</p>
                     </div>
-                    <button type="button" class="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2" id="openFormModal">
+                    <button type="button" class="btn bg-blue-600 text-white px-10 py-3 text-md rounded-lg hover:bg-blue-700 flex items-center gap-2" id="openFormModal">
                         <i class="fas fa-user-plus"></i> Add User
                     </button>
                 </div>
@@ -120,7 +120,7 @@ if ($result && $result->num_rows > 0) {
                                 <?php foreach ($userRows as $user): ?>
                                     <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['userName']); ?></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-xs text-gray-900"><?php echo htmlspecialchars($user['passWord']); ?></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900"><?php echo htmlspecialchars($user['passWord']); ?></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['usertype']); ?></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['name']); ?></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['email']); ?></td>
@@ -136,16 +136,13 @@ if ($result && $result->num_rows > 0) {
         <!-- Modal for Add User Form -->
         <div id="formModal" class="modal">
             <div class="modal-content" style="max-width: 600px;">
-                <div class="modal-header flex justify-between items-center p-6 pb-2">
-                    <h2 class="text-2xl font-bold">Add New User</h2>
+                <div class="modal-header flex justify-between items-center p-6 pb-6">
+                    <h2 class="text-2xl font-bold text-blue-900">Add New User</h2>
                     <span class="close cursor-pointer text-3xl">&times;</span>
                 </div>
                 <div class="modal-body p-6 pt-0">
                     <form id="addUserForm" method="post" action="" autocomplete="off">
-                        <div class="mb-6">
-                            <span class="section-header">Account Information</span>
-                        </div>
-                        <div class="form-row mb-4">
+                        <div class="form-row mb-2 mt-6">
                             <div class="form-group">
                                 <label for="userName">Username <span class="required">*</span></label>
                                 <input type="text" id="userName" name="userName" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
@@ -155,7 +152,7 @@ if ($result && $result->num_rows > 0) {
                                 <input type="password" id="passWord" name="passWord" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
                             </div>
                     </div>
-                        <div class="form-row mb-4">
+                        <div class="form-row mb-2">
                     <div class="form-group">
                                 <label for="usertype">User Type <span class="required">*</span></label>
                                 <select id="usertype" name="usertype" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
@@ -169,7 +166,7 @@ if ($result && $result->num_rows > 0) {
                                 <input type="text" id="name" name="name" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
                             </div>
                     </div>
-                        <div class="form-row mb-4">
+                        <div class="form-row mb-1">
                     <div class="form-group">
                                 <label for="email">Email Address <span class="required">*</span></label>
                                 <input type="email" id="email" name="email" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
@@ -180,7 +177,7 @@ if ($result && $result->num_rows > 0) {
                             </div>
                     </div>
                         <div class="flex justify-end mt-6">
-                            <button type="submit" class="btn btn-primary bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add User</button>
+                            <button type="submit" class="btn btn-primary bg-blue-600 text-white px-16 py-2 text-lg rounded-lg hover:bg-blue-700">Add User</button>
                     </div>
                 </form>
             </div>
