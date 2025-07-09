@@ -1,13 +1,10 @@
-// pwa-init.js
-
-// Register the service worker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("/dictproj1/public/Scripts/service-worker.js") 
       .then(() => console.log("✅ Service Worker Registered"))
       .catch(err => console.error("❌ SW registration failed:", err));
-  });
+  }); 
 }
 
 // Handle install prompt

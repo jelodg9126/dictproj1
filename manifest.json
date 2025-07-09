@@ -3,19 +3,19 @@
     "name": "DICT Documents Tracker",
     "short_name": "Docs Tracker",
     "description": "Web app used for monitoring and tracking documents",
-    "start_url": "/",
+    "start_url": "dictproj1/index.php",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#007bff",
     "orientation": "any",
     "icons": [
         {
-            "src": "public/assets/images/dictCircle.png",
+            "src": "/dictproj1/public/assets/images/dictCircle.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "public/assets/images/dictCircle.png",
+            "src": "/dictproj1/public/assets/images/dictCircle.png",
             "sizes": "512x512",
             "type": "image/png"
         }

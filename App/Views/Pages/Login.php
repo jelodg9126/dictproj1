@@ -11,12 +11,7 @@
 </head>
 <body>
     <?php
-    // Set session cookie parameters BEFORE starting the session
-    ini_set('session.cookie_httponly', 1);
-    ini_set('session.use_only_cookies', 1);
-    session_start();
-    
-    // If user is already logged in, redirect to dashboard
+
     if (isset($_SESSION['uNameLogin'])) {
         header("Location: Dashboard.php");
         exit();
