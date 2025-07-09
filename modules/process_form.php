@@ -172,9 +172,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Check if this is an AJAX request
             if (isset($_POST['ajax']) && $_POST['ajax'] === 'true') {
                 header('Content-Type: application/json');
-                $redirect_url = $filetype === 'incoming' ? '/dictproj1/public/index.php?page=incoming&success=1' : 
-                               ($filetype === 'outgoing' ? '/dictproj1/public/index.php?page=outgoing&success=1' : 
-                               '/dictproj1/public/index.php?page=documents&success=1');
+                $redirect_url = $filetype === 'incoming' ? '/dictproj1/index.php?page=incoming&success=1' : 
+                               ($filetype === 'outgoing' ? '/dictproj1/index.php?page=outgoing&success=1' : 
+                               '/dictproj1/index.php?page=documents&success=1');
                 echo json_encode([
                     'success' => true,
                     'message' => 'Record inserted successfully!',
@@ -183,9 +183,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit;
             } else {
                 // Regular form submission - redirect immediately
-                $redirect_url = $filetype === 'incoming' ? '/dictproj1/public/index.php?page=incoming&success=1' : 
-                               ($filetype === 'outgoing' ? '/dictproj1/public/index.php?page=outgoing&success=1' : 
-                               '/dictproj1/public/index.php?page=documents&success=1');
+                $redirect_url = $filetype === 'incoming' ? '/dictproj1/index.php?page=incoming&success=1' : 
+                               ($filetype === 'outgoing' ? '/dictproj1/index.php?page=outgoing&success=1' : 
+                               '/dictproj1/index.php?page=documents&success=1');
                 header("Location: " . $redirect_url);
                 exit;
             }
@@ -240,9 +240,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 } else {
     // If accessed directly without POST data, redirect to view records
     $current_page = $_GET['page'] ?? 'documents';
-    $redirect_url = $current_page === 'incoming' ? '/dictproj1/public/index.php?page=incoming' : 
-                   ($current_page === 'outgoing' ? '/dictproj1/public/index.php?page=outgoing' : 
-                   '/dictproj1/public/index.php?page=documents');
+    $redirect_url = $current_page === 'incoming' ? '/dictproj1/index.php?page=incoming' : 
+                   ($current_page === 'outgoing' ? '/dictproj1/index.php?page=outgoing' : 
+                   '/dictproj1/index.php?page=documents');
     header("Location: " . $redirect_url);
     exit;
 }

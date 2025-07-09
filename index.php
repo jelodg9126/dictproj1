@@ -39,9 +39,9 @@ switch ($page) {
         break;
     case 'endorsed':
         if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'admin') {
-            include __DIR__ . '/../App/Views/Pages/Endorsed.php';
+            include __DIR__ . '/App/Views/Pages/Endorsed.php';
         } else {
-            header('Location: /dictproj1/public/index.php?page=documents');
+            header('Location: /dictproj1/index.php?page=documents');
             exit();
         }
         break;

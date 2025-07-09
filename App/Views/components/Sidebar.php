@@ -47,6 +47,12 @@ $isProvincial = $userType === 'provincial';
           <span class="sidebar-label hidden transition-opacity duration-300">Add User</span>
         </a>
       <?php elseif ($isAdmin || $isProvincial): ?>
+        <!-- Dashboard for Admin and Provincial -->
+        <a class="flex items-center gap-3 p-5 transition duration-300 hover:bg-blue-800 active:bg-blue-700 active:scale-95 <?php echo ($currentPage === 'dashboard') ? 'bg-blue-800 border-l-4 border-white' : 'border-l-4 border-transparent'; ?>"
+          href="/dictproj1/index.php?page=dashboard">
+          <i data-lucide="chart-spline" class="w-6 h-6 text-white"></i>
+          <span class="sidebar-label hidden transition-opacity duration-300">Dashboard</span>
+        </a>
         <!-- Documents Dropdown for Admin and Provincial -->
         <div class="relative">
           <button id="documentsDropdown"

@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Check if user is logged in
 if (!isset($_SESSION['uNameLogin'])) {
@@ -408,9 +410,7 @@ function getOfficeDisplayNamePHP($code, $map) {
     }
     
     document.addEventListener('DOMContentLoaded', function() {
-        if (<?php echo json_encode(isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'admin'); ?>) {
-            window.location.href = 'Documents.php';
-        }
+        // Removed admin redirect to documents page
         document.querySelectorAll('.view-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();

@@ -5,7 +5,9 @@ if (!isset($_SESSION['userAuthLevel']) || strtolower($_SESSION['userAuthLevel'])
     exit();
 }
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin') {
     header('Location: Documents.php');
     exit();
