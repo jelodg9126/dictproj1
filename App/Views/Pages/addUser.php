@@ -60,7 +60,6 @@ if ($result && $result->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="/dictproj1/src/input.css">
-    <script src="/dictproj1/public/Scripts/pwa-init.js"></script>
     <link rel="manifest" href="/dictproj1/manifest.json">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/modal.css">
