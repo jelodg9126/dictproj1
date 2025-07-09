@@ -13,7 +13,10 @@
 <body>
 <?php
 $currentPage = $_GET['page'] ?? 'dashboard';
-$isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin';
+$userType = isset($_SESSION['userAuthLevel']) ? strtolower($_SESSION['userAuthLevel']) : '';
+$isSuperAdmin = $userType === 'superadmin';
+$isAdmin = $userType === 'admin';
+$isProvincial = $userType === 'provincial';
 ?>
 
 <div id="sidebar" class="h-screen bg-blue-950 w-[8%] transition-all duration-500 flex flex-col justify-between relative overflow-hidden max-sm:hidden">
@@ -43,63 +46,51 @@ $isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userA
         <span class="sidebar-label hidden transition-opacity duration-300">Dashboard</span>
       </a>
 
-      <!-- Documents Dropdown -->
-      <div class="relative">
-        <button id="documentsDropdown"
-          class="flex items-center gap-3 p-5 w-full text-left transition duration-300 hover:bg-blue-800 active:bg-blue-700 active:scale-95 
-            <?php echo (in_array($currentPage, ['documents', 'incoming', 'outgoing'])) ? 'bg-blue-800 border-l-4 border-white' : 'border-l-4 border-transparent'; ?>">
-          <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
-          <span class="sidebar-label hidden transition-opacity duration-300">Documents</span>
-          <svg class="w-4 h-4 ml-auto transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </button>
-
-        <div id="documentsDropdownMenu" class="absolute left-0 right-0 top-full bg-blue-900 border-l-4 border-white hidden">
-          <a href="/dictproj1/index.php?page=incoming"
-            class="flex items-center gap-3 p-4 pl-12 transition duration-300 hover:bg-blue-800 
-              <?php echo ($currentPage === 'incoming') ? 'bg-blue-700' : ''; ?>">
-            <i data-lucide="file-input" class="w-6 h-6 text-white"></i>
-            <span class="sidebar-label hidden transition-opacity duration-300">Incoming</span>
-          </a>
-          <a href="/dictproj1/index.php?page=outgoing"
-            class="flex items-center gap-3 p-4 pl-12 transition duration-300 hover:bg-blue-800 
-              <?php echo ($currentPage === 'outgoing') ? 'bg-blue-700' : ''; ?>">
-            <i data-lucide="file-output" class="w-6 h-6 text-white"></i>
-            <span class="sidebar-label hidden transition-opacity duration-300">Outgoing</span>
-          </a>
-          <a href="/dictproj1/index.php?page=received"
-            class="flex items-center gap-3 p-4 pl-12 transition duration-300 hover:bg-blue-800 
-              <?php echo ($currentPage === 'received') ? 'bg-blue-700' : ''; ?>">
-            <i data-lucide="file-check" class="w-6 h-6 text-white"></i>
-            <span class="sidebar-label hidden transition-opacity duration-300">Received</span>
-          </a>
-          <?php if ($isSuperAdmin): ?>
-          <a href="/dictproj1/index.php?page=endorsed"
-            class="flex items-center gap-3 p-4 pl-12 transition duration-300 hover:bg-blue-700 
-              <?php echo ($currentPage === 'endorsed') ? 'bg-blue-700' : ''; ?>">
-            <i data-lucide="refresh-ccw" class="w-6 h-6 text-white"></i>
-            <span class="sidebar-label hidden transition-opacity duration-300">Endorsed</span>
-          </a>
-          <?php endif; ?>
-        </div>
-      </div>
-
-
-      
-      <!-- add user - only show for superAdmin -->
-      <?php /*
-      if ($isSuperAdmin): ?>
-      <div>
+      <?php if ($isSuperAdmin): ?>
+        <!-- Only Add User for SuperAdmin -->
         <a href="/dictproj1/public/index.php?page=addUser"
-          class="flex items-center gap-3 p-5 transition duration-300 hover:bg-blue-800 
-            <?php echo ($currentPage === 'addUser') ? 'bg-blue-700' : ''; ?>">
+          class="flex items-center gap-3 p-5 transition duration-300 hover:bg-blue-800 <?php echo ($currentPage === 'addUser') ? 'bg-blue-700' : ''; ?>">
           <i data-lucide="user-plus" class="w-6 h-6 text-white"></i>
           <span class="sidebar-label hidden transition-opacity duration-300">Add User</span>
         </a>
-      </div>
+      <?php elseif ($isAdmin || $isProvincial): ?>
+        <!-- Documents Dropdown for Admin and Provincial -->
+        <div class="relative">
+          <button id="documentsDropdown"
+            class="flex items-center gap-3 p-5 w-full text-left transition duration-300 hover:bg-blue-800 active:bg-blue-700 active:scale-95 <?php echo (in_array($currentPage, ['documents', 'incoming', 'outgoing', 'received', 'endorsed'])) ? 'bg-blue-800 border-l-4 border-white' : 'border-l-4 border-transparent'; ?>">
+            <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
+            <span class="sidebar-label hidden transition-opacity duration-300">Documents</span>
+            <svg class="w-4 h-4 ml-auto transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <div id="documentsDropdownMenu" class="absolute left-0 right-0 top-full bg-blue-900 border-l-4 border-white hidden">
+            <a href="/dictproj1/index.php?page=incoming"
+              class="flex items-center gap-3 p-4 pl-12 transition duration-300 hover:bg-blue-800 <?php echo ($currentPage === 'incoming') ? 'bg-blue-700' : ''; ?>">
+              <i data-lucide="file-input" class="w-6 h-6 text-white"></i>
+              <span class="sidebar-label hidden transition-opacity duration-300">Incoming</span>
+            </a>
+            <a href="/dictproj1/index.php?page=outgoing"
+              class="flex items-center gap-3 p-4 pl-12 transition duration-300 hover:bg-blue-800 <?php echo ($currentPage === 'outgoing') ? 'bg-blue-700' : ''; ?>">
+              <i data-lucide="file-output" class="w-6 h-6 text-white"></i>
+              <span class="sidebar-label hidden transition-opacity duration-300">Outgoing</span>
+            </a>
+            <a href="/dictproj1/index.php?page=received"
+              class="flex items-center gap-3 p-4 pl-12 transition duration-300 hover:bg-blue-800 <?php echo ($currentPage === 'received') ? 'bg-blue-700' : ''; ?>">
+              <i data-lucide="file-check" class="w-6 h-6 text-white"></i>
+              <span class="sidebar-label hidden transition-opacity duration-300">Received</span>
+            </a>
+            <?php if ($isAdmin): ?>
+            <a href="/dictproj1/index.php?page=endorsed"
+              class="flex items-center gap-3 p-4 pl-12 transition duration-300 hover:bg-blue-700 <?php echo ($currentPage === 'endorsed') ? 'bg-blue-700' : ''; ?>">
+              <i data-lucide="refresh-ccw" class="w-6 h-6 text-white"></i>
+              <span class="sidebar-label hidden transition-opacity duration-300">Endorsed</span>
+            </a>
+            <?php endif; ?>
+          </div>
+        </div>
       <?php endif; ?>
-      */ ?>
     </div>
 
     <!-- Footer -->

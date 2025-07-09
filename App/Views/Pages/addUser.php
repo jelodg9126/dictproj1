@@ -148,44 +148,44 @@ if ($result && $result->num_rows > 0) {
                                 <label for="userName">Username <span class="required">*</span></label>
                                 <input type="text" id="userName" name="userName" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
                             </div>
-                            <div class="form-group">
+                    <div class="form-group">
                                 <label for="passWord">Password <span class="required">*</span></label>
                                 <input type="password" id="passWord" name="passWord" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
                             </div>
-                        </div>
+                    </div>
                         <div class="form-row mb-4">
-                            <div class="form-group">
+                    <div class="form-group">
                                 <label for="usertype">User Type <span class="required">*</span></label>
                                 <select id="usertype" name="usertype" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
-                                    <option value="">Select user type</option>
+                            <option value="">Select user type</option>
                                     <option value="Admin">Admin</option>
-                                    <option value="provincial">Provincial</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
+                            <option value="provincial">Provincial</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                                 <label for="name">Full Name <span class="required">*</span></label>
                                 <input type="text" id="name" name="name" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
                             </div>
-                        </div>
+                    </div>
                         <div class="form-row mb-4">
-                            <div class="form-group">
+                    <div class="form-group">
                                 <label for="email">Email Address <span class="required">*</span></label>
                                 <input type="email" id="email" name="email" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
-                            </div>
-                            <div class="form-group">
+                    </div>
+                    <div class="form-group">
                                 <label for="contactno">Contact Number <span class="required">*</span></label>
                                 <input type="text" id="contactno" name="contactno" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
                             </div>
-                        </div>
+                    </div>
                         <div class="flex justify-end mt-6">
                             <button type="submit" class="btn btn-primary bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add User</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
         <script src="/dictproj1/modal.js"></script>
-        <script>
+    <script>
         document.getElementById('addUserForm').onsubmit = async function(e) {
             e.preventDefault();
             const form = e.target;
@@ -223,7 +223,7 @@ if ($result && $result->num_rows > 0) {
             document.querySelectorAll('#formModal .close').forEach(btn => btn.click());
             form.reset();
         };
-        </script>
+    </script>
     </div>
 </body>
 </html>
