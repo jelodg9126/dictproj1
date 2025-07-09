@@ -48,7 +48,7 @@ $isProvincial = $userType === 'provincial';
 
       <?php if ($isSuperAdmin): ?>
         <!-- Only Add User for SuperAdmin -->
-        <a href="/dictproj1/public/index.php?page=addUser"
+        <a href="/dictproj1/index.php?page=addUser"
           class="flex items-center gap-3 p-5 transition duration-300 hover:bg-blue-800 <?php echo ($currentPage === 'addUser') ? 'bg-blue-700' : ''; ?>">
           <i data-lucide="user-plus" class="w-6 h-6 text-white"></i>
           <span class="sidebar-label hidden transition-opacity duration-300">Add User</span>
