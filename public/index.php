@@ -16,7 +16,7 @@ if ($page === 'dashboard') {
     include __DIR__ . '/../App/Views/Pages/addUser.php';
 } elseif ($page === 'endorsed') {
     session_start();
-    if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin') {
+    if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'admin') {
         include __DIR__ . '/../App/Views/Pages/Endorsed.php';
     } else {
         header('Location: /dictproj1/public/index.php?page=documents');

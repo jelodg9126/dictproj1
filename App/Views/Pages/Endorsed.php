@@ -1,7 +1,13 @@
 <?php
-// Only allow superadmin
-if (!isset($_SESSION['userAuthLevel']) || strtolower($_SESSION['userAuthLevel']) !== 'superadmin') {
+// Only allow admin
+if (!isset($_SESSION['userAuthLevel']) || strtolower($_SESSION['userAuthLevel']) !== 'admin') {
     header('Location: /dictproj1/App/Views/Pages/Documents.php');
+    exit();
+}
+
+session_start();
+if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin') {
+    header('Location: Documents.php');
     exit();
 }
 

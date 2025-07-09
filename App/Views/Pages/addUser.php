@@ -41,174 +41,190 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = "Error: Please fill in all required fields.";
     }
 }
+
+// Fetch all users for display in a table (excluding userID)
+$userRows = [];
+$result = $conn->query("SELECT userName, passWord, usertype, name, email, contactno FROM users");
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $userRows[] = $row;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="/dictproj1/src/input.css">
     <script src="/dictproj1/public/Scripts/pwa-init.js"></script>
     <link rel="manifest" href="/dictproj1/manifest.json">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
-    <link rel="stylesheet" href="/dictproj1/src/input.css">
-    <title>Add New User</title>
+    <link rel="stylesheet" href="/dictproj1/public/assets/css/modal.css">
+    <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Add Users</title>
     <style>
-        .app-container {
-            display: flex;
-            width: 100%;
+        body {
+            background: linear-gradient(120deg, #48517f 0%, #322b5f 100%);
             min-height: 100vh;
         }
-        .main-content {
-            flex: 1;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            background: 
-            linear-gradient(90deg, #48517f 0%, #322b5f 100%);
-            background-size: 100% 100%, 20px 20px;
-            min-height: 100vh;
+        .modal-content {
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
         }
-        .form-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0;
-            padding: 2.5rem;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #4a5568;
-        }
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            background-color: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-            background-color: #fff;
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
+        .section-header {
+            font-size: 1.15rem;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid #6366f1;
+            display: inline-block;
+            padding-bottom: 2px;
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        .message {
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-        }
-        .message.success {
-            background-color: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
-        }
-        .message.error {
-            background-color: #fef2f2;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
-        }
-        .form-actions {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 1rem;
-        }
+        .required { color: #e53e3e; }
+        .form-row { display: flex; gap: 1.5rem; }
+        .form-row .form-group { flex: 1; }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
-        
-        <div class="main-content">
-            <div class="form-container">
-                <h1 class="text-2xl font-bold text-gray-800 mb-6">Add New User</h1>
-                
-                <?php if ($message): ?>
-                    <div class="message <?php echo strpos($message, 'Error') !== false ? 'error' : 'success'; ?>">
-                        <?php echo htmlspecialchars($message); ?>
+        <div class="flex-1 p-6 bg-linear-90 from-[#48517f] to-[#322b5f] min-h-screen overflow-y-auto" id="docu">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="items-center">
+                        <h1 class="text-3xl font-bold text-indigo-500">Users</h1>
+                        <p class="text-gray-300 mt-2">Manage and track all users</p>
                     </div>
-                <?php endif; ?>
-
-                <form method="post" action="" class="form-grid">
-                    <div class="form-group">
-                        <label for="userName">Username</label>
-                        <input type="text" id="userName" name="userName" class="form-control" required>
+                    <button type="button" class="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2" id="openFormModal">
+                        <i class="fas fa-user-plus"></i> Add User
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto ">
+                        <table class="w-full ">
+                            <thead class="bg-[rgba(240,240,240,0.51)] backdrop-blur border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Username</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Password (Hashed)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">User Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Full Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Contact No</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody" class="bg-[rgb(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
+                                <?php foreach ($userRows as $user): ?>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['userName']); ?></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-xs text-gray-900"><?php echo htmlspecialchars($user['passWord']); ?></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['usertype']); ?></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['name']); ?></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['email']); ?></td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['contactno']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
-
-                    <div class="form-group">
-                        <label for="passWord">Password</label>
-                        <input type="password" id="passWord" name="passWord" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="usertype">User Type</label>
-                        <select id="usertype" name="usertype" class="form-control" required>
-                            <option value="">Select user type</option>
-                            <option value="superAdmin">Super Admin</option>
-                            <option value="provincial">Provincial</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="contactno">Contact Number</label>
-                        <input type="text" id="contactno" name="contactno" class="form-control" required>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn-primary">
-                            <i class="fas fa-user-plus mr-2"></i>Add User
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
+        <!-- Modal for Add User Form -->
+        <div id="formModal" class="modal">
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="modal-header flex justify-between items-center p-6 pb-2">
+                    <h2 class="text-2xl font-bold">Add New User</h2>
+                    <span class="close cursor-pointer text-3xl">&times;</span>
+                </div>
+                <div class="modal-body p-6 pt-0">
+                    <form id="addUserForm" method="post" action="" autocomplete="off">
+                        <div class="mb-6">
+                            <span class="section-header">Account Information</span>
+                        </div>
+                        <div class="form-row mb-4">
+                            <div class="form-group">
+                                <label for="userName">Username <span class="required">*</span></label>
+                                <input type="text" id="userName" name="userName" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="passWord">Password <span class="required">*</span></label>
+                                <input type="password" id="passWord" name="passWord" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
+                            </div>
+                        </div>
+                        <div class="form-row mb-4">
+                            <div class="form-group">
+                                <label for="usertype">User Type <span class="required">*</span></label>
+                                <select id="usertype" name="usertype" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
+                                    <option value="">Select user type</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="provincial">Provincial</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Full Name <span class="required">*</span></label>
+                                <input type="text" id="name" name="name" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
+                            </div>
+                        </div>
+                        <div class="form-row mb-4">
+                            <div class="form-group">
+                                <label for="email">Email Address <span class="required">*</span></label>
+                                <input type="email" id="email" name="email" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactno">Contact Number <span class="required">*</span></label>
+                                <input type="text" id="contactno" name="contactno" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-6">
+                            <button type="submit" class="btn btn-primary bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add User</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="/dictproj1/modal.js"></script>
+        <script>
+        document.getElementById('addUserForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            formData.append('ajax', 'true');
+            const response = await fetch('', {
+                method: 'POST',
+                body: formData
+            });
+            const text = await response.text();
+            // Try to parse new table body from response
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const newTbody = doc.getElementById('usersTableBody');
+            if (newTbody) {
+                document.getElementById('usersTableBody').innerHTML = newTbody.innerHTML;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'User has been added successfully.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK',
+                    timer: 2000
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to add user. Please check your input.',
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+            }
+            // Close modal and reset form
+            document.querySelectorAll('#formModal .close').forEach(btn => btn.click());
+            form.reset();
+        };
+        </script>
     </div>
-
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        lucide.createIcons();
-    </script>
 </body>
 </html>
 <?php $conn->close(); ?>

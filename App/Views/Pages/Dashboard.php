@@ -32,6 +32,11 @@
             exit();
         }
 
+        if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin') {
+            header('Location: Documents.php');
+            exit();
+        }
+
         // Include database connection
         include __DIR__ . '/../../Model/connect.php';
 

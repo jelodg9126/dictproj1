@@ -15,7 +15,7 @@ if (!isset($_SESSION['userAuthLevel'])) {
 }
 
 // Check user type for conditional display
-$isSuperAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin';
+$isAdmin = isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'admin';
 
 // Include database connection
 include __DIR__ . '/../../Model/connect.php';
@@ -45,7 +45,7 @@ if (isset($_SESSION['uNameLogin'])) {
         'dictne' => 'dictne',
         'dicttarlac' => 'dicttarlac',
         'dictzambales' => 'dictzambales',
-        'superadmin' => 'maindoc',
+        'admin' => 'maindoc',
         'maindoc' => 'maindoc',
         'others' => 'others'
     ];
@@ -127,7 +127,7 @@ if (isset($_SESSION['uNameLogin'])) {
         'dictne' => 'dictNE',
         'dicttarlac' => 'dictTarlac',
         'dictzambales' => 'dictZambales',
-        'superadmin' => 'Rmaindoc',
+        'admin' => 'Rmaindoc',
         'maindoc' => 'maindoc',
         'others' => 'Others'
     ];
@@ -249,7 +249,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                                                     "hasEndorsedSignature" => !empty($row["endorsedToSignature"]),
                                                     "hasEndorsedDocProof" => !empty($row["endorsedDocProof"]),
                                                 ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</a>
-                                                <?php if ($isSuperAdmin): ?>
+                                                <?php if ($isAdmin): ?>
                                                     <button class="endorse-btn bg-green-500 text-white px-3 py-1 rounded ml-2" data-id="<?php echo $row['transactionID']; ?>">Endorse</button>
                                                 <?php endif; ?>
                                             </td>
@@ -296,7 +296,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                         </a>
                     </div>
                 </div>
-                <?php if ($isSuperAdmin): ?>
+                <?php if ($isAdmin): ?>
                 <div class="form-section">
                     <h3>Endorsement Information</h3>
                     <div><b>Endorsed To Name:</b> <span id="detailsEndorsedToName"></span></div>
@@ -408,6 +408,9 @@ function getOfficeDisplayNamePHP($code, $map) {
     }
     
     document.addEventListener('DOMContentLoaded', function() {
+        if (<?php echo json_encode(isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'admin'); ?>) {
+            window.location.href = 'Documents.php';
+        }
         document.querySelectorAll('.view-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();

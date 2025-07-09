@@ -14,6 +14,12 @@ if (!isset($_SESSION['userAuthLevel'])) {
     exit();
 }
 
+// Check if user is superadmin, redirect to Documents.php
+if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin') {
+    header('Location: Documents.php');
+    exit();
+}
+
 // Include database connection
 include __DIR__ . '/../../Model/connect.php';
 
@@ -50,7 +56,7 @@ if (isset($_SESSION['uNameLogin'])) {
         'dictne' => 'dictne',
         'dicttarlac' => 'dicttarlac',
         'dictzambales' => 'dictzambales',
-        'superadmin' => 'maindoc',
+        'admin' => 'maindoc',
         'maindoc' => 'maindoc',
         'others' => 'others'
     ];
@@ -177,7 +183,7 @@ if (isset($_SESSION['uNameLogin'])) {
         'dictne' => 'RdictNE',
         'dicttarlac' => 'RdictTarlac',
         'dictzambales' => 'RdictZambales',
-        'superadmin' => 'Rmaindoc',
+        'admin' => 'Rmaindoc',
         'maindoc' => 'Rmaindoc',
         'others' => 'ROthers'
     ];

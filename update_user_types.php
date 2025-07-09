@@ -10,7 +10,7 @@ if ($check_column->num_rows == 0) {
     echo "<p style='color: red;'>❌ usertype column does not exist</p>";
     
     // Add usertype column
-    $add_column = "ALTER TABLE users ADD COLUMN usertype VARCHAR(20) DEFAULT 'superAdmin'";
+    $add_column = "ALTER TABLE users ADD COLUMN usertype VARCHAR(20) DEFAULT 'Admin'";
     if ($conn->query($add_column)) {
         echo "<p style='color: green;'>✅ usertype column added successfully</p>";
     } else {
@@ -34,7 +34,7 @@ while ($user = $users->fetch_assoc()) {
     echo "<td>" . htmlspecialchars($user['usertype']) . "</td>";
     
     // Determine appropriate user type based on username
-    $suggested_type = 'superAdmin'; // default
+    $suggested_type = 'Admin'; // default
     
     $username_lower = strtolower($user['userName']);
     if (strpos($username_lower, 'dict') === 0) {
@@ -42,7 +42,7 @@ while ($user = $users->fetch_assoc()) {
         $suggested_type = 'provincial';
     } elseif ($username_lower === 'admin' || $username_lower === 'maindoc') {
         // Admin users
-        $suggested_type = 'superAdmin';
+        $suggested_type = 'Admin';
     }
     
     if ($user['usertype'] === $suggested_type) {

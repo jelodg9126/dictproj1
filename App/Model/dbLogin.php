@@ -50,16 +50,16 @@ if ($result && $result->num_rows > 0) {
         $_SESSION['userAuthLevel'] = $row['usertype'];
     } else {
         // If usertype column doesn't exist, set default user type
-        $_SESSION['userAuthLevel'] = 'superAdmin';
+        $_SESSION['userAuthLevel'] = 'Admin';
         
         // Add usertype column to users table if it doesn't exist
         $check_column = $conn->query("SHOW COLUMNS FROM users LIKE 'usertype'");
         if ($check_column->num_rows == 0) {
-            $add_column = "ALTER TABLE users ADD COLUMN usertype VARCHAR(20) DEFAULT 'superAdmin'";
+            $add_column = "ALTER TABLE users ADD COLUMN usertype VARCHAR(20) DEFAULT 'Admin'";
             $conn->query($add_column);
             
-            // Update existing users to have superAdmin type
-            $update_users = "UPDATE users SET usertype = 'superAdmin' WHERE usertype IS NULL OR usertype = ''";
+            // Update existing users to have Admin type
+            $update_users = "UPDATE users SET usertype = 'Admin' WHERE usertype IS NULL OR usertype = ''";
             $conn->query($update_users);
         }
     }
@@ -73,7 +73,7 @@ if ($result && $result->num_rows > 0) {
     }
     
     switch($_SESSION['userAuthLevel']){
-        case 'superAdmin':
+        case 'Admin':
             //redirect to dashboard
             ob_end_clean(); // Clear any output buffer
             header("Location: /dictproj1/App/Views/Pages/Dashboard.php");

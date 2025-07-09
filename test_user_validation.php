@@ -19,8 +19,8 @@ if (!isset($_SESSION['uNameLogin'])) {
         
         // Test different user types
         switch(strtolower($_SESSION['userAuthLevel'])) {
-            case 'superadmin':
-                echo "<p style='color: blue;'>🔵 User type: Super Admin</p>";
+            case 'admin':
+                echo "<p style='color: blue;'>🔵 User type: Admin</p>";
                 echo "<p>Access level: Full access to all features</p>";
                 break;
             case 'provincial':
