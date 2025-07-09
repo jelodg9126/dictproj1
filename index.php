@@ -4,10 +4,13 @@ ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
 session_start();
 
-// If superadmin, always redirect to addUser
+// If superadmin and no ?page or ?page=dashboard, redirect to addUser
 if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'superadmin') {
-    header('Location: /dictproj1/App/Views/Pages/addUser.php');
-    exit();
+    $page = $_GET['page'] ?? '';
+    if ($page === '' || $page === 'dashboard') {
+        header('Location: /dictproj1/index.php?page=addUser');
+        exit();
+    }
 }
 
 $page = $_GET['page'] ?? 'logout';

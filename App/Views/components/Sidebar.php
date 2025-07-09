@@ -39,13 +39,6 @@ $isProvincial = $userType === 'provincial';
   <!-- Navigation Links -->
   <div class="flex flex-col justify-between text-white text-sm font-semibold font-sans h-full">
     <div class="flex flex-col gap-0.5">
-      <a class="flex items-center gap-3 p-5 transition duration-300 hover:bg-blue-800 active:bg-blue-700 active:scale-95 
-        <?php echo ($currentPage === 'dashboard') ? 'bg-blue-800 border-l-4 border-white' : 'border-l-4 border-transparent'; ?>"
-        href="/dictproj1/index.php?page=dashboard">
-        <i data-lucide="chart-spline" class="w-6 h-6 text-white"></i>
-        <span class="sidebar-label hidden transition-opacity duration-300">Dashboard</span>
-      </a>
-
       <?php if ($isSuperAdmin): ?>
         <!-- Only Add User for SuperAdmin -->
         <a href="/dictproj1/index.php?page=addUser"

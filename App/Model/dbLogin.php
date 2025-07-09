@@ -72,8 +72,8 @@ if ($result && $result->num_rows > 0) {
         ob_end_clean();
     }
     
-    switch($_SESSION['userAuthLevel']){
-        case 'Admin':
+    switch(strtolower($_SESSION['userAuthLevel'])){
+        case 'admin':
             //redirect to dashboard
             ob_end_clean(); // Clear any output buffer
             header("Location: /dictproj1/App/Views/Pages/Dashboard.php");
@@ -83,6 +83,11 @@ if ($result && $result->num_rows > 0) {
             //redirect to dashboard
             ob_end_clean(); // Clear any output buffer
             header("Location: /dictproj1/App/Views/RegionalPages/DashboardPO.php");
+            exit();
+            break;
+        case 'superadmin':
+            ob_end_clean();
+            header("Location: /dictproj1/index.php?page=addUser");
             exit();
             break;
         default:
