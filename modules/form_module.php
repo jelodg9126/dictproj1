@@ -71,54 +71,63 @@ if (isset($pre_selected_office)) {
         $exclude_receiving_office = $office_to_receiving[$pre_selected_office];
     }
 }
+
+// Pre-fill sender name and email from users table
+include_once __DIR__ . '/../App/Model/connect.php';
+$prefill_sender_name = '';
+$prefill_sender_email = '';
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare("SELECT name, email FROM users WHERE userID = ? LIMIT 1");
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $stmt->bind_result($prefill_sender_name, $prefill_sender_email);
+    $stmt->fetch();
+    $stmt->close();
+}
 ?>
 
 <div class="form-container" id="documentFormContainer">
     <form action="/dictproj1/modules/process_form.php" method="post" id="documentForm" enctype="multipart/form-data">
-        <div class="form-section">
+        <div class="form-section" style="display:<?php echo ($office_readonly && $filetype_readonly) ? 'none' : 'block'; ?>;">
             <h3>Office Information</h3>
             <div class="form-group">
                 <label for="officeName" class="required">Select Office</label>
-                <select name="officeName" id="officeName" required <?php echo $office_readonly ? 'disabled' : ''; ?>>
-                    <option value="">-- Select Office --</option>
-                    <option value="dictBulacan" <?php echo $pre_selected_office === 'dictBulacan' ? 'selected' : ''; ?>>Provincial Office Bulacan</option>
-                    <option value="dictPampanga" <?php echo $pre_selected_office === 'dictPampanga' ? 'selected' : ''; ?>>Provincial Office Pampanga</option>
-                    <option value="dictAurora" <?php echo $pre_selected_office === 'dictAurora' ? 'selected' : ''; ?>>Provincial Office Aurora</option>
-                    <option value="dictBataan" <?php echo $pre_selected_office === 'dictBataan' ? 'selected' : ''; ?>>Provincial Office Bataan</option>
-                    <option value="dictNE" <?php echo $pre_selected_office === 'dictNE' ? 'selected' : ''; ?>>Provincial Office Nueva Ecija</option>
-                    <option value="dictTarlac" <?php echo $pre_selected_office === 'dictTarlac' ? 'selected' : ''; ?>>Provincial Office Tarlac</option>
-                    <option value="dictZambales" <?php echo $pre_selected_office === 'dictZambales' ? 'selected' : ''; ?>>Provincial Office Zambales</option>
-                    <option value="maindoc" <?php echo $pre_selected_office === 'maindoc' ? 'selected' : ''; ?>>DICT Region 3 Office</option>
-                    <option value="Others" <?php echo $pre_selected_office === 'Others' ? 'selected' : ''; ?>>Others</option>
-                </select>
                 <?php if ($office_readonly): ?>
                     <input type="hidden" name="officeName" value="<?php echo htmlspecialchars($pre_selected_office); ?>">
+                <?php else: ?>
+                    <select name="officeName" id="officeName" required>
+                        <option value="">-- Select Office --</option>
+                        <option value="dictBulacan" <?php echo $pre_selected_office === 'dictBulacan' ? 'selected' : ''; ?>>Provincial Office Bulacan</option>
+                        <option value="dictPampanga" <?php echo $pre_selected_office === 'dictPampanga' ? 'selected' : ''; ?>>Provincial Office Pampanga</option>
+                        <option value="dictAurora" <?php echo $pre_selected_office === 'dictAurora' ? 'selected' : ''; ?>>Provincial Office Aurora</option>
+                        <option value="dictBataan" <?php echo $pre_selected_office === 'dictBataan' ? 'selected' : ''; ?>>Provincial Office Bataan</option>
+                        <option value="dictNE" <?php echo $pre_selected_office === 'dictNE' ? 'selected' : ''; ?>>Provincial Office Nueva Ecija</option>
+                        <option value="dictTarlac" <?php echo $pre_selected_office === 'dictTarlac' ? 'selected' : ''; ?>>Provincial Office Tarlac</option>
+                        <option value="dictZambales" <?php echo $pre_selected_office === 'dictZambales' ? 'selected' : ''; ?>>Provincial Office Zambales</option>
+                        <option value="maindoc" <?php echo $pre_selected_office === 'maindoc' ? 'selected' : ''; ?>>DICT Region 3 Office</option>
+                        <option value="Others" <?php echo $pre_selected_office === 'Others' ? 'selected' : ''; ?>>Others</option>
+                    </select>
                 <?php endif; ?>
             </div>
             <div class="form-group">
                 <label for="filetype" class="required">Document Type</label>
-                <select name="filetype" id="filetype" required <?php echo $filetype_readonly ? 'disabled' : ''; ?>>
-                    <option value="">-- Select Document Type --</option>
-                    <option value="incoming" <?php echo $pre_selected_filetype === 'incoming' ? 'selected' : ''; ?>>Incoming</option>
-                    <option value="outgoing" <?php echo $pre_selected_filetype === 'outgoing' ? 'selected' : ''; ?>>Outgoing</option>
-                </select>
                 <?php if ($filetype_readonly): ?>
                     <input type="hidden" name="filetype" value="<?php echo $pre_selected_filetype; ?>">
+                <?php else: ?>
+                    <select name="filetype" id="filetype" required>
+                        <option value="">-- Select Document Type --</option>
+                        <option value="incoming" <?php echo $pre_selected_filetype === 'incoming' ? 'selected' : ''; ?>>Incoming</option>
+                        <option value="outgoing" <?php echo $pre_selected_filetype === 'outgoing' ? 'selected' : ''; ?>>Outgoing</option>
+                    </select>
                 <?php endif; ?>
             </div>
         </div>
         
-        <div class="form-section">
+        <div class="form-section" style="display:none;">
             <h3>Sender Information</h3>
             <div class="form-row">
-                <div class="form-group">
-                    <label for="senderName" class="required">Sender Name</label>
-                    <input type="text" name="senderName" id="senderName" required placeholder="Enter your full name">
-                </div>
-                <div class="form-group">
-                    <label for="emailAdd" class="required">Email Address</label>
-                    <input type="email" name="emailAdd" id="emailAdd" required placeholder="Enter your email">
-                </div>
+                <input type="hidden" name="senderName" value="<?php echo htmlspecialchars($prefill_sender_name); ?>">
+                <input type="hidden" name="emailAdd" value="<?php echo htmlspecialchars($prefill_sender_email); ?>">
             </div>
         </div>
         
@@ -295,12 +304,66 @@ document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('documentForm');
         if (form) {
             form.addEventListener('submit', function(e) {
-                // Only save if something is drawn
-                if (!ctx.getImageData(0, 0, canvas.width, canvas.height).data.some(channel => channel !== 0)) {
-                    signatureInput.value = '';
-                } else {
-                    signatureInput.value = canvas.toDataURL('image/png');
+                e.preventDefault();
+                // Prepare FormData
+                const formData = new FormData(form);
+                // Add AJAX flag for backend
+                formData.append('ajax', 'true');
+                // If signature pad exists, update hidden input
+                const canvas = document.getElementById('signaturePad');
+                const signatureInput = document.getElementById('signatureInput');
+                if (canvas && signatureInput) {
+                    if (!canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data.some(channel => channel !== 0)) {
+                        signatureInput.value = '';
+                    } else {
+                        signatureInput.value = canvas.toDataURL('image/png');
+                    }
+                    formData.set('signature', signatureInput.value);
                 }
+                // Show loading state
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Processing...';
+                submitBtn.disabled = true;
+                fetch('/dictproj1/modules/process_form.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: data.message || 'Document sent successfully!',
+                            confirmButtonColor: '#3085d6',
+                            timer: 2000
+                        });
+                        localStorage.setItem('auditlog-refresh', Date.now());
+                        window.dispatchEvent(new Event('auditlog-refresh'));
+                        setTimeout(() => { window.location.reload(); }, 2000);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: (data.errors ? data.errors.join(', ') : 'Unknown error occurred'),
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while processing your request.',
+                        confirmButtonColor: '#d33'
+                    });
+                })
+                .finally(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                });
             });
         }
     }

@@ -183,6 +183,18 @@ function getOfficeDisplayNamePHP($code, $map) {
     }
     return $code;
 }
+
+// Fetch receiver name from users table for the current session user
+$receiverName = '';
+if (isset($_SESSION['userID'])) {
+    $userID = $_SESSION['userID'];
+    $stmtReceiver = $conn->prepare('SELECT name FROM users WHERE userID = ?');
+    $stmtReceiver->bind_param('i', $userID);
+    $stmtReceiver->execute();
+    $stmtReceiver->bind_result($receiverName);
+    $stmtReceiver->fetch();
+    $stmtReceiver->close();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -590,6 +602,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                             viewBtn.setAttribute('data-row', JSON.stringify(rowData));
                         }
                     }
+                    localStorage.setItem('auditlog-refresh', Date.now());
                 } else {
                     Swal.fire({
                         icon: 'error',

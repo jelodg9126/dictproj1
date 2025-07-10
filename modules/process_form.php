@@ -169,6 +169,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         // Execute the statement
         if ($stmt->execute()) {
+            // Audit log: only for successful document send
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            error_log('userID: ' . ($_SESSION['userID'] ?? 'not set') . ', userAuthLevel: ' . ($_SESSION['userAuthLevel'] ?? 'not set'));
+            if (isset($_SESSION['userID']) && isset($_SESSION['userAuthLevel'])) {
+                include_once __DIR__ . '/../App/Model/log_audit.php';
+                $user_id = $_SESSION['userID'];
+                $role = $_SESSION['userAuthLevel'];
+                // Try to get name and office from session, otherwise fetch from DB
+                $name = $_SESSION['name'] ?? null;
+                $office_name = $_SESSION['office'] ?? null;
+                if (!$name || !$office_name) {
+                    $stmtUser = $conn->prepare('SELECT name, office FROM users WHERE userID = ?');
+                    $stmtUser->bind_param('i', $user_id);
+                    $stmtUser->execute();
+                    $stmtUser->bind_result($name, $office_name);
+                    $stmtUser->fetch();
+                    $stmtUser->close();
+                }
+                $officeDisplayNames = [
+                    'dictbulacan' => 'Provincial Office Bulacan',
+                    'dictaurora' => 'Provincial Office Aurora',
+                    'dictbataan' => 'Provincial Office Bataan',
+                    'dictpampanga' => 'Provincial Office Pampanga',
+                    'dictPampanga' => 'Provincial Office Pampanga',
+                    'dicttarlac' => 'Provincial Office Tarlac',
+                    'dictzambales' => 'Provincial Office Zambales',
+                    'dictothers' => 'Provincial Office Others',
+                    'dictNE' => 'Provincial Office Nueva Ecija',
+                    'dictne' => 'Provincial Office Nueva Ecija',
+                    'dictNUEVAECIJA' => 'Provincial Office Nueva Ecija',
+                    'maindoc' => 'DICT Region 3 Office',
+                    'Rdictpampanga' => 'Provincial Office Pampanga',
+                    'RdictPampanga' => 'Provincial Office Pampanga',
+                    'RdictTarlac' => 'Provincial Office Tarlac',
+                    'RdictBataan' => 'Provincial Office Bataan',
+                    'RdictBulacan' => 'Provincial Office Bulacan',
+                    'RdictAurora' => 'Provincial Office Aurora',
+                    'RdictZambales' => 'Provincial Office Zambales',
+                    'RdictNuevaEcija' => 'Provincial Office Nueva Ecija',
+                    'RdictNE' => 'Provincial Office Nueva Ecija',
+                    'Rmaindoc' => 'DICT Region 3 Office',
+                ];
+                $officeLabel = $officeDisplayNames[$addressTo] ?? $addressTo;
+                $action = "Sent a document to $officeLabel";
+                log_audit_action($conn, $user_id, $name, $office_name, $role, $action);
+                if ($conn->error) error_log('Audit log insert error: ' . $conn->error);
+            }
+            // Trigger audit log refresh in parent window (if opened in a modal or iframe)
+            // Only output JSON for AJAX requests as below.
             // Check if this is an AJAX request
             if (isset($_POST['ajax']) && $_POST['ajax'] === 'true') {
                 header('Content-Type: application/json');

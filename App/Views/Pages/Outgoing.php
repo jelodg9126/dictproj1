@@ -765,6 +765,62 @@ function getOfficeDisplayNamePHP($code, $map) {
                 }
             };
         }
+        // --- Lightbox for Sender Signature ---
+        var senderSig = document.getElementById('detailsSenderSignature');
+        if (senderSig) {
+            senderSig.style.cursor = 'pointer';
+            senderSig.onclick = function() {
+                if (!senderSig.src || senderSig.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedSignature');
+                enlarged.src = senderSig.src;
+                var lightbox = document.getElementById('signatureLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        // --- Lightbox for Receiver Signature ---
+        var receiverSig = document.getElementById('detailsReceiverSignature');
+        if (receiverSig) {
+            receiverSig.style.cursor = 'pointer';
+            receiverSig.onclick = function() {
+                if (!receiverSig.src || receiverSig.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedSignature');
+                enlarged.src = receiverSig.src;
+                var lightbox = document.getElementById('signatureLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        // --- Lightbox for Sender POD ---
+        var senderPodImg = document.getElementById('detailsSenderPod');
+        if (senderPodImg) {
+            senderPodImg.style.cursor = 'pointer';
+            senderPodImg.onclick = function() {
+                if (!senderPodImg.src || senderPodImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedPod');
+                enlarged.src = senderPodImg.src;
+                var lightbox = document.getElementById('podLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
+        // --- Lightbox for Receiver POD ---
+        var receiverPodImg = document.getElementById('detailsReceiverPod');
+        if (receiverPodImg) {
+            receiverPodImg.style.cursor = 'pointer';
+            receiverPodImg.onclick = function() {
+                if (!receiverPodImg.src || receiverPodImg.style.display === 'none') return;
+                var enlarged = document.getElementById('enlargedPod');
+                enlarged.src = receiverPodImg.src;
+                var lightbox = document.getElementById('podLightbox');
+                lightbox.style.display = 'flex';
+                lightbox.style.opacity = 0;
+                setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+            };
+        }
         // Signature enlarge (lightbox) feature
         var signatureEnlargeLink = document.getElementById('signatureEnlargeLink');
         if (signatureEnlargeLink) {

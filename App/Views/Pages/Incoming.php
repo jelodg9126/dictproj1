@@ -197,6 +197,18 @@ if (isset($_SESSION['uNameLogin'])) {
     }
 }
 
+// Fetch receiver name from users table for the current session user
+$receiverName = '';
+if (isset($_SESSION['userID'])) {
+    $userID = $_SESSION['userID'];
+    $stmtReceiver = $conn->prepare('SELECT name FROM users WHERE userID = ?');
+    $stmtReceiver->bind_param('i', $userID);
+    $stmtReceiver->execute();
+    $stmtReceiver->bind_result($receiverName);
+    $stmtReceiver->fetch();
+    $stmtReceiver->close();
+}
+
 $offices_sql = "SELECT DISTINCT officeName FROM maindoc WHERE filetype = 'incoming'" . $user_receiving_office_filter . " ORDER BY officeName";
 $offices_result = $conn->query($offices_sql);
 $offices = [];
@@ -630,7 +642,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                         <h3>Receipt Information</h3>
                         <div class="form-group">
                             <label for="receiverName" class="required">Your Name (Receiver)</label>
-                            <input type="text" name="receiverName" id="receiverName" required placeholder="Enter your full name">
+                            <input type="text" name="receiverName" id="receiverName" value="<?php echo htmlspecialchars($receiverName); ?>" class="input-readonly" readonly required>
                         </div>
                         <div class="form-group">
                             <label for="receiptSignaturePad">Please sign below to confirm receipt:</label>
@@ -733,12 +745,8 @@ function getOfficeDisplayNamePHP($code, $map) {
                 var rowData = btn.getAttribute('data-row');
                 if (!rowData) return;
                 var data = JSON.parse(rowData);
-                // Prefill Received By if available, always editable
-                var receiverNameInput = document.getElementById('receiverName');
-                if (receiverNameInput) {
-                    receiverNameInput.value = data.receivedBy || '';
-                    receiverNameInput.readOnly = false;
-                }
+                // Receiver name is now auto-filled and readonly from PHP
+                // No need to manually set it here
                 // Always clear signature pad
                 var receiptSignatureInput = document.getElementById('receiptSignatureInput');
                 if (receiptSignatureInput) receiptSignatureInput.value = '';
@@ -1142,6 +1150,8 @@ function getOfficeDisplayNamePHP($code, $map) {
                         confirmButtonColor: '#3085d6',
                         timer: 2000
                     }).then(() => {
+                        window.dispatchEvent(new Event('auditlog-refresh'));
+                        localStorage.setItem('auditlog-refresh', Date.now());
                         window.location.reload();
                     });
                 } else {

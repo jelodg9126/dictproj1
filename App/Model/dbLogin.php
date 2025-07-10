@@ -42,7 +42,8 @@ if ($result && $result->num_rows > 0) {
     // If a match is found, session variables are set
     $row = $result->fetch_assoc();
     $_SESSION['uNameLogin'] = $row["userName"];
-    $_SESSION['user_id'] = $row["userID"]; // Use correct column name
+    $_SESSION['user_id'] = $row["userID"];
+    $_SESSION['userID'] = $row["userID"];
     $_SESSION['login_time'] = time();
     
     // Check if usertype column exists (note: lowercase in database)
