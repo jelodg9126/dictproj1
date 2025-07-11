@@ -46,6 +46,16 @@ try {
         $signatureBlob = base64_decode(str_replace('data:image/png;base64,', '', $signatureData));
         $null = null;
         $currentTimestamp = date('Y-m-d H:i:s');
+        // Fetch document title for audit log
+        $doctitle = '';
+        $doc_stmt = $conn->prepare('SELECT doctitle FROM maindoc WHERE transactionID = ?');
+        if ($doc_stmt) {
+            $doc_stmt->bind_param('i', $transactionID);
+            $doc_stmt->execute();
+            $doc_stmt->bind_result($doctitle);
+            $doc_stmt->fetch();
+            $doc_stmt->close();
+        }
         $stmt = $conn->prepare("UPDATE maindoc SET endorsedToName=?, endorsedToSignature=?, endorsedDocProof=?, endorsedDocProof_filename=?, endorsedDocProof_mime_type=?, endorsementTimestamp=?, status='Endorsed' WHERE transactionID=?");
         if (!$stmt) {
             throw new Exception('Prepare failed: ' . $conn->error);
@@ -86,6 +96,9 @@ try {
                     $stmtUser->close();
                 }
                 $action = "Endorsed a document to $endorsedToName";
+                if (!empty($doctitle)) {
+                    $action = "Endorsed document \"$doctitle\" to $endorsedToName";
+                }
                 log_audit_action($conn, $user_id, $name, $office_name, $role, $action);
                 if ($conn->error) error_log('Audit log insert error: ' . $conn->error);
             }

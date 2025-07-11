@@ -230,8 +230,8 @@ if (isset($_SESSION['userID'])) {
                             <thead class="bg-gray-50 border-b border-gray-200">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Office</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document Title</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sender Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivery Mode</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Courier Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Received By</th>
@@ -245,8 +245,8 @@ if (isset($_SESSION['userID'])) {
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames); ?></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['doctitle'] ?? '-'); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['senderName'] ?? ''); ?></td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['emailAdd'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['modeOfDel'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['courierName'] ?? '-'); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['receivedBy'] ?? '-'); ?></td>
@@ -262,6 +262,7 @@ if (isset($_SESSION['userID'])) {
                                                     "endorsedToName" => $row["endorsedToName"] ?? '',
                                                     "hasEndorsedSignature" => !empty($row["endorsedToSignature"]),
                                                     "hasEndorsedDocProof" => !empty($row["endorsedDocProof"]),
+                                                    "doctitle" => $row["doctitle"] ?? ''
                                                 ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</a>
                                                 <?php if ($isAdmin): ?>
                                                     <button class="endorse-btn bg-green-500 text-white px-3 py-1 rounded ml-2" data-id="<?php echo $row['transactionID']; ?>">Endorse</button>
@@ -289,6 +290,10 @@ if (isset($_SESSION['userID'])) {
             <div class="modal-body">
                 <div class="form-section">
                     <h3>Document Information</h3>
+                    <div class="form-group">
+                        <label for="detailsDocumentTitle">Document Title</label>
+                        <input type="text" id="detailsDocumentTitle" readonly class="input-readonly">
+                    </div>
                     <div><b>Office:</b> <span id="detailsOfficeName"></span></div>
                     <div><b>Sender:</b> <span id="detailsSenderName"></span></div>
                     <div><b>Date Received:</b> <span id="detailsDateReceived"></span></div>
@@ -432,6 +437,7 @@ if (isset($_SESSION['userID'])) {
                 document.getElementById('detailsSenderName').textContent = data.senderName || '';
                 document.getElementById('detailsDateReceived').textContent = data.dateAndTime || '';
                 document.getElementById('detailsReceivedBy').textContent = data.receivedBy || '';
+                document.getElementById('detailsDocumentTitle').value = data.doctitle || '';
                 var transactionID = data.transactionID;
                 document.getElementById('detailsSignature').src = '/dictproj1/modules/get_signature.php?id=' + transactionID;
                 document.getElementById('detailsPod').src = '/dictproj1/modules/get_pod.php?id=' + transactionID;

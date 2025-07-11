@@ -55,6 +55,7 @@ $result = $conn->query($sql);
                             <thead class="bg-gray-50 border-b border-gray-200">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Office</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document Title</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sender Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endorsed To</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endorsed Date & Time</th>
@@ -66,6 +67,7 @@ $result = $conn->query($sql);
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['officeName'] ?? ''); ?></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['doctitle'] ?? '-'); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['senderName'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['endorsedToName'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -82,6 +84,7 @@ $result = $conn->query($sql);
                                                     "endorsementTimestamp" => isset($row["endorsementTimestamp"]) && $row["endorsementTimestamp"] ? (string)$row["endorsementTimestamp"] : '',
                                                     "hasEndorsedSignature" => !empty($row["endorsedToSignature"]),
                                                     "hasEndorsedDocProof" => !empty($row["endorsedDocProof"]),
+                                                    "doctitle" => $row["doctitle"] ?? '',
                                                 ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</a>
                                             </td>
                                         </tr>
@@ -106,6 +109,10 @@ $result = $conn->query($sql);
             <div class="modal-body">
                 <div class="form-section">
                     <h3>Document Information</h3>
+                    <div class="form-group">
+                        <label for="detailsDocumentTitle">Document Title</label>
+                        <input type="text" id="detailsDocumentTitle" readonly class="input-readonly">
+                    </div>
                     <div><b>Office:</b> <span id="detailsOfficeName"></span></div>
                     <div><b>Sender:</b> <span id="detailsSenderName"></span></div>
                     <div><b>Date Received:</b> <span id="detailsDateReceived"></span></div>
@@ -161,6 +168,7 @@ $result = $conn->query($sql);
                 document.getElementById('detailsSenderName').textContent = data.senderName || '';
                 document.getElementById('detailsDateReceived').textContent = data.dateAndTime || '';
                 document.getElementById('detailsReceivedBy').textContent = data.receivedBy || '';
+                document.getElementById('detailsDocumentTitle').value = data.doctitle || '';
                 var transactionID = data.transactionID;
                 document.getElementById('detailsSignature').src = '/dictproj1/modules/get_signature.php?id=' + transactionID;
                 document.getElementById('detailsPod').src = '/dictproj1/modules/get_pod.php?id=' + transactionID;

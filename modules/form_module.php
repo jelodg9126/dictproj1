@@ -132,6 +132,14 @@ if (isset($_SESSION['user_id'])) {
         </div>
         
         <div class="form-section">
+            <h3>Document Information</h3>
+            <div class="form-group">
+                <label for="documentTitle" class="required">Document Title</label>
+                <input type="text" name="documentTitle" id="documentTitle" placeholder="Enter document title" required>
+            </div>
+        </div>
+        
+        <div class="form-section">
             <h3>Delivery Information</h3>
             <div class="form-group">
                 <label for="addressTo" class="required">Receiving Office</label>

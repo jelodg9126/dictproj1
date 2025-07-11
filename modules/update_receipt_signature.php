@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Update Receipt Signature Module - Handles receipt signature submission for incoming documents
 include __DIR__ . '/../App/Model/connect.php';
 
@@ -82,15 +83,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     try {
         // First, verify this is a valid document (no filetype check)
-        $check_stmt = $conn->prepare("SELECT transactionID, filetype FROM maindoc WHERE transactionID = ?");
+        $check_stmt = $conn->prepare("SELECT transactionID, filetype, doctitle, officeName FROM maindoc WHERE transactionID = ?");
         $check_stmt->bind_param("i", $transactionID);
         $check_stmt->execute();
         $check_result = $check_stmt->get_result();
-        
-        if ($check_result->num_rows === 0) {
+        $doctitle = '';
+        $sendingOffice = '';
+        if ($row = $check_result->fetch_assoc()) {
+            $doctitle = $row['doctitle'] ?? '';
+            $sendingOffice = $row['officeName'] ?? '';
+        } else {
             throw new Exception("Document not found.");
         }
-        
         $check_stmt->close();
         
         // Update the document with receipt signature, receiver name, and receiver POD (store in new columns)
@@ -148,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'Rmaindoc' => 'DICT Region 3 Office',
                 ];
                 $officeLabel = $officeDisplayNames[strtolower($sendingOffice)] ?? $sendingOffice;
-                $action = "Received a document from $officeLabel";
+                $action = "Received document \"$doctitle\" from $officeLabel";
                 log_audit_action($conn, $user_id, $name, $office_name, $role, $action);
                 if ($conn->error) error_log('Audit log insert error: ' . $conn->error);
             }
@@ -209,4 +213,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $conn->close();
+ob_end_flush();
 ?> 
