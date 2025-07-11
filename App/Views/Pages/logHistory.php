@@ -23,41 +23,16 @@
                         <table class="w-full">
                             <thead class="bg-gray-50 border-b border-gray-200">
                                 <tr>
+                                    <!-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Log ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th> -->
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Office</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sender Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endorsed To</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endorsed Date & Time</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Login Time</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Logout Time</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if ($result && $result->num_rows > 0): ?>
-                                    <?php while ($row = $result->fetch_assoc()): ?>
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['officeName'] ?? ''); ?></td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['senderName'] ?? ''); ?></td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['endorsedToName'] ?? ''); ?></td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <?php echo !empty($row['endorsementTimestamp']) ? date('M d, Y g:i A', strtotime($row['endorsementTimestamp'])) : '-'; ?>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <a href="#" class="view-btn bg-blue-500 text-white px-3 py-1 rounded" data-row='<?php echo json_encode([
-                                                    "officeName" => $row["officeName"] ?? '',
-                                                    "senderName" => $row["senderName"] ?? '',
-                                                    "dateAndTime" => $row["dateAndTime"] ?? '',
-                                                    "receivedBy" => $row["receivedBy"] ?? '',
-                                                    "transactionID" => $row["transactionID"],
-                                                    "endorsedToName" => $row["endorsedToName"] ?? '',
-                                                    "endorsementTimestamp" => isset($row["endorsementTimestamp"]) && $row["endorsementTimestamp"] ? (string)$row["endorsementTimestamp"] : '',
-                                                    "hasEndorsedSignature" => !empty($row["endorsedToSignature"]),
-                                                    "hasEndorsedDocProof" => !empty($row["endorsedDocProof"]),
-                                                ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>'>View</a>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                <?php else: ?>
-                                    <tr><td colspan="5" class="text-center py-4 text-gray-500">No endorsed documents found.</td></tr>
-                                <?php endif; ?>
+                                <!-- Table rows will be filled by JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -121,6 +96,38 @@
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // --- AUTO-REFRESH LOG HISTORY TABLE EVERY 3 SECONDS ---
+        function renderLogRows(data) {
+            const tbody = document.querySelector('table.w-full tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">No log history records found.</td></tr>';
+                return;
+            }
+            data.forEach(function(row) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.name || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.office || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.login_time ? new Date(row.login_time).toLocaleString() : '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.logout_time ? new Date(row.logout_time).toLocaleString() : '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function fetchLogHistory() {
+            fetch('/dictproj1/modules/get_user_log_history.php')
+                .then(response => response.json())
+                .then(json => {
+                    renderLogRows(json.data || []);
+                })
+                .catch(() => {});
+        }
+        fetchLogHistory();
+        setInterval(fetchLogHistory, 3000);
+
         document.querySelectorAll('.view-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();

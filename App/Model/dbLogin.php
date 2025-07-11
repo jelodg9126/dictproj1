@@ -68,6 +68,15 @@ if ($result && $result->num_rows > 0) {
     // Set user type in session
     $_SESSION['userAuthLevel'] = $row['usertype'];
     
+    // Insert login record into log_history
+    $user_id = $_SESSION['userID'];
+    $name = $row['name'];
+    $office = $row['office'];
+    $stmt_log = $conn->prepare("INSERT INTO log_history (user_id, name, office, login_time) VALUES (?, ?, ?, NOW())");
+    $stmt_log->bind_param("iss", $user_id, $name, $office);
+    $stmt_log->execute();
+    $stmt_log->close();
+    
     // Clear any output buffer to ensure clean redirect
     if (ob_get_level()) {
         ob_end_clean();
