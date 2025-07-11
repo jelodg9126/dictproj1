@@ -261,7 +261,11 @@
         </div>
     </div>
 
-
+ <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="/dictproj1/public/Scripts/pieGraph.js"></script>
@@ -269,12 +273,6 @@
     <script src="/dictproj1/public/Scripts/lineGraph.js"></script>
     <script src="/dictproj1/public/Scripts/toggleSidebar.js"></script>
     <script src="/dictproj1/public/Scripts/pwa-init.js"></script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            lucide.createIcons();
-        });
-    </script>
 </body>
 
 </html>
