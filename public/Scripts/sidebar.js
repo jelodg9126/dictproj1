@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
     expanded = !expanded;
 
     // Sidebar width
-    sidebar.classList.toggle("w-[8%]", !expanded);
-    sidebar.classList.toggle("w-[20%]", expanded);
+    sidebar.classList.toggle("w-[85px]", !expanded);
+    sidebar.classList.toggle("w-[300px]", expanded);
 
     // Logo transitions
     logoCollapsed.classList.toggle("opacity-0", expanded);
@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Rotate button wrapper
     iconWrapper.classList.toggle("rotate-180", expanded);
-
     // Change icon direction (chevrons-left/right)
     icon.setAttribute("data-lucide", expanded ? "chevrons-left" : "chevrons-left");
     lucide.createIcons(); // re-render icon only

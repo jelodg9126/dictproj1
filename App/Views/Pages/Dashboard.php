@@ -81,7 +81,7 @@
 
             <div class="box1">
                 <div class="box1-wrapper flex justify-between min-w-full items-center max-sm:justify-start">
-    
+                    
                     <i data-lucide="menu" id="burger" class="burg w-7 h-10 hidden text-gray-400 stroke-[3.5] max-sm:block" ></i>
                     <h1 class="text-4xl font-bold px-3 text-blue-900">Dashboard</h1>
                  
