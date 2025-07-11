@@ -269,7 +269,7 @@ if ($actions_result) {
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
+                            <tbody class="bg-white divide-y divide-gray-200" id="auditLogTableBody">
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php while($row = $result->fetch_assoc()): ?>
                                         <tr class="hover:bg-gray-50 transition-colors">
@@ -332,6 +332,39 @@ if ($actions_result) {
                 filterToggleText.textContent = 'Show Filters';
             }
         });
+
+        // --- Audit Log Table Auto-Refresh ---
+        function fetchAuditLog() {
+            fetch('/dictproj1/modules/get_audit_log.php')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('auditLogTableBody');
+                    if (!tbody) return;
+                    const rows = data.data || [];
+                    if (rows.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-12">
+                            <div class="text-gray-500 text-lg">No audit log records found</div>
+                            <div class="text-gray-400 text-sm mt-2">Try adjusting your search or filter criteria</div>
+                        </td></tr>`;
+                        return;
+                    }
+                    tbody.innerHTML = rows.map(row => `
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.name || row.user_fullname || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.office_name || row.user_office || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.role || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.action || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.timestamp ? new Date(row.timestamp).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }) : '-'}</td>
+                        </tr>
+                    `).join('');
+                })
+                .catch(err => {
+                    // Optionally show error
+                });
+        }
+        setInterval(fetchAuditLog, 3000);
+        // Initial fetch
+        fetchAuditLog();
     </script>
 </body>
 </html>

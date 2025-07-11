@@ -379,10 +379,10 @@ function getOfficeDisplayNamePHP($code, $map) {
                                             Office
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Sender Name
+                                            Document Title
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Email
+                                            Sender Name
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Delivery Mode
@@ -421,11 +421,9 @@ function getOfficeDisplayNamePHP($code, $map) {
                                                         <?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames)); ?>
                                                     </div>
                                                 </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['doctitle'] ?? '-'); ?></td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                     <?php echo htmlspecialchars($row['senderName']); ?>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    <?php echo htmlspecialchars($row['emailAdd']); ?>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                     <?php echo htmlspecialchars($row['modeOfDel']); ?>
@@ -499,6 +497,13 @@ function getOfficeDisplayNamePHP($code, $map) {
                         <div class="form-group">
                             <label for="detailsOfficeName">Select Office</label>
                             <input type="text" id="detailsOfficeName" readonly class="input-readonly">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3>Document Information</h3>
+                        <div class="form-group">
+                            <label for="detailsDocumentTitle">Document Title</label>
+                            <input type="text" id="detailsDocumentTitle" readonly class="input-readonly">
                         </div>
                     </div>
                     <div class="form-section">
@@ -850,6 +855,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                     receiverSignatureImg.style.display = 'none';
                     receiverSignatureNoImage.style.display = 'inline';
                 }
+                document.getElementById('detailsDocumentTitle').value = data.doctitle || '';
             });
         });
         // Modal close logic for POD preview

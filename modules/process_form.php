@@ -19,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $modeOfDel = trim($_POST['modeOfDel'] ?? '');
     $courierName = trim($_POST['courierName'] ?? '');
     $filetype = trim($_POST['filetype'] ?? '');
+    $doctitle = trim($_POST['documentTitle'] ?? '');
     $dateAndTime = date("Y-m-d H:i:s");
     
     // Signature extraction and decoding
@@ -96,6 +97,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Document type selection is required (Incoming or Outgoing).";
     }
     
+    if (empty($doctitle)) {
+        $errors[] = "Document title is required.";
+    }
+    
     // Check if courier name is required when courier delivery is selected
     if ($modeOfDel === 'Courier' && empty($courierName)) {
         $errors[] = "Courier name is required when selecting Courier delivery mode.";
@@ -155,16 +160,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         // Prepare the SQL statement with correct column order
         $stmt = $conn->prepare("INSERT INTO maindoc
-            (officeName, senderName, emailAdd, signature, addressTo, modeOfDel, courierName, dateAndTime, status, filetype, pod, pod_filename, pod_mime_type)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            (officeName, senderName, emailAdd, signature, addressTo, modeOfDel, courierName, dateAndTime, status, filetype, pod, pod_filename, pod_mime_type, doctitle)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
         if (!$stmt) {
             throw new Exception("Prepare failed: " . $conn->error);
         }
         
         // Bind parameters (all as strings for MySQLi, including blobs)
-        $stmt->bind_param("sssssssssssss", 
-            $office, $sname, $email, $signatureBlob, $addressTo, $modeOfDel, $courierName, $dateAndTime, $status, $filetype, $podBlob, $podFilename, $podMimeType
+        $stmt->bind_param("ssssssssssssss", 
+            $office, $sname, $email, $signatureBlob, $addressTo, $modeOfDel, $courierName, $dateAndTime, $status, $filetype, $podBlob, $podFilename, $podMimeType, $doctitle
         );
         
         // Execute the statement
@@ -214,7 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     'Rmaindoc' => 'DICT Region 3 Office',
                 ];
                 $officeLabel = $officeDisplayNames[$addressTo] ?? $addressTo;
-                $action = "Sent a document to $officeLabel";
+                $action = "Sent document \"$doctitle\" to $officeLabel";
                 log_audit_action($conn, $user_id, $name, $office_name, $role, $action);
                 if ($conn->error) error_log('Audit log insert error: ' . $conn->error);
             }
