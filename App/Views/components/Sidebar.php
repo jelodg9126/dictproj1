@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.lordicon.com/lordicon.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="manifest" href="/dictproj1/manifest.json">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -20,7 +21,7 @@ $isProvincial = $userType === 'provincial';
 ?>
 
 <!-- Desktop Sidebar -->
-<div id="sidebar" class="h-screen bg-blue-950 w-[85px] transition-all duration-500 flex flex-col justify-between relative overflow-hidden max-sm:hidden">
+<div id="sidebar" class="h-screen bg-blue-950 w-[100px] transition-all duration-500 flex flex-col justify-between relative overflow-hidden max-sm:hidden">
 
   <!-- Toggle Button -->
  <button id="toggleSidebar"
@@ -219,6 +220,7 @@ $isProvincial = $userType === 'provincial';
 </div>
 
 <!-- Scripts -->
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://unpkg.com/lucide@latest"></script>

@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     expanded = !expanded;
 
     // Sidebar width
-    sidebar.classList.toggle("w-[85px]", !expanded);
+    sidebar.classList.toggle("w-[100px]", !expanded);
     sidebar.classList.toggle("w-[300px]", expanded);
 
     // Logo transitions
