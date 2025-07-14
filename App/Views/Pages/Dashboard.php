@@ -273,6 +273,87 @@
     <script src="/dictproj1/public/Scripts/lineGraph.js"></script>
     <script src="/dictproj1/public/Scripts/toggleSidebar.js"></script>
     <script src="/dictproj1/public/Scripts/pwa-init.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+        });
+    </script>
+<!-- Floating Chatbot Toggle Button and Widget (iframe) -->
+<style>
+#chatbot-float-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 60px;
+  height: 60px;
+  background: #4519c8;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  border: none;
+  z-index: 9999;
+  cursor: pointer;
+}
+#chatbot-float-iframe-container {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  display: none;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  z-index: 10000;
+}
+#chatbot-float-iframe {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 400px;
+  height: 600px;
+  max-width: 95vw;
+  max-height: 90vh;
+  border-radius: 18px;
+  display: block;
+}
+#chatbot-float-close {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #4519c8;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 10001;
+}
+</style>
+<button id="chatbot-float-btn" title="Open Botchokoy">
+  <i class="fa-solid fa-robot"></i>
+</button>
+<div id="chatbot-float-iframe-container">
+  <iframe
+    id="chatbot-float-iframe"
+    src="/dictproj1/chatbot.html"
+    style="background: transparent; border: none; box-shadow: none; width: 400px; height: 600px; display: block;"
+    allowtransparency="true"
+    frameborder="0"
+  ></iframe>
+</div>
+<script>
+const floatBtn = document.getElementById('chatbot-float-btn');
+const floatIframe = document.getElementById('chatbot-float-iframe');
+const floatContainer = document.getElementById('chatbot-float-iframe-container');
+floatBtn.onclick = function() {
+  floatBtn.style.display = 'none';
+  floatContainer.style.display = 'block';
+};
+// The close button is now handled inside the iframe (chatbot.html)
+</script>
 </body>
 
 </html>

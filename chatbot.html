@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botchokoy Chatbot</title>
+    <link rel="stylesheet" href="public/assets/css/chatbot-widget.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+        #chatbot-widget {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-width: 400px;
+            min-width: 320px;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            overflow: hidden;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        #chatbot-header {
+            background: #4519c8;
+            color: #fff;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        #chatbot-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: color 0.2s;
+        }
+        #chatbot-close:hover {
+            color: #ffb4b4;
+        }
+        .message-bubble {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 14px;
+            margin-bottom: 8px;
+            max-width: 85%;
+            word-break: break-word;
+            font-size: 0.98em;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .bot-bubble {
+            background: #e4e7ec;
+            color: #222;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            margin-right: auto;
+        }
+        .user-bubble {
+            background: #2563eb;
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            margin-left: auto;
+        }
+        #chatbox {
+            flex: 1 1 auto;
+            padding: 20px;
+            background: #f6f8fa;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 0 20px 16px 20px;
+            background: #fff;
+        }
+        #chatbot-input-row {
+            display: flex;
+            gap: 8px;
+            padding: 12px 20px 20px 20px;
+            background: #fff;
+        }
+        .chat-btn {
+            padding: 7px 18px;
+            border: none;
+            border-radius: 7px;
+            background: linear-gradient(90deg, #2563eb 60%, #1746a2 100%);
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.97em;
+            font-weight: 500;
+            transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+            box-shadow: 0 1.5px 6px rgba(37,99,235,0.07);
+            letter-spacing: 0.01em;
+            margin-bottom: 2px;
+            max-width: 85%;
+            align-self: flex-start;
+            text-align: left;
+            min-width: 140px;
+        }
+        .chat-btn:hover {
+            background: linear-gradient(90deg, #1746a2 60%, #2563eb 100%);
+            transform: translateY(-1px) scale(1.03);
+            box-shadow: 0 3px 12px rgba(37,99,235,0.13);
+        }
+        .disabled-input,
+        #userInput:disabled {
+            background: #e0e0e0 !important;
+            color: #aaa !important;
+            border: 1.5px solid #cccccc !important;
+            cursor: not-allowed !important;
+        }
+        #userInput:disabled:hover {
+            cursor: not-allowed !important;
+        }
+    </style>
+</head>
+<body>
+<div id="chatbot-widget">
+    <div id="chatbot-header">Botchokoy
+        <button id="chatbot-close" title="Close">&times;</button>
+    </div>
+    <div id="chatbox"></div>
+    <div class="chat-options" id="mainOptions">
+        <button class="chat-btn" onclick="showStatusOptions()">Document Status</button>
+        <button class="chat-btn" onclick="showAnalyticsOptions()">Document Analytics</button>
+    </div>
+    <div class="chat-options" id="statusOptions" style="display:none">
+        <button class="chat-btn" onclick="promptForDoc('status')">Check status of a document</button>
+        <button class="chat-btn" onclick="backToMain()">⬅️ Back</button>
+    </div>
+    <div class="chat-options" id="analyticsOptions" style="display:none">
+        <button class="chat-btn" onclick="sendBotQuestion('Total documents sent today')">Total documents sent today</button>
+        <button class="chat-btn" onclick="sendBotQuestion('Total documents received today')">Total documents received today</button>
+        <button class="chat-btn" onclick="sendBotQuestion('Total documents currently in the system')">Total documents currently in the system</button>
+        <button class="chat-btn" onclick="sendBotQuestion('Total pending documents')">Total pending documents</button>
+        <button class="chat-btn" onclick="sendBotQuestion('Total documents endorsed today')">Total documents endorsed today</button>
+        <button class="chat-btn" onclick="backToMain()">⬅️ Back</button>
+    </div>
+    <div class="chat-options" id="cancelOptions" style="display:none">
+        <button class="chat-btn" id="cancelBtn" style="background: #888; color: #fff; max-width: 120px; align-self: flex-start; margin-top: 2px;">Cancel</button>
+    </div>
+    <div id="chatbot-input-row">
+        <input type="text" id="userInput" placeholder="Ask me something..." class="disabled-input" disabled>
+        <button id="sendBtn">Send</button>
+    </div>
+</div>
+<script>
+let awaitingDocType = null;
+const chatbox = document.getElementById('chatbox');
+
+function appendMessage(sender, text) {
+    const div = document.createElement('div');
+    div.className = 'message-bubble ' + (sender === 'user' ? 'user-bubble' : 'bot-bubble');
+    div.innerHTML = `<strong style="font-weight:600;">${sender === 'user' ? 'You' : 'Botchokoy'}:</strong> ${text}`;
+    chatbox.appendChild(div);
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+function showStatusOptions() {
+    document.getElementById('mainOptions').style.display = 'none';
+    document.getElementById('statusOptions').style.display = 'flex';
+    document.getElementById('analyticsOptions').style.display = 'none';
+    disableInput();
+}
+function showAnalyticsOptions() {
+    document.getElementById('mainOptions').style.display = 'none';
+    document.getElementById('statusOptions').style.display = 'none';
+    document.getElementById('analyticsOptions').style.display = 'flex';
+    disableInput();
+}
+function backToMain() {
+    document.getElementById('mainOptions').style.display = 'flex';
+    document.getElementById('statusOptions').style.display = 'none';
+    document.getElementById('analyticsOptions').style.display = 'none';
+    disableInput();
+}
+function promptForDoc(type) {
+    let promptMsg = '';
+    switch(type) {
+        case 'status': promptMsg = 'Please enter the document title to check its status.'; break;
+        // case 'holder': promptMsg = 'Please enter the document title or number to find out who currently has it.'; break;
+        // case 'received': promptMsg = 'Please enter the document title or number to check when it was received.'; break;
+        // case 'endorsed': promptMsg = 'Please enter the document title or number to check if it has been endorsed.'; break;
+    }
+    appendMessage('bot', promptMsg);
+    awaitingDocType = type;
+    enableInput();
+    document.getElementById('statusOptions').style.display = 'none';
+    document.getElementById('mainOptions').style.display = 'none';
+    document.getElementById('analyticsOptions').style.display = 'none';
+    document.getElementById('cancelOptions').style.display = 'flex';
+}
+function enableInput() {
+    const input = document.getElementById('userInput');
+    const btn = document.getElementById('sendBtn');
+    input.disabled = false;
+    btn.disabled = false;
+    input.classList.remove('disabled-input');
+    input.focus();
+    document.getElementById('cancelOptions').style.display = 'flex';
+}
+function disableInput() {
+    const input = document.getElementById('userInput');
+    const btn = document.getElementById('sendBtn');
+    input.disabled = true;
+    btn.disabled = true;
+    if (!input.classList.contains('disabled-input')) input.classList.add('disabled-input');
+    input.value = '';
+    document.getElementById('cancelOptions').style.display = 'none';
+}
+document.getElementById('sendBtn').onclick = function () {
+    if (document.getElementById('sendBtn').disabled) return;
+    const userInput = document.getElementById('userInput').value.trim();
+    if (!userInput) return;
+    if (awaitingDocType) {
+        let question = '';
+        switch(awaitingDocType) {
+            case 'status': question = `What’s the status of document ${userInput}?`; break;
+            case 'holder': question = `Who currently has document ${userInput}?`; break;
+            case 'received': question = `When was document ${userInput} received?`; break;
+            case 'endorsed': question = `Has document ${userInput} been endorsed?`; break;
+        }
+        sendBotQuestion(question);
+        awaitingDocType = null;
+        disableInput();
+        document.getElementById('mainOptions').style.display = 'flex';
+    }
+};
+document.getElementById('userInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !this.disabled) {
+        document.getElementById('sendBtn').click();
+    }
+});
+document.getElementById('cancelBtn').onclick = function() {
+    appendMessage('bot', 'Action cancelled. What else can I help you with?');
+    awaitingDocType = null;
+    disableInput();
+    document.getElementById('mainOptions').style.display = 'flex';
+    document.getElementById('statusOptions').style.display = 'none';
+    document.getElementById('analyticsOptions').style.display = 'none';
+    document.getElementById('cancelOptions').style.display = 'none';
+};
+function sendBotQuestion(question) {
+    appendMessage('user', question);
+    document.getElementById('statusOptions').style.display = 'none';
+    document.getElementById('analyticsOptions').style.display = 'none';
+    fetch('chatbot.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'message=' + encodeURIComponent(question)
+    })
+    .then(response => response.text())
+    .then(data => {
+        appendMessage('bot', data);
+        if (!awaitingDocType) {
+            document.getElementById('mainOptions').style.display = 'flex';
+            disableInput();
+        }
+    })
+    .catch(() => {
+        appendMessage('bot', 'Sorry, there was an error contacting the server.');
+        document.getElementById('mainOptions').style.display = 'flex';
+        disableInput();
+    });
+}
+// On load, show greeting and options
+window.onload = function() {
+    chatbox.innerHTML = '';
+    appendMessage('bot', 'Hello! How can I help you today? Please choose an option below.');
+    document.getElementById('mainOptions').style.display = 'flex';
+    document.getElementById('statusOptions').style.display = 'none';
+    document.getElementById('analyticsOptions').style.display = 'none';
+    disableInput();
+};
+document.getElementById('chatbot-close').onclick = function() {
+    // Try to close the parent floating widget
+    if (window.parent) {
+        const floatBtn = window.parent.document.getElementById('chatbot-float-btn');
+        const floatContainer = window.parent.document.getElementById('chatbot-float-iframe-container');
+        if (floatBtn && floatContainer) {
+            floatBtn.style.display = 'flex';
+            floatContainer.style.display = 'none';
+        }
+    }
+};
+</script>
+</body>
+</html> 

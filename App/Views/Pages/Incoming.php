@@ -402,7 +402,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
+                                <tbody class="bg-white divide-y divide-gray-200" id="incomingTableBody">
                                     <?php if ($result && $result->num_rows > 0): ?>
                                         <?php while($row = $result->fetch_assoc()): ?>
                                             <?php 
@@ -743,7 +743,123 @@ function getOfficeDisplayNamePHP($code, $map) {
         }
         return code;
     }
+    function bindViewBtnHandlers() {
+        document.querySelectorAll('.view-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var rowData = btn.getAttribute('data-row');
+                if (!rowData) return;
+                var data = JSON.parse(rowData);
+                // Receiver name is now auto-filled and readonly from PHP
+                // No need to manually set it here
+                // Always clear signature pad
+                var receiptSignatureInput = document.getElementById('receiptSignatureInput');
+                if (receiptSignatureInput) receiptSignatureInput.value = '';
+                var receiptCanvas = document.getElementById('receiptSignaturePad');
+                if (receiptCanvas && receiptCanvas.getContext) {
+                    var ctx = receiptCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, receiptCanvas.width, receiptCanvas.height);
+                }
+                // Always clear POD file input
+                var podFileInput = document.getElementById('podFile');
+                if (podFileInput) podFileInput.value = '';
+                // Do NOT show any previous signature or POD in the Add Signature modal
+                // Set document info
+                document.getElementById('signatureOfficeName').textContent = getOfficeDisplayName(data.officeName) || '';
+                document.getElementById('signatureSenderName').textContent = data.senderName || '';
+                document.getElementById('signatureDateReceived').textContent = data.dateAndTime ? new Date(data.dateAndTime).toLocaleString() : '';
+                // Set transactionID in hidden input
+                var transactionID = data.transactionID;
+                document.getElementById('signatureTransactionID').value = transactionID;
+                // Set sender POD preview in Add Signature modal
+                var addSignatureSenderPodPreview = document.getElementById('addSignatureSenderPodPreview');
+                var addSignatureSenderPodNoImage = document.getElementById('addSignatureSenderPodNoImage');
+                if (data.pod && data.transactionID) {
+                    addSignatureSenderPodPreview.src = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
+                    addSignatureSenderPodPreview.style.display = 'inline';
+                    addSignatureSenderPodNoImage.style.display = 'none';
+                    addSignatureSenderPodPreview.onerror = function() {
+                        addSignatureSenderPodPreview.style.display = 'none';
+                        addSignatureSenderPodNoImage.style.display = 'inline';
+                    };
+                } else {
+                    addSignatureSenderPodPreview.src = '';
+                    addSignatureSenderPodPreview.style.display = 'none';
+                    addSignatureSenderPodNoImage.style.display = 'inline';
+                }
+                // Show the modal
+                document.getElementById('addSignatureModal').style.display = 'flex';
+                // In the JS view-btn click handler, after setting detailsPod, add:
+                var receiverPodImg = document.getElementById('detailsReceiverPod');
+                var receiverPodEnlargeLink = document.getElementById('receiverPodEnlargeLink');
+                if (receiverPodEnlargeLink) {
+                    receiverPodEnlargeLink.onclick = function(e) {
+                        e.preventDefault();
+                        if (!receiverPodImg.src || receiverPodImg.style.display === 'none') return;
+                        var enlarged = document.getElementById('enlargedReceiverPod');
+                        enlarged.src = receiverPodImg.src;
+                        var lightbox = document.getElementById('receiverPodLightbox');
+                        lightbox.style.display = 'flex';
+                        lightbox.style.opacity = 0;
+                        setTimeout(() => { lightbox.style.opacity = 1; }, 10);
+                    };
+                }
+                document.getElementById('receiverPodLightbox').onclick = function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                        document.getElementById('enlargedReceiverPod').src = '';
+                    }
+                };
+                document.getElementById('enlargedReceiverPod').onclick = function(e) {
+                    e.stopPropagation();
+                };
+                // Signature preview
+                var detailsSignature = document.getElementById('detailsSignature');
+                if (data.hasSignature && data.transactionID) {
+                    detailsSignature.src = '/dictproj1/modules/get_signature.php?id=' + data.transactionID;
+                    detailsSignature.style.display = 'inline';
+                } else {
+                    detailsSignature.src = '';
+                    detailsSignature.style.display = 'none';
+                }
+                // POD preview
+                var podImg = document.getElementById('detailsPod');
+                var podNoImage = document.getElementById('podNoImage');
+                if (data.pod && data.transactionID) {
+                    podImg.src = '/dictproj1/modules/get_pod.php?id=' + data.transactionID;
+                    podImg.style.display = 'inline';
+                    podNoImage.style.display = 'none';
+                    podImg.onerror = function() {
+                        podImg.style.display = 'none';
+                        podNoImage.style.display = 'inline';
+                    };
+                } else {
+                    podImg.src = '';
+                    podImg.style.display = 'none';
+                    podNoImage.style.display = 'inline';
+                }
+                // In JS, after setting detailsSignature, add:
+                var receiverSignatureImg = document.getElementById('detailsReceiverSignature');
+                var receiverSignatureNoImage = document.getElementById('receiverSignatureNoImage');
+                if (data.transactionID) {
+                    receiverSignatureImg.src = '/dictproj1/modules/get_signature.php?id=' + data.transactionID + '&type=receiver';
+                    receiverSignatureImg.style.display = 'inline';
+                    receiverSignatureNoImage.style.display = 'none';
+                    receiverSignatureImg.onerror = function() {
+                        receiverSignatureImg.style.display = 'none';
+                        receiverSignatureNoImage.style.display = 'inline';
+                    };
+                } else {
+                    receiverSignatureImg.src = '';
+                    receiverSignatureImg.style.display = 'none';
+                    receiverSignatureNoImage.style.display = 'inline';
+                }
+                document.getElementById('detailsDocumentTitle').value = data.doctitle || '';
+            });
+        });
+    }
     document.addEventListener('DOMContentLoaded', function() {
+        // bindViewBtnHandlers(); // This was moved to fetchAndUpdateTable
         document.querySelectorAll('.view-btn').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -1292,6 +1408,163 @@ function getOfficeDisplayNamePHP($code, $map) {
                     }
                 });
             };
+        }
+    });
+
+    let autoRefreshInterval = null;
+
+    function isAnyModalOpen() {
+        // Checks if any modal is currently visible (display: flex or block)
+        return Array.from(document.querySelectorAll('.modal'))
+            .some(modal => modal.style.display === 'flex' || modal.style.display === 'block');
+    }
+
+    function getCurrentFilters() {
+        // Reads current filter values from the filter form and pagination
+        const filters = {};
+        const filterForm = document.querySelector('#filterSection form');
+        if (filterForm) {
+            const formData = new FormData(filterForm);
+            for (const [key, value] of formData.entries()) {
+                if (value !== undefined && value !== null) {
+                    filters[key] = value;
+                }
+            }
+        }
+        // Get current page number from active pagination
+        const activePage = document.querySelector('.pagination-page.active');
+        if (activePage) {
+            filters['page_num'] = activePage.dataset.pageNum;
+        } else {
+            // fallback: try to get from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('page_num')) {
+                filters['page_num'] = urlParams.get('page_num');
+            }
+        }
+        return filters;
+    }
+
+    function buildQueryString(params) {
+        return Object.keys(params)
+            .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+            .join('&');
+    }
+
+    function updatePagination(totalPages, currentPage) {
+        const paginationContainer = document.querySelector('.auto-pagination-container');
+        if (!paginationContainer) return;
+        paginationContainer.innerHTML = '';
+        if (totalPages <= 1) return;
+        for (let i = 1; i <= totalPages; i++) {
+            const a = document.createElement('a');
+            a.textContent = i;
+            a.className = 'pagination-page px-3 py-1 border border-gray-300 ' + (i == currentPage ? 'active bg-blue-500 text-white' : 'bg-white text-gray-700');
+            a.style.margin = '0 2px';
+            a.href = '#';
+            a.dataset.pageNum = i;
+            a.onclick = function(e) {
+                e.preventDefault();
+                fetchAndUpdateTable(i);
+            };
+            paginationContainer.appendChild(a);
+        }
+    }
+
+    function fetchAndUpdateTable(pageNum) {
+        if (isAnyModalOpen()) return; // Pause if modal is open
+        const filters = getCurrentFilters();
+        if (pageNum) filters['page_num'] = pageNum;
+        const query = buildQueryString(filters);
+        fetch('/dictproj1/modules/get_incoming_documents.php?' + query)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && Array.isArray(data.data)) {
+                    const tbody = document.getElementById('incomingTableBody');
+                    if (!tbody) return;
+                    tbody.innerHTML = '';
+                    if (data.data.length === 0) {
+                        tbody.innerHTML = `<tr>
+                            <td colspan="9" class="text-center py-12">
+                                <div class="text-gray-500 text-lg">No incoming documents found</div>
+                                <div class="text-gray-400 text-sm mt-2">Try adjusting your search or filter criteria</div>
+                            </td>
+                        </tr>`;
+                    } else {
+                        data.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.className = "hover:bg-[rgb(203,202,202)] transition-colors";
+                            tr.setAttribute('data-transaction-id', row.transactionID);
+                            const dataRow = {
+                                ...row
+                            };
+                            tr.innerHTML = `
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">${row.officeName || '-'}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.doctitle || '-'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.senderName || '-'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.modeOfDel || '-'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.courierName || '-'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.receivedBy || '-'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.status || '-'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.dateAndTime || '-'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    ${row.status && row.status.toLowerCase() !== 'received'
+                                        ? `<button class=\"view-btn bg-blue-500 text-white px-3 py-1 rounded\" data-row='${JSON.stringify(dataRow).replace(/'/g, "&#39;")}'>View</button>`
+                                        : ''}
+                                </td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    // Update pagination
+                    let paginationContainer = document.querySelector('.auto-pagination-container');
+                    if (!paginationContainer) {
+                        // Try to find and create if not present
+                        const tableSection = document.getElementById('incomingTableSection');
+                        if (tableSection) {
+                            paginationContainer = document.createElement('div');
+                            paginationContainer.className = 'flex justify-center my-4 auto-pagination-container';
+                            tableSection.appendChild(paginationContainer);
+                        }
+                    }
+                    updatePagination(data.total_pages, filters['page_num'] || 1);
+                    bindViewBtnHandlers();
+                }
+            });
+    }
+
+    // Start auto-refresh
+    function startAutoRefresh() {
+        if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+        autoRefreshInterval = setInterval(() => fetchAndUpdateTable(), 2000);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        startAutoRefresh();
+        bindViewBtnHandlers();
+        // Monitor modal open/close to immediately pause/resume
+        document.querySelectorAll('.modal').forEach(modal => {
+            const observer = new MutationObserver(() => {
+                if (isAnyModalOpen()) {
+                    if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+                } else {
+                    startAutoRefresh();
+                }
+            });
+            observer.observe(modal, { attributes: true, attributeFilter: ['style'] });
+        });
+        // Also, update table immediately on filter change
+        const filterForm = document.querySelector('#filterSection form');
+        if (filterForm) {
+            filterForm.addEventListener('change', function() {
+                fetchAndUpdateTable(1);
+            });
+            filterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                fetchAndUpdateTable(1);
+            });
         }
     });
 

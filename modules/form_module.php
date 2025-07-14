@@ -123,11 +123,17 @@ if (isset($_SESSION['user_id'])) {
             </div>
         </div>
         
-        <div class="form-section" style="display:none;">
+        <div class="form-section">
             <h3>Sender Information</h3>
             <div class="form-row">
-                <input type="hidden" name="senderName" value="<?php echo htmlspecialchars($prefill_sender_name); ?>">
-                <input type="hidden" name="emailAdd" value="<?php echo htmlspecialchars($prefill_sender_email); ?>">
+                <div class="form-group">
+                    <label for="senderName" class="required">Sender Name</label>
+                    <input type="text" name="senderName" id="senderName" value="<?php echo htmlspecialchars($prefill_sender_name); ?>" placeholder="Enter sender name" required>
+                </div>
+                <div class="form-group">
+                    <label for="emailAdd" class="required">Email Address</label>
+                    <input type="email" name="emailAdd" id="emailAdd" value="<?php echo htmlspecialchars($prefill_sender_email); ?>" placeholder="Enter email address" required>
+                </div>
             </div>
         </div>
         
