@@ -319,6 +319,6 @@ if ($actions_result) {
         </div>
     </div>
 
-    <script src="/dictproj1/public/assets/js/auditLog.js"></script>
+    <script src="/dictproj1/public/Scripts/superadmin/auditLog.js"></script>
 </body>
 </html>

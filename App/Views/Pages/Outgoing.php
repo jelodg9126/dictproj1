@@ -576,7 +576,7 @@ function getOfficeDisplayNamePHP($code, $map) {
     </div>
 
     <script src="/dictproj1/modal.js"></script>
-    <script src="/dictproj1/public/assets/js/outgoing.js"></script>
+    <script src="/dictproj1/public/Scripts/docs/outgoing.js"></script>
 </body>
 </html>
 

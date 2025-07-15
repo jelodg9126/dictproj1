@@ -45,21 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeEndorseForm();
     initializeLightboxes();
     initializeCameraFunctionality();
-    // Add filter toggle functionality
-    const filterToggle = document.getElementById('filterToggle');
-    const filterSection = document.getElementById('filterSection');
-    const filterToggleText = document.getElementById('filterToggleText');
-    if (filterToggle && filterSection) {
-        filterToggle.addEventListener('click', function() {
-            if (filterSection.style.display === 'none' || filterSection.style.display === '') {
-                filterSection.style.display = 'block';
-                if (filterToggleText) filterToggleText.textContent = 'Hide Filters';
-            } else {
-                filterSection.style.display = 'none';
-                if (filterToggleText) filterToggleText.textContent = 'Show Filters';
-            }
-        });
-    }
 });
 
 // Initialize view button functionality

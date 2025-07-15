@@ -163,7 +163,7 @@ if ($result && $result->num_rows > 0) {
         </div>
     </div>
         <script src="/dictproj1/modal.js"></script>
-    <script src="/dictproj1/public/assets/js/addUser.js"></script>
+    <script src="/dictproj1/public/assets/Scripts/addUser.js"></script>
 </body>
 </html>
 <?php $conn->close(); ?>

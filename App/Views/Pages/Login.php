@@ -75,7 +75,7 @@ if (isset($_GET['error'])) {
         });
     </script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="/dictproj1/public/Scripts/passVisible.js"></script>
+    <script src="/dictproj1/public/Scripts/login/passVisible.js"></script>
     <script src="/dictproj1/public/Scripts/pwa-init.js"></script>
 </body>
 </html>

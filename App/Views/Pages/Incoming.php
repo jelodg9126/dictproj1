@@ -278,11 +278,10 @@ function getOfficeDisplayNamePHP($code, $map) {
     <link rel="stylesheet" href="/dictproj1/public/assets/css/modal.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/incoming.css">
-    <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Incoming Documents</title>
 </head>
-<body>
+<body class="min-h-screen">
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
 
@@ -618,7 +617,7 @@ function getOfficeDisplayNamePHP($code, $map) {
     </div>
 
     <!-- Add Signature Modal for Incoming Documents -->
-    <div id="addSignatureModal" class="modal" style="display:none;">
+    <div id="addSignatureModal" class="modal " style="display:none;">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
                 <h2>Add Receipt Signature</h2>
@@ -650,7 +649,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                         <h3>Receipt Information</h3>
                         <div class="form-group">
                             <label for="receiverName" class="required">Your Name (Receiver)</label>
-                            <input type="text" name="receiverName" id="receiverName" value="<?php echo htmlspecialchars($receiverName); ?>" class="input-readonly" readonly required>
+                            <input type="text" name="receiverName" id="receiverName" value="<?php echo htmlspecialchars($receiverName); ?>" class="input-readonly " readonly required>
                         </div>
                         <div class="form-group">
                             <label for="receiptSignaturePad">Please sign below to confirm receipt:</label>
@@ -690,28 +689,10 @@ function getOfficeDisplayNamePHP($code, $map) {
       <img id="addSignatureSenderPodEnlarged" src="" alt="Enlarged Sender POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
 
-    <style>
-    .input-readonly {
-        width: 100%;
-        padding: 6px 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background: #f5f5f5;
-    }
-    .modal {
-        display: none;
-        position: fixed !important;
-        z-index: 99999 !important;
-        left: 0; top: 0; width: 100vw; height: 100vh;
-        align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.3);
-    }
-    .modal[style*="display: flex"] {
-        display: flex !important;
-    }
-    </style>
+  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
-    <script src="/dictproj1/public/assets/js/incoming.js"></script>
+    <script src="/dictproj1/public/Scripts/docs/incoming.js"></script>
+    <script src="/dictproj1/public/Scripts/filterToggle.js"></script>
 </body>
 </html>
 

@@ -224,9 +224,9 @@ $isProvincial = $userType === 'provincial';
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-<script src="/dictproj1/public/Scripts/sidebar.js"> </script>
+<script src="/dictproj1/public/Scripts/sidebar/collapse-sidebar.js"> </script>
 <script src="/dictproj1/public/Scripts/pwa-init.js"></script>
-<script src="/dictproj1/public/Scripts/SidebarDropdown.js"></script>
-<script src="/dictproj1/public/Scripts/LogoutConfirm.js"></script> 
+<script src="/dictproj1/public/Scripts/sidebar/SidebarDropdown.js"></script>
+<script src="/dictproj1/public/Scripts/sidebar/LogoutConfirm.js"></script> 
 </body>
 </html>
