@@ -64,29 +64,9 @@ if ($result && $result->num_rows > 0) {
     <link rel="stylesheet" href="/dictproj1/public/assets/css/dashboard.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/modal.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
+    <link rel="stylesheet" href="/dictproj1/public/assets/css/addUser.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Add Users</title>
-    <style>
-        body {
-            background: linear-gradient(120deg, #48517f 0%, #322b5f 100%);
-            min-height: 100vh;
-        }
-        .modal-content {
-            border-radius: 1.25rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-        }
-        .section-header {
-            font-size: 1.15rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            border-bottom: 3px solid #6366f1;
-            display: inline-block;
-            padding-bottom: 2px;
-        }
-        .required { color: #e53e3e; }
-        .form-row { display: flex; gap: 1.5rem; }
-        .form-row .form-group { flex: 1; }
-    </style>
 </head>
 <body>
     <div class="app-container">
@@ -183,46 +163,7 @@ if ($result && $result->num_rows > 0) {
         </div>
     </div>
         <script src="/dictproj1/modal.js"></script>
-    <script>
-        document.getElementById('addUserForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const form = e.target;
-            const formData = new FormData(form);
-            formData.append('ajax', 'true');
-            const response = await fetch('', {
-                method: 'POST',
-                body: formData
-            });
-            const text = await response.text();
-            // Try to parse new table body from response
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(text, 'text/html');
-            const newTbody = doc.getElementById('usersTableBody');
-            if (newTbody) {
-                document.getElementById('usersTableBody').innerHTML = newTbody.innerHTML;
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'User has been added successfully.',
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'OK',
-                    timer: 2000
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to add user. Please check your input.',
-                    confirmButtonColor: '#d33',
-                    confirmButtonText: 'OK'
-                });
-            }
-            // Close modal and reset form
-            document.querySelectorAll('#formModal .close').forEach(btn => btn.click());
-            form.reset();
-        };
-    </script>
-    </div>
+    <script src="/dictproj1/public/assets/js/addUser.js"></script>
 </body>
 </html>
 <?php $conn->close(); ?>

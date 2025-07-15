@@ -1,0 +1,36 @@
+/* Audit Log Page Specific Styles */
+
+/* Table hover effects */
+.hover\:bg-gray-50:hover {
+    background-color: #f9fafb;
+    transition: background-color 0.2s ease;
+}
+
+/* Filter section styles */
+.filter-input {
+    transition: all 0.3s ease;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button styles */
+#filterToggle {
+    transition: all 0.2s ease;
+}
+#filterToggle:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+/* Pagination styles */
+.pagination-link {
+    transition: all 0.2s ease;
+}
+.pagination-link:hover {
+    background-color: #dbeafe;
+    border-color: #3b82f6;
+} 
