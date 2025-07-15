@@ -31,3 +31,20 @@ const officeDisplayNames = {
 // ... (The rest of the JS logic from the <script> block goes here, unchanged, except for the SweetAlert2 and WebcamJS CDN imports)
 
 // (For brevity, the full code is not repeated here, but in the actual file, all the logic from the <script> block will be included.) 
+
+document.addEventListener('DOMContentLoaded', function() {
+    const filterToggle = document.getElementById('filterToggle');
+    const filterSection = document.getElementById('filterSection');
+    const filterToggleText = document.getElementById('filterToggleText');
+    if (filterToggle && filterSection) {
+        filterToggle.addEventListener('click', function() {
+            if (filterSection.style.display === 'none' || filterSection.style.display === '') {
+                filterSection.style.display = 'block';
+                if (filterToggleText) filterToggleText.textContent = 'Hide Filters';
+            } else {
+                filterSection.style.display = 'none';
+                if (filterToggleText) filterToggleText.textContent = 'Show Filters';
+            }
+        });
+    }
+}); 

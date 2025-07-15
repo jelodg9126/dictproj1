@@ -68,19 +68,21 @@ if (isset($_SESSION['uNameLogin'])) {
 }
 
 if (!empty($search)) {
-    $sql .= " AND (officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
-    $count_sql .= " AND (officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
+    $sql .= " AND (doctitle LIKE ? OR officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
+    $count_sql .= " AND (doctitle LIKE ? OR officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
     $search_param = "%$search%";
     $params[] = $search_param;
     $params[] = $search_param;
     $params[] = $search_param;
     $params[] = $search_param;
-    $types .= "ssss";
+    $params[] = $search_param;
+    $types .= "sssss";
     $count_params[] = $search_param;
     $count_params[] = $search_param;
     $count_params[] = $search_param;
     $count_params[] = $search_param;
-    $count_types .= "ssss";
+    $count_params[] = $search_param;
+    $count_types .= "sssss";
 }
 
 if (!empty($office_filter)) {
@@ -195,15 +197,15 @@ if ($offices_result) {
     }
 }
 
-// Get unique statuses for filter dropdown (only from user's own office)
-$statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE filetype = 'outgoing' AND status IS NOT NULL AND status != ''" . $user_office_filter . " ORDER BY status";
-$statuses_result = $conn->query($statuses_sql);
-$statuses = [];
-if ($statuses_result) {
-    while ($row = $statuses_result->fetch_assoc()) {
-        $statuses[] = $row['status'];
-    }
-}
+// Remove the PHP code that fetches unique statuses for the filter dropdown
+// $statuses_sql = "SELECT DISTINCT status FROM maindoc WHERE filetype = 'outgoing' AND status IS NOT NULL AND status != ''" . $user_office_filter . " ORDER BY status";
+// $statuses_result = $conn->query($statuses_sql);
+// $statuses = [];
+// if ($statuses_result) {
+//     while ($row = $statuses_result->fetch_assoc()) {
+//         $statuses[] = $row['status'];
+//     }
+// }
 
 $officeDisplayNames = [
     'dictbulacan' => 'Provincial Office Bulacan',
@@ -319,17 +321,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                                         <option value="Courier" <?php echo $delivery_filter === 'Courier' ? 'selected' : ''; ?>>Courier</option>
                                         <option value="In-Person" <?php echo $delivery_filter === 'In-Person' ? 'selected' : ''; ?>>In-Person</option>
                                     </select>
-                                    <select
-                                        name="status"
-                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                        <option value="">All Status</option>
-                                        <?php foreach ($statuses as $status): ?>
-                                            <option value="<?php echo htmlspecialchars($status); ?>" 
-                                                    <?php echo $status_filter === $status ? 'selected' : ''; ?>>
-                                                <?php echo ucfirst(htmlspecialchars($status)); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <!-- Status filter removed because only 'pending' is available -->
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">

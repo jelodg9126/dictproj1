@@ -74,19 +74,21 @@ if (isset($_SESSION['uNameLogin'])) {
 }
 
 if (!empty($search)) {
-    $sql .= " AND (officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
-    $count_sql .= " AND (officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
+    $sql .= " AND (doctitle LIKE ? OR officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
+    $count_sql .= " AND (doctitle LIKE ? OR officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
     $search_param = "%$search%";
     $params[] = $search_param;
     $params[] = $search_param;
     $params[] = $search_param;
     $params[] = $search_param;
-    $types .= "ssss";
+    $params[] = $search_param;
+    $types .= "sssss";
     $count_params[] = $search_param;
     $count_params[] = $search_param;
     $count_params[] = $search_param;
     $count_params[] = $search_param;
-    $count_types .= "ssss";
+    $count_params[] = $search_param;
+    $count_types .= "sssss";
 }
 
 if (!empty($office_filter)) {

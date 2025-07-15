@@ -63,13 +63,14 @@ if (isset($_SESSION['uNameLogin'])) {
 $sql .= " AND (endorsedToName IS NULL OR endorsedToName = '' OR endorsedToSignature IS NULL OR endorsedToSignature = '' OR endorsedDocProof IS NULL OR endorsedDocProof = '')";
 
 if (!empty($search)) {
-    $sql .= " AND (officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
+    $sql .= " AND (doctitle LIKE ? OR officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
     $search_param = "%$search%";
     $params[] = $search_param;
     $params[] = $search_param;
     $params[] = $search_param;
     $params[] = $search_param;
-    $types .= "ssss";
+    $params[] = $search_param;
+    $types .= "sssss";
 }
 
 if (!empty($office_filter)) {
@@ -223,6 +224,45 @@ if (isset($_SESSION['userID'])) {
                         <h1 class="text-3xl font-bold text-indigo-500">Received Documents</h1>
                         <p class="text-gray-300 mt-2">View and track all documents that have been received.</p>
                     </div>
+                    <div class="flex items-center gap-3">
+                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
+                            </svg>
+                            <span id="filterToggleText">Show Filters</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Filter Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6" id="filterSection" style="display: none;">
+                    <form method="GET" action="index.php">
+                        <input type="hidden" name="page" value="received">
+                        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="relative flex-1 max-w-md">
+                                    <input
+                                        type="text"
+                                        name="search"
+                                        class="filter-input pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        placeholder="Search document title, sender, or recipient..."
+                                        value="<?php echo htmlspecialchars($search); ?>"
+                                    />
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <select
+                                        name="delivery"
+                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        <option value="">All Modes</option>
+                                        <option value="Courier" <?php echo $delivery_filter === 'Courier' ? 'selected' : ''; ?>>Courier</option>
+                                        <option value="In-Person" <?php echo $delivery_filter === 'In-Person' ? 'selected' : ''; ?>>In-Person</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <a href="?page=received" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Clear</a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <!-- Table -->
                 <div class="bg-gray-200 backdrop-blur rounded-lg shadow-sm border border-gray-200 overflow-hidden">
