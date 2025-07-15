@@ -124,14 +124,12 @@ $total_pages = ceil($total_records / $per_page);
 // Add LIMIT and OFFSET to main query
 $sql .= " LIMIT ? OFFSET ?";
 $types .= "ii";
-$params[] = $per_page;
-$params[] = $offset;
+$params[] = (int)$per_page;
+$params[] = (int)$offset;
 
 // Prepare and execute the statement
 $stmt = $conn->prepare($sql);
-if (!empty($params)) {
-    $stmt->bind_param($types, ...$params);
-}
+$stmt->bind_param($types, ...$params);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -196,7 +194,7 @@ if ($actions_result) {
                 </div>
 
                 <!-- Search and Filter Section -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6" id="filterSection" style="display: none;">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6" id="filterSection">
                     <form method="GET" action="auditLog.php">
                         <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                             <div class="flex items-center gap-4 flex-1">
@@ -210,17 +208,12 @@ if ($actions_result) {
                                     />
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <select
-                                        name="user"
-                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                        <option value="">All Users</option>
-                                        <?php foreach ($users as $user): ?>
-                                            <option value="<?php echo htmlspecialchars($user); ?>" 
-                                                    <?php echo $user_filter === $user ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($user); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
+                                    <input
+                                        type="date"
+                                        name="date_from"
+                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        value="<?php echo htmlspecialchars($date_from); ?>"
+                                    />
                                     <select
                                         name="role"
                                         class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -229,17 +222,6 @@ if ($actions_result) {
                                             <option value="<?php echo htmlspecialchars($role); ?>" 
                                                     <?php echo $role_filter === $role ? 'selected' : ''; ?>>
                                                 <?php echo htmlspecialchars($role); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <select
-                                        name="action"
-                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                        <option value="">All Actions</option>
-                                        <?php foreach ($actions as $action): ?>
-                                            <option value="<?php echo htmlspecialchars($action); ?>" 
-                                                    <?php echo $action_filter === $action ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($action); ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>

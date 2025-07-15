@@ -649,7 +649,7 @@ function getOfficeDisplayNamePHP($code, $map) {
                         <h3>Receipt Information</h3>
                         <div class="form-group">
                             <label for="receiverName" class="required">Your Name (Receiver)</label>
-                            <input type="text" name="receiverName" id="receiverName" value="<?php echo htmlspecialchars($receiverName); ?>" class="input-readonly " readonly required>
+                            <input type="text" name="receiverName" id="receiverName" value="<?php echo htmlspecialchars($receiverName); ?>" class="input-readonly" required>
                         </div>
                         <div class="form-group">
                             <label for="receiptSignaturePad">Please sign below to confirm receipt:</label>

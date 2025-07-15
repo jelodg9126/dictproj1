@@ -45,6 +45,9 @@ function debounce(func, wait) {
     };
 }
 
+// Add at the top of the file
+let isSubmitting = false;
+
 // Initialize all event listeners when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeViewButtons();
@@ -55,6 +58,89 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeFilterForm();
     initializeFilterToggle();
     initializeFormModal();
+    // Camera Modal Logic (add Switch Camera functionality)
+    const useCameraBtn = document.getElementById('useCameraBtn');
+    const capturedImagePreview = document.getElementById('capturedImagePreview');
+    const podCameraImageInput = document.getElementById('podCameraImage');
+    if (useCameraBtn && capturedImagePreview && podCameraImageInput) {
+        let currentFacingMode = 'user';
+        useCameraBtn.onclick = function() {
+            Swal.fire({
+                title: 'Capture Proof of Document',
+                html: `
+                  <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div id="swalCameraContainer" style="margin-bottom:12px;"></div>
+                    <img id="swalCapturedPreview" src="" style="display:none; max-width:100%; margin-bottom:12px;"/>
+                    <div>
+                      <button type="button" id="swalCaptureBtn" class="swal2-confirm swal2-styled" style="margin-right:8px;">Capture</button>
+                      <button type="button" id="swalRetakeBtn" class="swal2-cancel swal2-styled" style="display:none; margin-right:8px;">Retake</button>
+                      <button type="button" id="swalAcceptBtn" class="swal2-confirm swal2-styled" style="display:none; background:#16a34a;">Accept</button>
+                      <button type="button" id="swalSwitchCamBtn" class="swal2-cancel swal2-styled" style="margin-left:8px;">Switch Camera</button>
+                    </div>
+                  </div>
+                `,
+                showCancelButton: true,
+                showConfirmButton: false,
+                cancelButtonText: 'Cancel',
+                didOpen: () => {
+                    function attachCamera(facingMode) {
+                        Webcam.reset();
+                        Webcam.set({
+                            width: 320,
+                            height: 240,
+                            image_format: 'jpeg',
+                            jpeg_quality: 90,
+                            constraints: { facingMode: { exact: facingMode } }
+                        });
+                        Webcam.attach('#swalCameraContainer');
+                    }
+                    attachCamera(currentFacingMode);
+                    const captureBtn = document.getElementById('swalCaptureBtn');
+                    const retakeBtn = document.getElementById('swalRetakeBtn');
+                    const acceptBtn = document.getElementById('swalAcceptBtn');
+                    const switchCamBtn = document.getElementById('swalSwitchCamBtn');
+                    const previewImg = document.getElementById('swalCapturedPreview');
+                    let capturedData = '';
+                    captureBtn.onclick = function() {
+                        Webcam.snap(function(data_uri) {
+                            previewImg.src = data_uri;
+                            previewImg.style.display = 'block';
+                            document.getElementById('swalCameraContainer').style.display = 'none';
+                            captureBtn.style.display = 'none';
+                            retakeBtn.style.display = 'inline-block';
+                            acceptBtn.style.display = 'inline-block';
+                            switchCamBtn.style.display = 'none';
+                            capturedData = data_uri;
+                        });
+                    };
+                    retakeBtn.onclick = function() {
+                        previewImg.style.display = 'none';
+                        document.getElementById('swalCameraContainer').style.display = 'block';
+                        captureBtn.style.display = 'inline-block';
+                        retakeBtn.style.display = 'none';
+                        acceptBtn.style.display = 'none';
+                        switchCamBtn.style.display = 'inline-block';
+                        capturedData = '';
+                    };
+                    acceptBtn.onclick = function() {
+                        if (capturedData) {
+                            Swal.close();
+                            podCameraImageInput.value = capturedData;
+                            capturedImagePreview.src = capturedData;
+                            capturedImagePreview.style.display = 'block';
+                        }
+                    };
+                    switchCamBtn.onclick = function() {
+                        currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+                        attachCamera(currentFacingMode);
+                    };
+                },
+                willClose: () => {
+                    Webcam.reset();
+                }
+            });
+        };
+    }
 });
 
 // Initialize view button functionality

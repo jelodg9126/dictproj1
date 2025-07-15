@@ -56,6 +56,20 @@ try {
             $doc_stmt->fetch();
             $doc_stmt->close();
         }
+        // Add before the update statement
+        $dup_stmt = $conn->prepare("SELECT endorsedToSignature, endorsedToName FROM maindoc WHERE transactionID = ?");
+        $dup_stmt->bind_param("i", $transactionID);
+        $dup_stmt->execute();
+        $dup_stmt->bind_result($existing_sig, $existing_name);
+        $dup_stmt->fetch();
+        $dup_stmt->close();
+        if (!empty($existing_sig) && !empty($existing_name)) {
+            echo json_encode([
+                'success' => false,
+                'errors' => ['This document has already been endorsed. Duplicate endorsement is not allowed.']
+            ]);
+            exit;
+        }
         $stmt = $conn->prepare("UPDATE maindoc SET endorsedToName=?, endorsedToSignature=?, endorsedDocProof=?, endorsedDocProof_filename=?, endorsedDocProof_mime_type=?, endorsementTimestamp=?, status='Endorsed' WHERE transactionID=?");
         if (!$stmt) {
             throw new Exception('Prepare failed: ' . $conn->error);

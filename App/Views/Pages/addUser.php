@@ -44,9 +44,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch all users for display in a table (excluding userID)
+// Pagination setup
+$page = isset($_GET['page_num']) ? max(1, intval($_GET['page_num'])) : 1;
+$per_page = 10;
+$offset = ($page - 1) * $per_page;
+
+// Get total user count
+$count_result = $conn->query("SELECT COUNT(*) as total FROM users");
+$total_users = $count_result ? $count_result->fetch_assoc()['total'] : 0;
+$total_pages = ceil($total_users / $per_page);
+
+// Fetch users for current page
 $userRows = [];
-$result = $conn->query("SELECT userName, passWord, usertype, name, email, contactno FROM users");
+$result = $conn->query("SELECT userName, passWord, usertype, name, email, contactno FROM users LIMIT $per_page OFFSET $offset");
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $userRows[] = $row;
@@ -109,6 +119,25 @@ if ($result && $result->num_rows > 0) {
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <!-- Pagination Controls -->
+                <div class="flex justify-center my-4">
+                    <?php if ($total_pages > 1): ?>
+                        <nav class="inline-flex -space-x-px">
+                            <?php
+                            // Build query string for filters/search, preserving all except page_num
+                            $query_params = $_GET;
+                            foreach(['page_num'] as $unset) unset($query_params[$unset]);
+                            $base_query = http_build_query($query_params);
+                            for ($i = 1; $i <= $total_pages; $i++):
+                                $link = ($base_query ? "?{$base_query}&" : "?") . "page_num={$i}";
+                            ?>
+                                <a href="<?php echo $link; ?>" class="px-3 py-1 border border-gray-300 <?php echo $i == $page ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'; ?> hover:bg-blue-100 mx-1 rounded">
+                                    <?php echo $i; ?>
+                                </a>
+                            <?php endfor; ?>
+                        </nav>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

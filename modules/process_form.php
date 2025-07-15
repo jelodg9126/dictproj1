@@ -158,6 +158,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     try {
+        // Add before the insert statement
+        $duplicate_check_stmt = $conn->prepare("SELECT COUNT(*) FROM maindoc WHERE doctitle = ? AND senderName = ? AND officeName = ? AND dateAndTime >= DATE_SUB(NOW(), INTERVAL 10 SECOND)");
+        $duplicate_check_stmt->bind_param("sss", $doctitle, $sname, $office);
+        $duplicate_check_stmt->execute();
+        $duplicate_check_stmt->bind_result($duplicate_count);
+        $duplicate_check_stmt->fetch();
+        $duplicate_check_stmt->close();
+        if ($duplicate_count > 0) {
+            if (isset($_POST['ajax']) && $_POST['ajax'] === 'true') {
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => false,
+                    'errors' => ['Duplicate submission detected. Please wait a moment before submitting again.']
+                ]);
+                exit;
+            } else {
+                echo "<div style='color:red;'>Duplicate submission detected. Please wait a moment before submitting again.</div>";
+                exit;
+            }
+        }
         // Prepare the SQL statement with correct column order
         $stmt = $conn->prepare("INSERT INTO maindoc
             (officeName, senderName, emailAdd, signature, addressTo, modeOfDel, courierName, dateAndTime, status, filetype, pod, pod_filename, pod_mime_type, doctitle)

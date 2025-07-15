@@ -36,6 +36,9 @@ function getOfficeDisplayName(code) {
     return code;
 }
 
+// Add at the top of the file
+let isSubmitting = false;
+
 // Initialize all event listeners when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeViewButtons();
@@ -280,10 +283,17 @@ function initializeEndorseForm() {
     var endorseForm = document.getElementById('endorseForm');
     if (endorseForm) {
         endorseForm.addEventListener('submit', function(e) {
+            if (isSubmitting) return;
+            isSubmitting = true;
             e.preventDefault();
             var formData = new FormData(this);
             var transactionID = document.getElementById('endorseTransactionID').value;
             
+            var submitBtn = endorseForm.querySelector('button[type="submit"]');
+            var originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+
             fetch('/dictproj1/modules/endorse_document.php', {
                 method: 'POST',
                 body: formData
@@ -325,6 +335,11 @@ function initializeEndorseForm() {
             .catch(error => {
                 console.error('Error:', error);
                 alert('An error occurred while processing your request.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                isSubmitting = false;
             });
         });
     }
@@ -587,3 +602,114 @@ function initializeCameraFunctionality() {
         };
     }
 } 
+
+// --- AJAX Table Refresh for Received Documents ---
+function refreshReceivedTable() {
+    fetch('/dictproj1/modules/get_received_documents.php')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) return;
+            const tbody = document.querySelector('table.w-full tbody');
+            if (!tbody) return;
+            const isAdmin = document.querySelector('.endorse-btn') !== null; // crude check
+            const officeDisplayNames = window.officeDisplayNames || {
+                'dictbulacan': 'Provincial Office Bulacan',
+                'dictaurora': 'Provincial Office Aurora',
+                'dictbataan': 'Provincial Office Bataan',
+                'dictpampanga': 'Provincial Office Pampanga',
+                'dictPampanga': 'Provincial Office Pampanga',
+                'dicttarlac': 'Provincial Office Tarlac',
+                'dictzambales': 'Provincial Office Zambales',
+                'dictothers': 'Provincial Office Others',
+                'dictNE': 'Provincial Office Nueva Ecija',
+                'dictne': 'Provincial Office Nueva Ecija',
+                'dictNUEVAECIJA': 'Provincial Office Nueva Ecija',
+                'maindoc': 'DICT Region 3 Office',
+                'Rdictpampanga': 'Provincial Office Pampanga',
+                'RdictPampanga': 'Provincial Office Pampanga',
+                'RdictTarlac': 'Provincial Office Tarlac',
+                'RdictBataan': 'Provincial Office Bataan',
+                'RdictBulacan': 'Provincial Office Bulacan',
+                'RdictAurora': 'Provincial Office Aurora',
+                'RdictZambales': 'Provincial Office Zambales',
+                'RdictNuevaEcija': 'Provincial Office Nueva Ecija',
+                'RdictNE': 'Provincial Office Nueva Ecija',
+                'Rmaindoc': 'DICT Region 3 Office',
+            };
+            function getOfficeDisplayName(code) {
+                if (!code) return '';
+                var lower = code.toLowerCase();
+                for (var key in officeDisplayNames) {
+                    if (key.toLowerCase() === lower) return officeDisplayNames[key];
+                }
+                return code;
+            }
+            let html = '';
+            if (data.data.length === 0) {
+                html = '<tr><td colspan="9" class="text-center py-4 text-gray-500">No received documents found.</td></tr>';
+            } else {
+                data.data.forEach(row => {
+                    const rowData = {
+                        officeName: row.officeName || '',
+                        senderName: row.senderName || '',
+                        dateAndTime: row.dateAndTime || '',
+                        receivedBy: row.receivedBy || '',
+                        transactionID: row.transactionID,
+                        endorsedToName: row.endorsedToName || '',
+                        hasEndorsedSignature: !!row.endorsedToSignature,
+                        hasEndorsedDocProof: !!row.endorsedDocProof,
+                        doctitle: row.doctitle || ''
+                    };
+                    html += `<tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${getOfficeDisplayName(row.officeName)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.doctitle ? escapeHtml(row.doctitle) : '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.senderName ? escapeHtml(row.senderName) : ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.modeOfDel ? escapeHtml(row.modeOfDel) : ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.courierName ? escapeHtml(row.courierName) : '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.receivedBy ? escapeHtml(row.receivedBy) : '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.status ? escapeHtml(row.status) : '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.dateAndTime ? formatDateTime(row.dateAndTime) : ''}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <a href="#" class="view-btn bg-blue-500 text-white px-3 py-1 rounded" data-id="${row.transactionID}" data-row='${escapeHtml(JSON.stringify(rowData))}'>View</a>
+                            ${isAdmin ? `<button class="endorse-btn bg-green-500 text-white px-3 py-1 rounded ml-2" data-id="${row.transactionID}">Endorse</button>` : ''}
+                        </td>
+                    </tr>`;
+                });
+            }
+            tbody.innerHTML = html;
+            // Re-initialize all event listeners
+            initializeViewButtons();
+            initializeEndorseButtons();
+            initializeModalCloseHandlers();
+            initializeSignaturePad();
+            initializeEndorseForm();
+            initializeLightboxes();
+            initializeCameraFunctionality();
+        });
+}
+// Helper to escape HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+// Helper to format date and time
+function formatDateTime(dateTimeString) {
+    if (!dateTimeString) return '';
+    try {
+        const date = new Date(dateTimeString);
+        return date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    } catch (error) {
+        return dateTimeString;
+    }
+}
+// Expose globally for use from other modules if needed
+window.refreshReceivedTable = refreshReceivedTable; 
