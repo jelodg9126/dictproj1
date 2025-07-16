@@ -281,10 +281,11 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="/dictproj1/public/Scripts/pieGraph.js"></script>
-    <script src="/dictproj1/public/Scripts/barGraph.js"></script>
-    <script src="/dictproj1/public/Scripts/lineGraph.js"></script>
-    <script src="/dictproj1/public/Scripts/toggleSidebar.js"></script>
+     <script src="/dictproj1/public/Scripts/sidebar/mobileSidebar.js"></script>
+    <script src="/dictproj1/public/Scripts/graphs/pieGraph.js"></script>
+    <script src="/dictproj1/public/Scripts/graphs/barGraph.js"></script>
+    <script src="/dictproj1/public/Scripts/graphs/lineGraph.js"></script>
+    <script src="/dictproj1/public/Scripts/toggleSidebar.js"></script> <!--for mobile responsive-->
     <script src="/dictproj1/public/Scripts/pwa-init.js"></script>
     <script src="/dictproj1/public/Scripts/chatbot.js"></script>
 

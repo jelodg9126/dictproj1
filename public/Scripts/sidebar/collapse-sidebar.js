@@ -5,11 +5,14 @@ document.addEventListener("DOMContentLoaded", function () {
   const toggleBtn = document.getElementById("toggleSidebar");
   const iconWrapper = document.getElementById("rotateWrapper"); // rotate this
   const icon = iconWrapper.querySelector("i");
+
   const logoCollapsed = document.getElementById("logoCollapsed");
   const logoExpanded = document.getElementById("logoExpanded");
   const sidebarLabels = document.querySelectorAll(".sidebar-label");
 
   let expanded = false;
+
+    console.log("existing!" , icon)
 
   toggleBtn.addEventListener("click", () => {
     expanded = !expanded;
@@ -33,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Rotate button wrapper
     iconWrapper.classList.toggle("rotate-180", expanded);
     // Change icon direction (chevrons-left/right)
-    icon.setAttribute("data-lucide", expanded ? "chevrons-left" : "chevrons-left");
+    icon.setAttribute(expanded ? "chevrons-left" : "chevrons-right");
     lucide.createIcons(); // re-render icon only
   });
 });

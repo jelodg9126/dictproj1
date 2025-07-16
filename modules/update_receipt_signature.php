@@ -97,6 +97,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         $check_stmt->close();
         
+        // Add before the update statement
+        $dup_stmt = $conn->prepare("SELECT receiver_signature, receivedBy FROM maindoc WHERE transactionID = ?");
+        $dup_stmt->bind_param("i", $transactionID);
+        $dup_stmt->execute();
+        $dup_stmt->bind_result($existing_sig, $existing_receiver);
+        $dup_stmt->fetch();
+        $dup_stmt->close();
+        if (!empty($existing_sig) && !empty($existing_receiver)) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => false,
+                'errors' => ['This document has already been received. Duplicate receipt is not allowed.']
+            ]);
+            exit;
+        }
+
         // Update the document with receipt signature, receiver name, and receiver POD (store in new columns)
         $stmt = $conn->prepare("UPDATE maindoc SET receiver_signature = ?, receivedBy = ?, receiver_pod = ?, receiver_pod_filename = ?, receiver_pod_mime_type = ? WHERE transactionID = ?");
         if (!$stmt) {

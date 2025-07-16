@@ -18,13 +18,6 @@ document.addEventListener('DOMContentLoaded', function(){
     console.log('Desktop elements:', { toggleBtn, sidebar });
     console.log('Mobile elements:', { burgerBtn, mobileSidebar, mobileSidebarContent, closeMobileSidebar });
 
-    // Desktop sidebar toggle
-    // if (toggleBtn && sidebar) {
-    //     toggleBtn.addEventListener('click', function(){
-    //         console.log("Desktop sidebar toggle working!")
-    //         sidebar.classList.toggle('visible');
-    //     });
-    // }
 
     // Mobile sidebar functionality
     if (burgerBtn && mobileSidebar && mobileSidebarContent) {
@@ -39,17 +32,6 @@ document.addEventListener('DOMContentLoaded', function(){
         });
     }
 
-    // // Close mobile sidebar
-    // if (closeMobileSidebar && mobileSidebar && mobileSidebarContent) {
-    //     closeMobileSidebar.addEventListener('click', function(){
-    //         console.log("Closing mobile sidebar");
-    //         mobileSidebarContent.classList.add('-translate-x-full');
-    //         document.body.classList.remove('sidebar-open');
-    //         setTimeout(() => {
-    //             mobileSidebar.classList.add('hidden');
-    //         }, 300);
-    //     });
-    // }
 
     // Close mobile sidebar when clicking on overlay
     if (mobileSidebar && mobileSidebarContent) {

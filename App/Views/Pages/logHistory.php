@@ -94,6 +94,6 @@
     <div id="endorsedDocProofLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
       <img id="enlargedEndorsedDocProof" src="" alt="Enlarged Endorsed Document Proof" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
-    <script src="/dictproj1/public/assets/js/logHistory.js"></script>
+    <script src="/dictproj1/public/Scripts/superadmin/logHistory.js"></script>
 </body>
 </html>
