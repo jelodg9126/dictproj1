@@ -3,6 +3,21 @@
 document.getElementById('addUserForm').onsubmit = async function(e) {
     e.preventDefault();
     const form = e.target;
+    const emailInput = form.querySelector('input[type="email"]');
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@dict\.gov\.ph$/i;
+    if (!emailRegex.test(emailInput.value)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Email',
+            text: 'Please enter a valid email address ending with @dict.gov.ph',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+        emailInput.focus();
+        return false;
+    }
     const formData = new FormData(form);
     formData.append('ajax', 'true');
     const response = await fetch('', {
