@@ -27,8 +27,8 @@ if (!isset($_POST['uNameLogin']) || !isset($_POST['pNameLogin'])) {
 $username = mysqli_real_escape_string($conn, $_POST['uNameLogin']);
 $password = mysqli_real_escape_string($conn, $_POST['pNameLogin']);
 
-// Prepared Statement to check database
-$stmt = $conn->prepare("SELECT * FROM users WHERE userName=? AND passWord=?");
+// Prepared Statement to check database with case-sensitive comparison
+$stmt = $conn->prepare("SELECT * FROM users WHERE BINARY userName = ? AND BINARY passWord = ?");
 $stmt->bind_param("ss", $username, $password);
 $stmt->execute();
 $result = $stmt->get_result();
