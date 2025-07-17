@@ -9,7 +9,7 @@ const officeDisplayNames = {
     'dictTarlac': 'Provincial Office Tarlac',
     'dictZambales': 'Provincial Office Zambales',
     'dictOthers': 'Others',
-    'dictNe': 'Provincial Office Nueva Ecija',
+    'dictNE': 'Provincial Office Nueva Ecija',
     'maindoc': 'DICT Region 3 Office',
     'RdictPampanga': 'Provincial Office Pampanga',
     'RdictAurora': 'Provincial Office Aurora',
