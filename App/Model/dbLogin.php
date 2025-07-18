@@ -27,9 +27,9 @@ if (!isset($_POST['uNameLogin']) || !isset($_POST['pNameLogin'])) {
 $username = mysqli_real_escape_string($conn, $_POST['uNameLogin']);
 $password = mysqli_real_escape_string($conn, $_POST['pNameLogin']);
 
-// Prepared Statement to check database with case-sensitive comparison
-$stmt = $conn->prepare("SELECT * FROM users WHERE BINARY userName = ? AND BINARY passWord = ?");
-$stmt->bind_param("ss", $username, $password);
+// Prepared Statement to fetch user by username (case-sensitive)
+$stmt = $conn->prepare("SELECT * FROM users WHERE BINARY userName = ?");
+$stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -39,12 +39,23 @@ if (!$result) {
 }
 
 if ($result && $result->num_rows > 0) {
-    // If a match is found, session variables are set
+    // Fetch user data
     $row = $result->fetch_assoc();
-    $_SESSION['uNameLogin'] = $row["userName"];
-    $_SESSION['user_id'] = $row["userID"];
-    $_SESSION['userID'] = $row["userID"];
-    $_SESSION['login_time'] = time();
+    $hashed_password = $row["passWord"];
+    
+    // Verify the password against the hashed password in database
+    if (password_verify($password, $hashed_password)) {
+        // Password is correct, set session variables
+        $_SESSION['uNameLogin'] = $row["userName"];
+        $_SESSION['user_id'] = $row["userID"];
+        $_SESSION['userID'] = $row["userID"];
+        $_SESSION['login_time'] = time();
+    
+    } else {
+        // Password is incorrect
+        header("Location: /dictproj1/App/Views/Pages/Login.php?error=invalid_credentials");
+        exit();
+    }
     
     // Check if usertype column exists (note: lowercase in database)
     if (isset($row['usertype'])) {
