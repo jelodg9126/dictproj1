@@ -262,3 +262,18 @@ SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office
         FROM audit_log a 
         LEFT JOIN users u ON a.user_id = u.userID 
         WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-14",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
