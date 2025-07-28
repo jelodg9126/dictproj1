@@ -51,4 +51,4 @@ document.getElementById('addUserForm').onsubmit = async function(e) {
     // Close modal and reset form
     document.querySelectorAll('#formModal .close').forEach(btn => btn.click());
     form.reset();
-}; 
+};

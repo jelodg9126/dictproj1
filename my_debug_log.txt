@@ -277,3 +277,538 @@ SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office
         FROM audit_log a 
         LEFT JOIN users u ON a.user_id = u.userID 
         WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND (a.name LIKE ? OR a.office_name LIKE ? OR a.action LIKE ? OR u.name LIKE ? OR u.office LIKE ? ) ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["%yamat%","%yamat%","%yamat%","%yamat%","%yamat%",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND (a.name LIKE ? OR a.office_name LIKE ? OR a.action LIKE ? OR u.name LIKE ? OR u.office LIKE ? ) ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["%yamat%","%yamat%","%yamat%","%yamat%","%yamat%",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND (a.name LIKE ? OR a.office_name LIKE ? OR a.action LIKE ? OR u.name LIKE ? OR u.office LIKE ? ) ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["%a%","%a%","%a%","%a%","%a%",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND (a.name LIKE ? OR a.office_name LIKE ? OR a.action LIKE ? OR u.name LIKE ? OR u.office LIKE ? ) ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["%al%","%al%","%al%","%al%","%al%",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND (a.name LIKE ? OR a.office_name LIKE ? OR a.action LIKE ? OR u.name LIKE ? OR u.office LIKE ? ) ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["%alex%","%alex%","%alex%","%alex%","%alex%",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=2025-07-24
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-24",10,0]
+date_from=2025-07-18
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-18",10,0]
+date_from=2025-07-19
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-19",10,0]
+date_from=2025-07-17
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-17",10,0]
+date_from=2025-07-21
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-21",10,0]
+date_from=2025-07-14
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-14",10,0]
+date_from=2025-07-15
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-15",10,0]
+date_from=2025-07-28
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-28",10,0]
+date_from=2025-07-14
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-14",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=2025-07-23
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-23",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=2025-07-14
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-14",10,0]
+date_from=2025-07-14
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-14",10,0]
+date_from=2025-07-14
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-14",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=2025-07-21
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-21",10,0]
+date_from=2025-07-21
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-21",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=2025-07-21
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-21",10,0]
+date_from=2025-07-21
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-21",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=2025-07-22
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-22",10,0]
+date_from=2025-07-22
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-22",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=2025-07-14
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-14",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=2025-07-15
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-15",10,0]
+date_from=2025-07-15
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-15",10,0]
+date_from=2025-07-16
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-16",10,0]
+date_from=2025-07-14
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-14",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=2025-07-09
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-09",10,0]
+date_from=2025-07-09
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 AND DATE(a.timestamp) = ? ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: ["2025-07-09",10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]
+date_from=
+SQL: SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+        FROM audit_log a 
+        LEFT JOIN users u ON a.user_id = u.userID 
+        WHERE 1 ORDER BY a.timestamp DESC LIMIT ? OFFSET ? | Params: [10,0]

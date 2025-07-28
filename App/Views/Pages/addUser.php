@@ -10,6 +10,10 @@ if (!isset($_SESSION['userAuthLevel']) || strtolower($_SESSION['userAuthLevel'])
 
 include __DIR__ . '/../../Model/connect.php';
 
+// Always initialize $userRows and $total_pages before any logic
+$userRows = array();
+$total_pages = 1;
+
 // Set current page for sidebar highlighting
 $current_page = 'addUser';
 
@@ -44,36 +48,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Process search and filter parameters
+// Fetch users from the database for display and live search
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$userType = isset($_GET['userType']) ? trim($_GET['userType']) : '';
-
-// Build base query
 $base_query = "FROM users WHERE 1=1";
 $params = [];
 $types = '';
-
-// Add search conditions
 if (!empty($search)) {
-    $base_query .= " AND (userName LIKE ? OR name LIKE ? OR email LIKE ?)";
+    $base_query .= " AND (name LIKE ? OR email LIKE ?)";
     $searchTerm = "%$search%";
-    $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
-    $types .= 'sss';
+    $params = array_merge($params, [$searchTerm, $searchTerm]);
+    $types .= 'ss';
 }
-
-// Add user type filter
-if (!empty($userType)) {
-    $base_query .= " AND usertype = ?";
-    $params[] = $userType;
-    $types .= 's';
-}
-
-// Pagination setup
 $page = isset($_GET['page_num']) ? max(1, intval($_GET['page_num'])) : 1;
 $per_page = 10;
 $offset = ($page - 1) * $per_page;
-
-// Get total user count with filters
 $count_sql = "SELECT COUNT(*) as total $base_query";
 $count_stmt = $conn->prepare($count_sql);
 if (!empty($params)) {
@@ -82,22 +70,16 @@ if (!empty($params)) {
 $count_stmt->execute();
 $count_result = $count_stmt->get_result();
 $total_users = $count_result ? $count_result->fetch_assoc()['total'] : 0;
-$total_pages = ceil($total_users / $per_page);
-
-// Fetch users for current page with filters
+$total_pages = max(1, ceil($total_users / $per_page));
 $userRows = [];
+$data_params = $params;
+$data_types = $types;
 $data_sql = "SELECT userName, passWord, usertype, name, email, contactno $base_query ORDER BY name ASC LIMIT ? OFFSET ?";
+$data_params[] = $per_page;
+$data_params[] = $offset;
+$data_types .= 'ii';
 $stmt = $conn->prepare($data_sql);
-
-// Add pagination parameters
-$params[] = $per_page;
-$params[] = $offset;
-$types .= 'ii';
-
-if (!empty($types)) {
-    $stmt->bind_param($types, ...$params);
-}
-
+$stmt->bind_param($data_types, ...$data_params);
 $stmt->execute();
 $result = $stmt->get_result();
 if ($result && $result->num_rows > 0) {
@@ -105,6 +87,23 @@ if ($result && $result->num_rows > 0) {
         $userRows[] = $row;
     }
 }
+// AJAX: Only return table body if ajax=1
+if (isset($_GET['ajax']) && $_GET['ajax'] == '1') {
+    echo '<tbody id="usersTableBody">';
+    foreach ($userRows as $user) {
+        echo '<tr class="hover:bg-gray-50 transition-colors">';
+        echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">' . htmlspecialchars($user['userName']) . '</td>';
+        echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">' . htmlspecialchars($user['usertype']) . '</td>';
+        echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">' . htmlspecialchars($user['name']) . '</td>';
+        echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">' . htmlspecialchars($user['email']) . '</td>';
+        echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">' . htmlspecialchars($user['contactno']) . '</td>';
+        echo '</tr>';
+    }
+    echo '</tbody>';
+    exit;
+}
+
+// Add new live search filter UI above the table
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -137,41 +136,20 @@ if ($result && $result->num_rows > 0) {
                 </div>
                 <!-- Search and Filter Bar -->
                 <div class="bg-white p-4 mb-4 rounded-lg shadow-sm border border-gray-200">
-                    <form id="searchForm" method="get" class="flex flex-wrap gap-4">
+                    <div class="flex flex-wrap gap-4">
                         <div class="flex-1 min-w-[200px]">
-                            <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                            <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
-                                   placeholder="Search by name, username, or email">
+                            <label for="liveSearch" class="block text-sm font-medium text-gray-700 mb-1">Search Users</label>
+                            <input type="text" id="liveSearch" name="search" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Search by name or email">
                         </div>
-                        <div class="w-48">
-                            <label for="userType" class="block text-sm font-medium text-gray-700 mb-1">User Type</label>
-                            <select id="userType" name="userType" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">All Types</option>
-                                <option value="Admin" <?php echo (isset($_GET['userType']) && $_GET['userType'] === 'Admin') ? 'selected' : ''; ?>>Admin</option>
-                                <option value="provincial" <?php echo (isset($_GET['userType']) && $_GET['userType'] === 'provincial') ? 'selected' : ''; ?>>Provincial</option>
-                            </select>
-                        </div>
-                        <div class="self-end">
-                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                Apply Filters
-                            </button>
-                            <?php if (isset($_GET['search']) || isset($_GET['userType'])): ?>
-                                <a href="?" class="ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                                    Clear
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                    </form>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full ">
+                        <table class="w-full " id="userTable">
                             <thead class="bg-[rgba(240,240,240,0.51)] backdrop-blur border-b border-gray-200">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Username</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Password (Hashed)</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">User Type</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Full Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Email</th>
@@ -182,7 +160,6 @@ if ($result && $result->num_rows > 0) {
                                 <?php foreach ($userRows as $user): ?>
                                     <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['userName']); ?></td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900"><?php echo htmlspecialchars($user['passWord']); ?></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['usertype']); ?></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['name']); ?></td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['email']); ?></td>
@@ -266,6 +243,24 @@ if ($result && $result->num_rows > 0) {
     </div>
         <script src="/dictproj1/modal.js"></script>
     <script src="/dictproj1/public/assets/Scripts/addUser.js"></script>
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("liveSearch");
+    let debounceTimeout;
+    searchInput.addEventListener("input", function() {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            const query = encodeURIComponent(searchInput.value);
+            fetch(`/dictproj1/App/Views/Pages/addUser.php?ajax=1&search=${query}`)
+                .then((response) => response.text())
+                .then((html) => {
+                    document.querySelector("#usersTableBody").outerHTML = html;
+                })
+                .catch((err) => console.error("AJAX load failed:", err));
+        }, 300); // 300ms debounce
+    });
+});
+</script>
 </body>
 </html>
 <?php $conn->close(); ?>

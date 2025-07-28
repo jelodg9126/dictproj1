@@ -620,11 +620,11 @@ function getOfficeDisplayNamePHP($code, $map) {
     <div id="addSignatureModal" class="modal " style="display:none;">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h2>Add Receipt Signature</h2>
+                <h2 class="text-black">Add Receipt Signature</h2>
                 <span class="close" id="closeAddSignatureModal" style="cursor:pointer;">&times;</span>
             </div>
             <div class="modal-body">
-                <form id="addSignatureForm">
+                <form id="addSignatureForm" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="transactionID" id="signatureTransactionID">
                     <div class="form-section">
                         <h3>Document Information</h3>
@@ -693,6 +693,7 @@ function getOfficeDisplayNamePHP($code, $map) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     <script src="/dictproj1/public/Scripts/docs/incoming.js"></script>
     <script src="/dictproj1/public/Scripts/filterToggle.js"></script>
+    <script src="/dictproj1/public/Scripts/docs/addSignatureForm.js"></script>
 </body>
 </html>
 

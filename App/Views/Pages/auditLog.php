@@ -228,7 +228,9 @@ if ($actions_result) {
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
-                                <a href="auditLog.php" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Clear</a>
+                            <a href="/dictproj1/App/Views/Pages/auditLog.php" class="ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                             Clear
+                            </a>
                                 <span class="text-sm text-gray-600">
                                     <?php echo $total_records; ?> record<?php echo $total_records != 1 ? 's' : ''; ?>
                                 </span>

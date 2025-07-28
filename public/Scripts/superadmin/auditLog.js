@@ -178,3 +178,31 @@ if (isAnyFilterSet()) {
 }
 fetchAuditLog();
 }); 
+
+document.getElementById('clearFiltersBtn')?.addEventListener('click', async function(e) {
+    e.preventDefault();
+
+    // Clear the input fields
+    document.getElementById('search').value = '';
+    document.getElementById('userType').value = '';
+
+    // Optional: reset page to 1
+    const params = new URLSearchParams();
+    params.set('ajax', 'true');
+    params.set('page_num', '1');
+
+    const response = await fetch('?' + params.toString(), {
+        method: 'GET',
+    });
+
+    const text = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+    const newTbody = doc.getElementById('usersTableBody');
+
+    if (newTbody) {
+        document.getElementById('usersTableBody').innerHTML = newTbody.innerHTML;
+    } else {
+        console.error('Failed to clear filters: tbody not found');
+    }
+});
