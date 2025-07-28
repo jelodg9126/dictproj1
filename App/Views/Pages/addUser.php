@@ -44,62 +44,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Process search and filter parameters
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$userType = isset($_GET['userType']) ? trim($_GET['userType']) : '';
-
-// Build base query
-$base_query = "FROM users WHERE 1=1";
-$params = [];
-$types = '';
-
-// Add search conditions
-if (!empty($search)) {
-    $base_query .= " AND (userName LIKE ? OR name LIKE ? OR email LIKE ?)";
-    $searchTerm = "%$search%";
-    $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
-    $types .= 'sss';
-}
-
-// Add user type filter
-if (!empty($userType)) {
-    $base_query .= " AND usertype = ?";
-    $params[] = $userType;
-    $types .= 's';
-}
-
 // Pagination setup
 $page = isset($_GET['page_num']) ? max(1, intval($_GET['page_num'])) : 1;
 $per_page = 10;
 $offset = ($page - 1) * $per_page;
 
-// Get total user count with filters
-$count_sql = "SELECT COUNT(*) as total $base_query";
-$count_stmt = $conn->prepare($count_sql);
-if (!empty($params)) {
-    $count_stmt->bind_param($types, ...$params);
-}
-$count_stmt->execute();
-$count_result = $count_stmt->get_result();
+// Get total user count
+$count_result = $conn->query("SELECT COUNT(*) as total FROM users");
 $total_users = $count_result ? $count_result->fetch_assoc()['total'] : 0;
 $total_pages = ceil($total_users / $per_page);
 
-// Fetch users for current page with filters
+// Fetch users for current page
 $userRows = [];
-$data_sql = "SELECT userName, passWord, usertype, name, email, contactno $base_query ORDER BY name ASC LIMIT ? OFFSET ?";
-$stmt = $conn->prepare($data_sql);
-
-// Add pagination parameters
-$params[] = $per_page;
-$params[] = $offset;
-$types .= 'ii';
-
-if (!empty($types)) {
-    $stmt->bind_param($types, ...$params);
-}
-
-$stmt->execute();
-$result = $stmt->get_result();
+$result = $conn->query("SELECT userName, passWord, usertype, name, email, contactno FROM users LIMIT $per_page OFFSET $offset");
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $userRows[] = $row;
@@ -135,38 +92,8 @@ if ($result && $result->num_rows > 0) {
                         <i class="fas fa-user-plus"></i> Add User
                     </button>
                 </div>
-                <!-- Search and Filter Bar -->
-                <div class="bg-white p-4 mb-4 rounded-lg shadow-sm border border-gray-200">
-                    <form id="searchForm" method="get" class="flex flex-wrap gap-4">
-                        <div class="flex-1 min-w-[200px]">
-                            <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                            <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
-                                   placeholder="Search by name, username, or email">
-                        </div>
-                        <div class="w-48">
-                            <label for="userType" class="block text-sm font-medium text-gray-700 mb-1">User Type</label>
-                            <select id="userType" name="userType" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">All Types</option>
-                                <option value="Admin" <?php echo (isset($_GET['userType']) && $_GET['userType'] === 'Admin') ? 'selected' : ''; ?>>Admin</option>
-                                <option value="provincial" <?php echo (isset($_GET['userType']) && $_GET['userType'] === 'provincial') ? 'selected' : ''; ?>>Provincial</option>
-                            </select>
-                        </div>
-                        <div class="self-end">
-                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                Apply Filters
-                            </button>
-                            <?php if (isset($_GET['search']) || isset($_GET['userType'])): ?>
-                                <a href="?" class="ml-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                                    Clear
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                    </form>
-                </div>
-
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto ">
                         <table class="w-full ">
                             <thead class="bg-[rgba(240,240,240,0.51)] backdrop-blur border-b border-gray-200">
                                 <tr>
