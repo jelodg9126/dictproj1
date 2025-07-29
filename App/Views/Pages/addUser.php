@@ -25,20 +25,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Basic validation (add more as needed)
     if ($userName && $passWord && $usertype && $name && $email && $contactno) {
-        // Hash the password before storing
-        $hashedPassword = password_hash($passWord, PASSWORD_DEFAULT);
+        // Check if username already exists
+        $checkStmt = $conn->prepare("SELECT userName FROM users WHERE userName = ?");
+        $checkStmt->bind_param("s", $userName);
+        $checkStmt->execute();
+        $result = $checkStmt->get_result();
         
-        $stmt = $conn->prepare("INSERT INTO users (userName, passWord, usertype, name, email, contactno) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssss", $userName, $hashedPassword, $usertype, $name, $email, $contactno);
-        
-        if ($stmt->execute()) {
-            $message = "User added successfully!";
-            // Clear form fields on success
-            $_POST = array();
+        if ($result->num_rows > 0) {
+            $message = "Error: Username already exists. Please choose a different username.";
+            $checkStmt->close();
         } else {
-            $message = "Error: " . $stmt->error;
+            $checkStmt->close();
+            // Hash the password before storing
+            $hashedPassword = password_hash($passWord, PASSWORD_DEFAULT);
+            
+            $stmt = $conn->prepare("INSERT INTO users (userName, passWord, usertype, name, email, contactno) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssss", $userName, $hashedPassword, $usertype, $name, $email, $contactno);
+            
+            if ($stmt->execute()) {
+                $message = "User added successfully!";
+                // Clear form fields on success
+                $_POST = array();
+            } else {
+                $message = "Error: " . $stmt->error;
+            }
+            $stmt->close();
         }
-        $stmt->close();
     } else {
         $message = "Error: Please fill in all required fields.";
     }
