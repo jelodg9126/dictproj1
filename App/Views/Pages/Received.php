@@ -231,6 +231,26 @@ if (isset($_SESSION['userID'])) {
                             </svg>
                             <span id="filterToggleText">Show Filters</span>
                         </button>
+                        <div class="flex items-center gap-2">
+                            <button type="button" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 flex items-center gap-2" id="manualRefreshBtn">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                <span>Refresh Now</span>
+                            </button>
+                            <button type="button" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2" id="autoRefreshToggle">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                <span id="autoRefreshText">Auto Refresh: ON</span>
+                            </button>
+                            <div id="refreshStatus" class="text-green-500 text-sm font-medium hidden">
+                                <svg class="w-4 h-4 inline animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Refreshing...
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- Filter Section -->
@@ -322,19 +342,16 @@ if (isset($_SESSION['userID'])) {
         </div>
     </div>
     <!-- Details Modal for Received Documents -->
-    <div id="receivedDetailsModal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width: 600px;">
+    <div id="receivedDetailsModal" class="modal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2>Received Document Details</h2>
-                <span class="close" id="closeReceivedDetailsModal" style="cursor:pointer;">&times;</span>
+                <h2 class="text-black">Received Document Details</h2>
+                <span id="closeReceivedDetailsModal" class="close">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="form-section">
                     <h3>Document Information</h3>
-                    <div class="form-group">
-                        <label for="detailsDocumentTitle">Document Title</label>
-                        <input type="text" id="detailsDocumentTitle" readonly class="input-readonly">
-                    </div>
+                    <div><b>Document Title:</b> <span id="detailsDocumentTitle"></span></div>
                     <div><b>Office:</b> <span id="detailsOfficeName"></span></div>
                     <div><b>Sender:</b> <span id="detailsSenderName"></span></div>
                     <div><b>Date Received:</b> <span id="detailsDateReceived"></span></div>
@@ -358,7 +375,7 @@ if (isset($_SESSION['userID'])) {
                 </div>
                 <?php if ($isAdmin): ?>
                 <div class="form-section">
-                    <h3>Endorsement Information</h3>
+                    <h3 class="text-black">Endorsement Information</h3>
                     <div><b>Endorsed To Name:</b> <span id="detailsEndorsedToName"></span></div>
                     <div><b>Endorsed To Signature:</b><br>
                         <img id="detailsEndorsedSignature" src="" alt="Endorsed Signature" style="max-width:200px; max-height:100px; border:1px solid #ccc; background:#f9f9f9; cursor:pointer;">
@@ -373,10 +390,10 @@ if (isset($_SESSION['userID'])) {
     </div>
     <!-- Endorse Modal -->
     <div id="endorseModal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content" id="endorseModalContent" style="max-width: 600px;">
             <div class="modal-header">
-                <h2>Endorse Document</h2>
-                <span class="close" id="closeEndorseModal" style="cursor:pointer;">&times;</span>
+                <h2 class="text-black">Endorse Document</h2>
+                <span class="close" id="closeEndorseModal" style="cursor:pointer; position:relative; z-index:1001;">&times;</span>
             </div>
             <div class="modal-body">
                 <form id="endorseForm">
@@ -389,7 +406,7 @@ if (isset($_SESSION['userID'])) {
                         <label>Endorsed To Signature</label>
                         <canvas id="endorseSignaturePad" width="300" height="100" style="border:1px solid #ccc;"></canvas>
                         <input type="hidden" id="endorseSignatureInput" name="endorsedToSignature">
-                        <button type="button" id="clearEndorseSignature" class="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 ml-2">Clear Signature</button>
+                        <button type="button" id="clearEndorseSignature" class="btn btn-secondary" style="margin-top:8px; display:inline-flex; align-items:center; gap:6px;">Clear Signature</button>
                     </div>
                     <div class="form-group">
                         <label for="endorseDocProof">Endorsed Document Proof (Image/PDF)</label>
@@ -403,7 +420,7 @@ if (isset($_SESSION['userID'])) {
                     </div>
                     <div class="submit-section">
                         <button type="submit" class="btn">Submit Endorsement</button>
-                        <button type="button" class="btn btn-secondary" id="cancelEndorse">Cancel</button>
+                        <button type="button" class="btn btn-secondary" id="cancelEndorse" style="position:relative; z-index:1001;">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -430,6 +447,31 @@ if (isset($_SESSION['userID'])) {
       <img id="enlargedEndorsedDocProof" src="" alt="Enlarged Endorsed Document Proof" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
-    <script src="/dictproj1/public/assets/Scripts/received.js"></script>
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded, initializing scripts...');
+            
+            // Initialize the modal functionality
+            if (typeof initializeViewButtons === 'function') {
+                console.log('Initializing view buttons...');
+                initializeViewButtons();
+            } else {
+                console.error('initializeViewButtons function not found!');
+            }
+            
+            if (typeof initializeModalCloseHandlers === 'function') {
+                console.log('Initializing modal close handlers...');
+                initializeModalCloseHandlers();
+            } else {
+                console.error('initializeModalCloseHandlers function not found!');
+            }
+            
+            // Log if modal element exists
+            const modal = document.getElementById('receivedDetailsModal');
+            console.log('Modal element on load:', modal);
+        });
+    </script>
+    <script src="/dictproj1/public/Scripts/docs/received.js"></script>
 </body>
 </html> 

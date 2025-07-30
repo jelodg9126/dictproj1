@@ -22,6 +22,41 @@ $currentPage = 'endorsed';
 // Query for endorsed documents
 $sql = "SELECT * FROM maindoc WHERE filetype = 'outgoing' AND status = 'Endorsed' AND endorsedToName IS NOT NULL AND endorsedToName != '' AND endorsedToSignature IS NOT NULL AND endorsedToSignature != '' AND endorsedDocProof IS NOT NULL AND endorsedDocProof != '' ORDER BY dateAndTime DESC";
 $result = $conn->query($sql);
+
+
+$officeDisplayNames = [
+    'dictbulacan' => 'Provincial Office Bulacan',
+    'dictaurora' => 'Provincial Office Aurora',
+    'dictbataan' => 'Provincial Office Bataan',
+    'dictpampanga' => 'Provincial Office Pampanga',
+    'dictPampanga' => 'Provincial Office Pampanga',
+    'dicttarlac' => 'Provincial Office Tarlac',
+    'dictzambales' => 'Provincial Office Zambales',
+    'dictothers' => 'Provincial Office Others',
+    'dictNE' => 'Provincial Office Nueva Ecija',
+    'dictne' => 'Provincial Office Nueva Ecija',
+    'dictNUEVAECIJA' => 'Provincial Office Nueva Ecija',
+    'maindoc' => 'DICT Region 3 Office',
+    'Rdictpampanga' => 'Provincial Office Pampanga',
+    'RdictPampanga' => 'Provincial Office Pampanga',
+    'RdictTarlac' => 'Provincial Office Tarlac',
+    'RdictBataan' => 'Provincial Office Bataan',
+    'RdictBulacan' => 'Provincial Office Bulacan',
+    'RdictAurora' => 'Provincial Office Aurora',
+    'RdictZambales' => 'Provincial Office Zambales',
+    'RdictNuevaEcija' => 'Provincial Office Nueva Ecija',
+    'RdictNE' => 'Provincial Office Nueva Ecija',
+    'Rmaindoc' => 'DICT Region 3 Office',
+    // Add more as you encounter new codes!
+];
+function getOfficeDisplayNamePHP($code, $map) {
+    if (!$code) return '';
+    $lower = strtolower($code);
+    foreach ($map as $key => $val) {
+        if (strtolower($key) === $lower) return $val;
+    }
+    return $code;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,7 +102,7 @@ $result = $conn->query($sql);
                                 <?php if ($result && $result->num_rows > 0): ?>
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['officeName'] ?? ''); ?></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars(getOfficeDisplayNamePHP($row['officeName'], $officeDisplayNames)); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['doctitle'] ?? '-'); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['senderName'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['endorsedToName'] ?? ''); ?></td>
@@ -104,16 +139,12 @@ $result = $conn->query($sql);
     <div id="receivedDetailsModal" class="modal" style="display:none;">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h2>Document Details</h2>
+                <h2 class="text-black">Document Details</h2>
                 <span class="close" id="closeReceivedDetailsModal" style="cursor:pointer;">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="form-section">
-                    <h3>Document Information</h3>
-                    <div class="form-group">
-                        <label for="detailsDocumentTitle">Document Title</label>
-                        <input type="text" id="detailsDocumentTitle" readonly class="input-readonly">
-                    </div>
+                    <div><b>Document Title:</b> <span id="detailsDocumentTitle"></span></div>
                     <div><b>Office:</b> <span id="detailsOfficeName"></span></div>
                     <div><b>Sender:</b> <span id="detailsSenderName"></span></div>
                     <div><b>Date Received:</b> <span id="detailsDateReceived"></span></div>
