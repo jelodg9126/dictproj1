@@ -25,17 +25,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Basic validation (add more as needed)
     if ($userName && $passWord && $usertype && $name && $email && $contactno) {
-        // Check if username already exists
-        $checkStmt = $conn->prepare("SELECT userName FROM users WHERE userName = ?");
-        $checkStmt->bind_param("s", $userName);
-        $checkStmt->execute();
-        $result = $checkStmt->get_result();
-        
-        if ($result->num_rows > 0) {
-            $message = "Error: Username already exists. Please choose a different username.";
-            $checkStmt->close();
+        // Check if email already exists
+        $checkEmailStmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
+        $checkEmailStmt->bind_param("s", $email);
+        $checkEmailStmt->execute();
+        $emailResult = $checkEmailStmt->get_result();
+
+        if ($emailResult->num_rows > 0) {
+            $message = "Error: Email already exists. Please use a different email address.";
+            $checkEmailStmt->close();
         } else {
-            $checkStmt->close();
+            $checkEmailStmt->close();
+            // Check if username already exists
+            $checkUserStmt = $conn->prepare("SELECT userName FROM users WHERE userName = ?");
+            $checkUserStmt->bind_param("s", $userName);
+            $checkUserStmt->execute();
+            $userResult = $checkUserStmt->get_result();
+
+            if ($userResult->num_rows > 0) {
+                $message = "Error: Username already exists. Please choose a different username.";
+                $checkUserStmt->close();
+            } else {
+                $checkUserStmt->close();
             // Hash the password before storing
             $hashedPassword = password_hash($passWord, PASSWORD_DEFAULT);
             
@@ -49,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $message = "Error: " . $stmt->error;
             }
-            $stmt->close();
+                $stmt->close();
+            }
         }
     } else {
         $message = "Error: Please fill in all required fields.";
@@ -167,16 +179,24 @@ if ($result && $result->num_rows > 0) {
                                 <label for="userName">Username <span class="required">*</span></label>
                                 <input type="text" id="userName" name="userName" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
                             </div>
-                    <div class="form-group">
+                            <div class="form-group">
                                 <label for="passWord">Password <span class="required">*</span></label>
-                                <input type="password" id="passWord" name="passWord" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
+                                <div class="relative">
+                                    <input type="password" id="passWord" name="passWord" class="form-control rounded-lg border border-gray-300 px-4 py-2 pr-10 w-full" required>
+                                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
-                    </div>
+                        </div>
                         <div class="form-row mb-2">
-                    <div class="form-group">
+                            <div class="form-group">
                                 <label for="usertype">User Type <span class="required">*</span></label>
                                 <select id="usertype" name="usertype" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
-                            <option value="">Select user type</option>
+                                    <option value="">Select user type</option>
                                     <option value="Admin">Admin</option>
                             <option value="provincial">Provincial</option>
                         </select>
