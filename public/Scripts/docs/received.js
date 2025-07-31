@@ -44,23 +44,59 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeViewButtons();
     initializeEndorseButtons();
     initializeModalCloseHandlers();
+    initializeModalContentHandlers();
     initializeSignaturePad();
     initializeEndorseForm();
     initializeLightboxes();
     initializeCameraFunctionality();
+    initializeAutoRefreshControls();
+    
+    // Start auto-refresh timer for the table
+    startAutoRefresh();
 });
 
 // Initialize view button functionality
 function initializeViewButtons() {
-    document.querySelectorAll('.view-btn').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            var rowData = btn.getAttribute('data-row');
-            var data = rowData ? JSON.parse(rowData) : {};
+    console.log('Initializing view buttons...');
+    // Use event delegation for dynamically added elements
+    document.addEventListener('click', function(e) {
+        console.log('Document click event triggered');
+        const viewBtn = e.target.closest('.view-btn');
+        console.log('View button found:', viewBtn);
+        
+        if (!viewBtn) return;
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        try {
+            const rowData = viewBtn.getAttribute('data-row');
+            console.log('Row data:', rowData);
+            const data = rowData ? JSON.parse(rowData) : {};
             
+            // Populate modal with data
+            console.log('Populating modal with data...');
             populateReceivedDetailsModal(data);
-            document.getElementById('receivedDetailsModal').style.display = 'flex';
-        });
+            
+            // Show the modal
+            const modal = document.getElementById('receivedDetailsModal');
+            console.log('Modal element:', modal);
+            
+            if (modal) {
+                console.log('Showing modal...');
+                modal.style.display = 'flex';
+                // Force reflow to enable transition
+                void modal.offsetWidth;
+                modal.style.opacity = '1';
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                console.log('Modal should now be visible');
+            } else {
+                console.error('Modal element not found!');
+            }
+        } catch (error) {
+            console.error('Error showing modal:', error);
+        }
     });
 }
 
@@ -70,7 +106,9 @@ function populateReceivedDetailsModal(data) {
     document.getElementById('detailsSenderName').textContent = data.senderName || '';
     document.getElementById('detailsDateReceived').textContent = data.dateAndTime || '';
     document.getElementById('detailsReceivedBy').textContent = data.receivedBy || '';
-    document.getElementById('detailsDocumentTitle').value = data.doctitle || '';
+    document.getElementById('detailsDocumentTitle').textContent = data.doctitle
+    ? data.doctitle.charAt(0).toUpperCase() + data.doctitle.slice(1)
+    : '';
     
     var transactionID = data.transactionID;
     document.getElementById('detailsSignature').src = '/dictproj1/modules/get_signature.php?id=' + transactionID;
@@ -117,12 +155,50 @@ function populateReceivedDetailsModal(data) {
 // Initialize endorse button functionality
 function initializeEndorseButtons() {
     document.querySelectorAll('.endorse-btn').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
+        // Remove any existing event listeners to prevent duplicates
+        btn.removeEventListener('click', btn.endorseClickHandler);
+        
+        // Create new event handler
+        btn.endorseClickHandler = function(e) {
+            console.log('Endorse button clicked');
             e.preventDefault();
+            e.stopPropagation();
             var transactionID = btn.getAttribute('data-id');
             resetEndorseForm(transactionID);
-            document.getElementById('endorseModal').style.display = 'flex';
-        });
+            const endorseModal = document.getElementById('endorseModal');
+            if (endorseModal) {
+                console.log('Opening endorse modal');
+                endorseModal.style.display = 'flex';
+                endorseModal.style.opacity = '1';
+                endorseModal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                
+                // After opening the modal, re-initialize the close handlers
+                setTimeout(() => {
+                    console.log('Re-initializing close handlers after modal open...');
+                    const closeBtn = document.getElementById('closeEndorseModal');
+                    const cancelBtn = document.getElementById('cancelEndorse');
+                    
+                    console.log('Close button after modal open:', closeBtn);
+                    console.log('Cancel button after modal open:', cancelBtn);
+                    
+                    if (closeBtn) {
+                        closeBtn.style.pointerEvents = 'auto';
+                        closeBtn.style.zIndex = '1001';
+                    }
+                    
+                    if (cancelBtn) {
+                        cancelBtn.style.pointerEvents = 'auto';
+                        cancelBtn.style.zIndex = '1001';
+                    }
+                }, 50);
+            } else {
+                console.error('Endorse modal not found');
+            }
+        };
+        
+        // Add the event listener
+        btn.addEventListener('click', btn.endorseClickHandler);
     });
 }
 
@@ -152,47 +228,130 @@ function resetEndorseForm(transactionID) {
     }
 }
 
+// Close modal function
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        console.log('Closing modal:', modalId);
+        // Immediately hide the modal without transition to prevent reopening
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+        modal.classList.remove('show');
+        document.body.style.overflow = 'auto';
+        console.log('Modal closed successfully');
+    } else {
+        console.error('Modal not found:', modalId);
+    }
+}
+
 // Initialize modal close handlers
 function initializeModalCloseHandlers() {
-    // Received details modal close
-    var closeReceivedDetailsModal = document.getElementById('closeReceivedDetailsModal');
-    if (closeReceivedDetailsModal) {
-        closeReceivedDetailsModal.onclick = function() {
-            document.getElementById('receivedDetailsModal').style.display = 'none';
-        };
-    }
+    console.log('Initializing modal close handlers...');
     
-    var receivedDetailsModal = document.getElementById('receivedDetailsModal');
-    if (receivedDetailsModal) {
-        receivedDetailsModal.onclick = function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
+    // Use a more robust approach with setTimeout to ensure DOM is ready
+    setTimeout(() => {
+        // Add specific event listeners for close and cancel buttons
+        const closeEndorseBtn = document.getElementById('closeEndorseModal');
+        const cancelEndorseBtn = document.getElementById('cancelEndorse');
+        
+        console.log('Close button found:', closeEndorseBtn);
+        console.log('Cancel button found:', cancelEndorseBtn);
+        
+        if (closeEndorseBtn) {
+            // Remove any existing listeners to prevent duplicates
+            closeEndorseBtn.removeEventListener('click', closeEndorseBtn.closeHandler);
+            
+            closeEndorseBtn.closeHandler = function(e) {
+                console.log('Close button clicked');
+                e.preventDefault();
+                e.stopPropagation();
+                closeModal('endorseModal');
+            };
+            
+            closeEndorseBtn.addEventListener('click', closeEndorseBtn.closeHandler);
+            console.log('Close button event listener attached');
+            
+            // Also add a test click to verify the button is clickable
+            closeEndorseBtn.style.pointerEvents = 'auto';
+            closeEndorseBtn.style.zIndex = '1000';
+        } else {
+            console.error('Close button not found!');
+        }
+        
+        if (cancelEndorseBtn) {
+            // Remove any existing listeners to prevent duplicates
+            cancelEndorseBtn.removeEventListener('click', cancelEndorseBtn.cancelHandler);
+            
+            cancelEndorseBtn.cancelHandler = function(e) {
+                console.log('Cancel button clicked');
+                e.preventDefault();
+                e.stopPropagation();
+                closeModal('endorseModal');
+            };
+            
+            cancelEndorseBtn.addEventListener('click', cancelEndorseBtn.cancelHandler);
+            console.log('Cancel button event listener attached');
+            
+            // Also add a test click to verify the button is clickable
+            cancelEndorseBtn.style.pointerEvents = 'auto';
+            cancelEndorseBtn.style.zIndex = '1000';
+        } else {
+            console.error('Cancel button not found!');
+        }
+    }, 100);
+    
+    // Close modals when clicking outside the modal or on close/cancel buttons
+    document.addEventListener('click', function(e) {
+        // Close received details modal
+        if (e.target.closest('#closeReceivedDetailsModal') || 
+            (e.target === document.getElementById('receivedDetailsModal'))) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeModal('receivedDetailsModal');
+        }
+        
+        // Close endorse modal when clicking close button, cancel button, or outside
+        const endorseModal = document.getElementById('endorseModal');
+        const endorseContent = document.getElementById('endorseModalContent');
+
+        if (endorseModal) {
+            // Check if clicking on close or cancel buttons
+            if (e.target.closest('#closeEndorseModal') || e.target.closest('#cancelEndorse')) {
+                console.log('Endorse modal close triggered by button click:', e.target);
+                e.preventDefault();
+                e.stopPropagation();
+                closeModal('endorseModal');
             }
-        };
-    }
-    
-    // Endorse modal close
-    var closeEndorseModal = document.getElementById('closeEndorseModal');
-    if (closeEndorseModal) {
-        closeEndorseModal.onclick = function() {
-            document.getElementById('endorseModal').style.display = 'none';
-        };
-    }
-    
-    var cancelEndorse = document.getElementById('cancelEndorse');
-    if (cancelEndorse) {
-        cancelEndorse.onclick = function() {
-            document.getElementById('endorseModal').style.display = 'none';
-        };
-    }
-    
-    var endorseModal = document.getElementById('endorseModal');
-    if (endorseModal) {
-        endorseModal.onclick = function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
+            // Check if clicking outside the modal content
+            else if (!endorseContent.contains(e.target) && endorseModal.contains(e.target)) {
+                console.log('Endorse modal close triggered by clicking outside');
+                e.preventDefault();
+                e.stopPropagation();
+                closeModal('endorseModal');
             }
-        };
+        }
+    });
+    
+    // Add escape key handler
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const openModal = document.querySelector('.modal.show') || 
+                            document.querySelector('.modal[style*="display: flex"]');
+            if (openModal) {
+                e.preventDefault();
+                closeModal(openModal.id);
+            }
+        }
+    });
+}
+
+// Prevent event propagation on modal content
+function initializeModalContentHandlers() {
+    const endorseModalContent = document.getElementById('endorseModalContent');
+    if (endorseModalContent) {
+        endorseModalContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
     }
 }
 
@@ -282,9 +441,14 @@ function initializeSignaturePad() {
 function initializeEndorseForm() {
     var endorseForm = document.getElementById('endorseForm');
     if (endorseForm) {
+        // Declare isSubmitting variable if not already declared
+        if (typeof window.isSubmitting === 'undefined') {
+            window.isSubmitting = false;
+        }
+        
         endorseForm.addEventListener('submit', function(e) {
-            if (isSubmitting) return;
-            isSubmitting = true;
+            if (window.isSubmitting) return;
+            window.isSubmitting = true;
             e.preventDefault();
             var formData = new FormData(this);
             var transactionID = document.getElementById('endorseTransactionID').value;
@@ -308,7 +472,7 @@ function initializeEndorseForm() {
                         confirmButtonColor: '#3085d6',
                         timer: 2000
                     });
-                    document.getElementById('endorseModal').style.display = 'none';
+                    closeModal('endorseModal');
                     
                     // Update the data-row attribute for the corresponding row
                     var row = document.querySelector('button.endorse-btn[data-id="' + transactionID + '"]').closest('tr');
@@ -339,7 +503,7 @@ function initializeEndorseForm() {
             .finally(() => {
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
-                isSubmitting = false;
+                window.isSubmitting = false;
             });
         });
     }
@@ -606,7 +770,12 @@ function initializeCameraFunctionality() {
 // --- AJAX Table Refresh for Received Documents ---
 function refreshReceivedTable() {
     fetch('/dictproj1/modules/get_received_documents.php')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(data => {
             if (!data.success) return;
             const tbody = document.querySelector('table.w-full tbody');
@@ -681,10 +850,15 @@ function refreshReceivedTable() {
             initializeViewButtons();
             initializeEndorseButtons();
             initializeModalCloseHandlers();
+            initializeModalContentHandlers();
             initializeSignaturePad();
             initializeEndorseForm();
             initializeLightboxes();
             initializeCameraFunctionality();
+        })
+        .catch(error => {
+            console.error('Error refreshing table:', error);
+            // Don't show error to user for auto-refresh, just log it
         });
 }
 // Helper to escape HTML
@@ -711,5 +885,114 @@ function formatDateTime(dateTimeString) {
         return dateTimeString;
     }
 }
+// Auto-refresh functionality
+let autoRefreshInterval = null;
+let isAutoRefreshEnabled = true;
+
+function startAutoRefresh() {
+    console.log('Starting auto-refresh timer...');
+    
+    // Clear any existing interval
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+    }
+    
+    // Set up auto-refresh every 3 seconds
+    autoRefreshInterval = setInterval(function() {
+        if (isAutoRefreshEnabled) {
+            console.log('Auto-refreshing table...');
+            showRefreshStatus();
+            refreshReceivedTable();
+        }
+    }, 3000); // 3000 milliseconds = 3 seconds
+}
+
+function stopAutoRefresh() {
+    console.log('Stopping auto-refresh timer...');
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+    }
+}
+
+function toggleAutoRefresh() {
+    isAutoRefreshEnabled = !isAutoRefreshEnabled;
+    
+    const toggleBtn = document.getElementById('autoRefreshToggle');
+    const toggleText = document.getElementById('autoRefreshText');
+    
+    if (isAutoRefreshEnabled) {
+        toggleText.textContent = 'Auto Refresh: ON';
+        toggleBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+        toggleBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+        console.log('Auto-refresh enabled');
+    } else {
+        toggleText.textContent = 'Auto Refresh: OFF';
+        toggleBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+        toggleBtn.classList.add('bg-red-500', 'hover:bg-red-600');
+        console.log('Auto-refresh disabled');
+    }
+}
+
+function showRefreshStatus() {
+    const statusElement = document.getElementById('refreshStatus');
+    if (statusElement) {
+        statusElement.classList.remove('hidden');
+        
+        // Hide the status after 2 seconds
+        setTimeout(() => {
+            statusElement.classList.add('hidden');
+        }, 2000);
+    }
+}
+
+function initializeAutoRefreshControls() {
+    const toggleBtn = document.getElementById('autoRefreshToggle');
+    const manualRefreshBtn = document.getElementById('manualRefreshBtn');
+    
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', toggleAutoRefresh);
+    }
+    
+    if (manualRefreshBtn) {
+        manualRefreshBtn.addEventListener('click', function() {
+            console.log('Manual refresh triggered');
+            showRefreshStatus();
+            refreshReceivedTable();
+        });
+    }
+}
+
 // Expose globally for use from other modules if needed
-window.refreshReceivedTable = refreshReceivedTable; 
+window.refreshReceivedTable = refreshReceivedTable;
+window.startAutoRefresh = startAutoRefresh;
+window.stopAutoRefresh = stopAutoRefresh;
+
+// Test function to verify modal close functionality
+window.testModalClose = function() {
+    console.log('Testing modal close functionality...');
+    
+    const closeBtn = document.getElementById('closeEndorseModal');
+    const cancelBtn = document.getElementById('cancelEndorse');
+    const endorseModal = document.getElementById('endorseModal');
+    
+    console.log('Close button:', closeBtn);
+    console.log('Cancel button:', cancelBtn);
+    console.log('Endorse modal:', endorseModal);
+    
+    if (closeBtn) {
+        console.log('Close button clickable:', closeBtn.style.pointerEvents);
+        console.log('Close button z-index:', closeBtn.style.zIndex);
+    }
+    
+    if (cancelBtn) {
+        console.log('Cancel button clickable:', cancelBtn.style.pointerEvents);
+        console.log('Cancel button z-index:', cancelBtn.style.zIndex);
+    }
+    
+    // Try to trigger a click programmatically
+    if (closeBtn) {
+        console.log('Attempting to trigger close button click...');
+        closeBtn.click();
+    }
+}; 

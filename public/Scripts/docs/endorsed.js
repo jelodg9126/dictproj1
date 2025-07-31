@@ -1,4 +1,39 @@
 // Endorsed Page JavaScript
+const officeDisplayNames = {
+    'dictbulacan': 'Provincial Office Bulacan',
+    'dictaurora': 'Provincial Office Aurora',
+    'dictbataan': 'Provincial Office Bataan',
+    'dictpampanga': 'Provincial Office Pampanga',
+    'dictPampanga': 'Provincial Office Pampanga',
+    'dicttarlac': 'Provincial Office Tarlac',
+    'dictzambales': 'Provincial Office Zambales',
+    'dictothers': 'Provincial Office Others',
+    'dictNE': 'Provincial Office Nueva Ecija',
+    'dictne': 'Provincial Office Nueva Ecija',
+    'dictNUEVAECIJA': 'Provincial Office Nueva Ecija',
+    'maindoc': 'DICT Region 3 Office',
+    'Rdictpampanga': 'Provincial Office Pampanga',
+    'RdictPampanga': 'Provincial Office Pampanga',
+    'RdictTarlac': 'Provincial Office Tarlac',
+    'RdictBataan': 'Provincial Office Bataan',
+    'RdictBulacan': 'Provincial Office Bulacan',
+    'RdictAurora': 'Provincial Office Aurora',
+    'RdictZambales': 'Provincial Office Zambales',
+    'RdictNuevaEcija': 'Provincial Office Nueva Ecija',
+    'RdictNE': 'Provincial Office Nueva Ecija',
+    'Rmaindoc': 'DICT Region 3 Office',
+    // Add more as you encounter new codes!
+};
+
+function getOfficeDisplayName(code) {
+    if (!code) return '';
+    var lower = code.toLowerCase();
+    for (var key in officeDisplayNames) {
+        if (key.toLowerCase() === lower) return officeDisplayNames[key];
+    }
+    return code;
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.view-btn').forEach(function(btn) {
@@ -6,11 +41,13 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             var rowData = btn.getAttribute('data-row');
             var data = rowData ? JSON.parse(rowData) : {};
-            document.getElementById('detailsOfficeName').textContent = data.officeName || '';
+            document.getElementById('detailsOfficeName').textContent = getOfficeDisplayName(data.officeName) || '';
             document.getElementById('detailsSenderName').textContent = data.senderName || '';
             document.getElementById('detailsDateReceived').textContent = data.dateAndTime || '';
             document.getElementById('detailsReceivedBy').textContent = data.receivedBy || '';
-            document.getElementById('detailsDocumentTitle').value = data.doctitle || '';
+document.getElementById('detailsDocumentTitle').textContent = data.doctitle
+    ? data.doctitle.charAt(0).toUpperCase() + data.doctitle.slice(1)
+    : '';
             var transactionID = data.transactionID;
             document.getElementById('detailsSignature').src = '/dictproj1/modules/get_signature.php?id=' + transactionID;
             document.getElementById('detailsPod').src = '/dictproj1/modules/get_pod.php?id=' + transactionID;

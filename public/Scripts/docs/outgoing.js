@@ -178,7 +178,9 @@ function populateDetailsModal(data) {
         dateTimeLabel.textContent = 'Date & Time Created';
     }
     
-    document.getElementById('detailsDocumentTitle').value = data.doctitle || '';
+   document.getElementById('detailsDocumentTitle').value = data.doctitle
+    ? data.doctitle.charAt(0).toUpperCase() + data.doctitle.slice(1)
+    : '';
     document.getElementById('detailsDestinationOffice').value = getOfficeDisplayName(data.addressTo) || '';
     
     // Handle sender signature

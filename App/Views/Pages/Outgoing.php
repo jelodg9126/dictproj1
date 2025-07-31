@@ -472,7 +472,7 @@ function getOfficeDisplayNamePHP($code, $map) {
     <div id="detailsModal" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Document Details</h2>
+                <h2 class="text-black">Document Details</h2>
                 <span class="close" id="closeDetailsModal">&times;</span>
             </div>
             <div class="modal-body">
