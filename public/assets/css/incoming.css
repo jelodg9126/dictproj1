@@ -1,0 +1,136 @@
+/* Incoming Page Specific Styles */
+
+.input-readonly {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #f5f5f5;
+}
+
+.modal {
+    display: none;
+    position: fixed !important;
+    z-index: 99999 !important;
+    left: 0; 
+    top: 0; 
+    width: 100vw; 
+    height: 100vh;
+    align-items: center; 
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+}
+
+.modal[style*="display: flex"] {
+    display: flex !important;
+}
+
+/* Table hover effects */
+.hover\:bg-gray-50:hover, .hover\:bg-\[rgb\(203\,202\,202\)\]:hover {
+    background-color: #f9fafb;
+    transition: background-color 0.2s ease;
+}
+
+/* Button styles */
+.view-btn {
+    transition: all 0.2s ease;
+}
+
+.view-btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+/* Lightbox styles */
+#signatureLightbox,
+#podLightbox,
+#receiverPodLightbox,
+#addSignatureSenderPodLightbox {
+    transition: opacity 0.3s ease;
+}
+
+/* Form section styles */
+.form-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+}
+
+.form-section h3 {
+    margin-bottom: 15px;
+    color: #374151;
+    font-weight: 600;
+}
+
+/* Image preview styles */
+#capturedImagePreview,
+#addSignatureSenderPodPreview {
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Lightbox image styles */
+#enlargedSignature,
+#enlargedPod,
+#enlargedReceiverPod,
+#addSignatureSenderPodEnlarged {
+    transition: transform 0.2s ease;
+}
+
+#enlargedSignature:hover,
+#enlargedPod:hover,
+#enlargedReceiverPod:hover,
+#addSignatureSenderPodEnlarged:hover {
+    transform: scale(1.02);
+}
+
+/* Success message animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.success-message {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Modal content styles */
+.modal-content {
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Submit section styles */
+.submit-section {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Clear signature button styles */
+#clearReceiptSignature {
+    transition: all 0.2s ease;
+}
+
+#clearReceiptSignature:hover {
+    background-color: #4b5563;
+    transform: translateY(-1px);
+}
+
+/* Remove captured image button styles */
+#removeCapturedImageBtn {
+    transition: all 0.2s ease;
+}
+
+#removeCapturedImageBtn:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+} 

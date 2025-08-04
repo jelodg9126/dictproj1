@@ -1,0 +1,37 @@
+{
+    "lang":  "en-us",
+    "name": "DICT Documents Tracker",
+    "short_name": "Docs Tracker",
+    "description": "Web app used for monitoring and tracking documents",
+    "start_url": "/dictproj1/index.php",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#007bff",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/dictproj1/public/assets/images/dictCircle-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/dictproj1/public/assets/images/dictCircle-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "screenshots": [
+    {
+      "src": "/dictproj1/public/assets/images/screenshot-mobile.png",
+      "type": "image/png",
+      "sizes": "540x720",
+      "form_factor": "narrow"
+    },
+      {
+    "src": "/dictproj1/public/assets/images/screenshot-desktop.png",
+    "type": "image/png",
+    "sizes": "1280x720",
+    "form_factor": "wide"
+  }
+  ]
+}

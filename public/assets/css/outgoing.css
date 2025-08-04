@@ -1,0 +1,79 @@
+/* Outgoing Page Specific Styles */
+
+.input-readonly {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #f5f5f5;
+}
+
+.modal {
+    display: none;
+    position: fixed !important;
+    z-index: 99999 !important;
+    left: 0; 
+    top: 0; 
+    width: 100vw; 
+    height: 100vh;
+    align-items: center; 
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+}
+
+.modal[style*="display: flex"] {
+    display: flex !important;
+}
+
+/* Filter section styles */
+.filter-input {
+    transition: all 0.3s ease;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Table hover effects */
+.hover\:bg-gray-50:hover {
+    background-color: #f9fafb;
+    transition: background-color 0.2s ease;
+}
+
+/* Button styles */
+.view-btn {
+    transition: all 0.2s ease;
+}
+
+.view-btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+}
+
+/* Lightbox styles */
+#signatureLightbox,
+#podLightbox {
+    transition: opacity 0.3s ease;
+}
+
+/* Pagination styles */
+.pagination-link {
+    transition: all 0.2s ease;
+}
+
+.pagination-link:hover {
+    background-color: #dbeafe;
+    border-color: #3b82f6;
+}
+
+/* Success message animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.success-message {
+    animation: fadeIn 0.3s ease;
+} 

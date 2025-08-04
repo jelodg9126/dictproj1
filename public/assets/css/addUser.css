@@ -1,0 +1,45 @@
+/* Add User Page Specific Styles */
+
+body {
+    background: linear-gradient(120deg, #48517f 0%, #322b5f 100%);
+    min-height: 100vh;
+}
+
+.modal-content {
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+.section-header {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    border-bottom: 3px solid #6366f1;
+    display: inline-block;
+    padding-bottom: 2px;
+}
+
+.required { color: #e53e3e; }
+.form-row { display: flex; gap: 1.5rem; }
+.form-row .form-group { flex: 1; }
+
+/* Modal styles for consistency */
+.modal {
+    display: none;
+    position: fixed !important;
+    z-index: 99999 !important;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.3);
+}
+.modal[style*="display: flex"] {
+    display: flex !important;
+}
+
+/* Button styles */
+.btn {
+    transition: all 0.2s ease;
+}
+.btn:hover {
+    transform: translateY(-1px);
+} 
