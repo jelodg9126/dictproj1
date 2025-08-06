@@ -14,11 +14,13 @@ class AuthController extends BaseController{
     
     public function login() {
     //   require __DIR__ . '/../Core/database.php'; 
+if (!isset($_POST['uNameLogin']) || !isset($_POST['pNameLogin'])) {
+    echo "Missing form fields.";
+    var_dump($_POST);
+    exit();
+}
 
-        if (!isset($_POST['uNameLogin']) || !isset($_POST['pNameLogin'])) {
-            header("Location: /dictproj1/index.php?page=logout&error=missing_data");
-            exit();
-        }
+
 
         // No need for mysqli_real_escape_string with PDO
         $username = $_POST['uNameLogin'];
@@ -28,32 +30,35 @@ class AuthController extends BaseController{
         $AuthModel = new AuthModel($this->pdo);
         $result = $AuthModel->dblogin($username, $password);
 
-        if ($result && $result->rowCount() > 0) {
-            $row = $result->fetch(PDO::FETCH_ASSOC);
+ $result = $this->AuthModel->dblogin($username);
 
-            $_SESSION['uNameLogin'] = $row['userName'];
-            $_SESSION['userID'] = $row['userID'];
-            $_SESSION['login_time'] = time();
-            $_SESSION['userAuthLevel'] = $row['usertype'] ?? 'Admin';
+if ($result && $result->rowCount() > 0) {
+    $row = $result->fetch(PDO::FETCH_ASSOC);
 
-            $AuthModel->logHistory($row['userID'], $row['name'], $row['office']);
+    if (password_verify($password, $row['passWord'])) {
+        $_SESSION['uNameLogin'] = $row['userName'];
+        $_SESSION['userID'] = $row['userID'];
+        $_SESSION['login_time'] = time();
+        $_SESSION['userAuthLevel'] = $row['usertype'] ?? 'Admin';
 
-         
-            switch(strtolower($_SESSION['userAuthLevel'])) {
-                case 'superadmin':
-                    $this->redirect("/dictproj1/index.php?page=addUser");
-                
-                case 'provincial':
-                    $this->redirect("/dictproj1/index.php?page=dashboard");
-                
-                default:
-                    $this->redirect("/dictproj1/index.php?page=dashboard");
-            }
-        } else {
-            header("Location: /dictproj1/index.php?page=logout&error=invalid_credentials");
+        $this->AuthModel->logHistory($row['userID'], $row['name'], $row['office']);
+
+        switch (strtolower($_SESSION['userAuthLevel'])) {
+            case 'superadmin':
+                $this->redirect("/dictproj1/index.php?page=addUser");
+            case 'provincial':
+                $this->redirect("/dictproj1/index.php?page=dashboard");
+            default:
+                $this->redirect("/dictproj1/index.php?page=dashboard");
         }
-
+    } else {
+        header("Location: /dictproj1/index.php?page=logout&error=invalid_credentials");
         exit();
+    }
+} else {
+    header("Location: /dictproj1/index.php?page=logout&error=invalid_credentials");
+    exit();
+}
     }
 
      public function logout(){
