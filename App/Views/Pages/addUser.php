@@ -88,7 +88,6 @@
                             <thead class="bg-[rgba(240,240,240,0.51)] backdrop-blur border-b border-gray-200">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Username</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Password (Hashed)</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">User Type</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Full Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Email</th>
@@ -100,7 +99,6 @@
          <?php foreach ($userRows as $user): ?>
       <tr>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['userName']); ?></td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900"><?php echo htmlspecialchars($user['passWord']); ?></td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['usertype']); ?></td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['name']); ?></td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['email']); ?></td>
