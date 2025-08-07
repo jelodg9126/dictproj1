@@ -304,7 +304,7 @@
                     <div class="bg-white/30 border border-white/20 backdrop-blur-md p-4 rounded-full flex items-center justify-center shadow-lg">
                         <i data-lucide="file-check-2" class="w-6 h-6 text-[#4E9F3D]" style="stroke-width:2.5;"></i>
                     </div>
-                    <p class="text-2xl  font-bold text-white pl-1.5"><?php htmlspecialchars($data['pending_count']) ?></p>
+                    <p class="text-2xl  font-bold text-white pl-1.5"><?php echo htmlspecialchars($data['pending_count']) ?></p>
 
                 </div>
             </div>

@@ -1,0 +1,11 @@
+SET: otp=489311, email=reignreyes10@gmail.comCHECK: inputOtp=489311, email=reignreyes10@gmail.com, session=Array
+(
+    [uNameLogin] => Alex Santos
+    [userID] => 2
+    [login_time] => 1754536802
+    [userAuthLevel] => Admin
+    [otp] => 489311
+    [otp_email] => reignreyes10@gmail.com
+    [otp_expiry] => 1754537152
+)
+COMPARING: inputOtp=489311 vs storedOtp=489311 | email=reignreyes10@gmail.com vs storedEmail=reignreyes10@gmail.com
