@@ -10,6 +10,27 @@ if (!isset($_SESSION['userAuthLevel']) || strtolower($_SESSION['userAuthLevel'])
 
 include __DIR__ . '/../../Model/connect.php';
 
+// Pagination settings
+$records_per_page = 10;
+$page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
+$page = max(1, $page); // Ensure page is at least 1
+$offset = ($page - 1) * $records_per_page;
+
+// Get total number of records
+$count_query = "SELECT COUNT(*) as total FROM users";
+$count_result = $conn->query($count_query);
+$total_records = $count_result->fetch_assoc()['total'];
+$total_pages = ceil($total_records / $records_per_page);
+
+// Fetch users with pagination
+$query = "SELECT * FROM users ORDER BY name ASC LIMIT ?, ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('ii', $offset, $records_per_page);
+$stmt->execute();
+$result = $stmt->get_result();
+$userRows = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
 // Set current page for sidebar highlighting
 $current_page = 'addUser';
 
@@ -167,8 +188,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
                 <!-- Pagination Controls -->
-                <div class="flex justify-center my-4" id="pagination-container">
-                    <!-- This will be populated by addUser.js -->
+                <div class="flex justify-center my-4">
+                    <?php if ($total_pages > 1): ?>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            <?php
+                            // Build query string for filters/search
+                            $query_params = $_GET;
+                            unset($query_params['page_num']);
+                            $base_query = http_build_query($query_params);
+                            $base_url = '?' . $base_query . ($base_query ? '&' : '');
+                            
+                            // First page link
+                            if ($page > 1): ?>
+                                <a href="<?php echo $base_url . 'page_num=1'; ?>" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">First</span>
+                                    &laquo;
+                                </a>
+                                <a href="<?php echo $base_url . 'page_num=' . ($page - 1); ?>" class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">Previous</span>
+                                    &lsaquo;
+                                </a>
+                            <?php endif; ?>
+                            
+                            <?php 
+                            // Page number links
+                            $start = max(1, $page - 2);
+                            $end = min($total_pages, $start + 4);
+                            $start = max(1, $end - 4);
+                            
+                            for ($i = $start; $i <= $end; $i++):
+                                $is_first = $i === 1 && $page === 1;
+                                $is_last = $i === $total_pages && $page === $total_pages;
+                                $is_active = $i == $page;
+                                $classes = [
+                                    'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                                    $is_active ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50',
+                                    $is_first ? 'rounded-l-md' : '',
+                                    ($i === $total_pages && $page === $total_pages) ? 'rounded-r-md' : ''
+                                ];
+                                $link = $base_url . 'page_num=' . $i;
+                            ?>
+                                <a href="<?php echo $link; ?>" class="<?php echo implode(' ', array_filter($classes)); ?>" <?php echo $is_active ? 'aria-current="page"' : ''; ?>>
+                                    <?php echo $i; ?>
+                                </a>
+                            <?php endfor; ?>
+                            
+                            <?php // Next and Last page links
+                            if ($page < $total_pages): ?>
+                                <a href="<?php echo $base_url . 'page_num=' . ($page + 1); ?>" class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">Next</span>
+                                    &rsaquo;
+                                </a>
+                                <a href="<?php echo $base_url . 'page_num=' . $total_pages; ?>" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">Last</span>
+                                    &raquo;
+                                </a>
+                            <?php endif; ?>
+                        </nav>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
