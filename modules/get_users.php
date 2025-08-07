@@ -14,11 +14,11 @@ $params = [];
 $types = "";
 
 if (!empty($search)) {
-    $sql .= " AND (userName LIKE ? OR name LIKE ? OR email LIKE ?)";
-    $count_sql .= " AND (userName LIKE ? OR name LIKE ? OR email LIKE ?)";
+    $sql .= " AND (userName LIKE ? OR name LIKE ? OR email LIKE ? OR contactno LIKE ?)";
+    $count_sql .= " AND (userName LIKE ? OR name LIKE ? OR email LIKE ? OR contactno LIKE ?)";
     $search_param = "%{$search}%";
-    array_push($params, $search_param, $search_param, $search_param);
-    $types .= 'sss';
+    array_push($params, $search_param, $search_param, $search_param, $search_param);
+    $types .= 'ssss';
 }
 
 if (!empty($usertype)) {
