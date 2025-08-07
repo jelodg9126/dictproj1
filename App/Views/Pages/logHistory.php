@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Log History</title>
     <link rel="stylesheet" href="/dictproj1/src/input.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/logHistory.css">
+    <link rel="icon" href="/dictproj1/public/assets/images/mainCircle.png" type="image/png">
   
 </head>
 <body>

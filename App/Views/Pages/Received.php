@@ -213,6 +213,7 @@ date_default_timezone_set('Asia/Manila');
     <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/received.css">
     <title>Received Documents</title>
+    <link rel="icon" href="/dictproj1/public/assets/images/mainCircle.png" type="image/png">
 </head>
 <body>
     <div class="app-container">

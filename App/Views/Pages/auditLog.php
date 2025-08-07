@@ -166,15 +166,18 @@ if ($actions_result) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/dictproj1/public/assets/images/mainCircle.png" type="image/png">
     <title>Audit Log</title>
     <link rel="stylesheet" href="/dictproj1/src/input.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/auditLog.css">
 </head>
+
 <body>
-     <div class="app-container">
+    <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
         <div class="flex-1 p-6 min-h-screen overflow-y-auto" id="docu">
             <div class="max-w-7xl mx-auto">
@@ -204,24 +207,39 @@ if ($actions_result) {
                                         name="search"
                                         class="filter-input pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="Search users, offices, or actions..."
-                                        value="<?php echo htmlspecialchars($search); ?>"
-                                    />
+                                        value="<?php echo htmlspecialchars($search); ?>" />
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <input
-                                        type="date"
-                                        name="date_from"
-                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        value="<?php echo htmlspecialchars($date_from); ?>"
-                                    />
+                                    <select
+                                        name="user"
+                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        <option value="">All Users</option>
+                                        <?php foreach ($users_filter as $user): ?>
+                                            <option value="<?php echo htmlspecialchars($user); ?>"
+                                                <?php echo $users_filter === $user ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($user); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
                                     <select
                                         name="role"
                                         class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">All Roles</option>
-                                        <?php foreach ($roles as $role): ?>
-                                            <option value="<?php echo htmlspecialchars($role); ?>" 
-                                                    <?php echo $role_filter === $role ? 'selected' : ''; ?>>
+                                        <?php foreach ($roles_filter as $role): ?>
+                                            <option value="<?php echo htmlspecialchars($role); ?>"
+                                                <?php echo $roles_filter === $role ? 'selected' : ''; ?>>
                                                 <?php echo htmlspecialchars($role); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <select
+                                        name="action"
+                                        class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        <option value="">All Actions</option>
+                                        <?php foreach ($actions_filter as $action): ?>
+                                            <option value="<?php echo htmlspecialchars($action); ?>"
+                                                <?php echo $actions_filter === $action ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($action); ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -255,18 +273,16 @@ if ($actions_result) {
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200" id="auditLogTableBody">
-                                <?php if ($result && $result->num_rows > 0): ?>
-                                    <?php while($row = $result->fetch_assoc()): ?>
+                                <?php if (!empty($auditLogs)): ?>
+                                    <?php foreach ($auditLogs as $row): ?>
                                         <tr class="hover:bg-gray-50 transition-colors">
-                                            <!-- <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['audit_id']); ?></td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['user_id']); ?></td> -->
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['name'] ?: $row['user_fullname'] ?: '-'); ?></td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['office_name'] ?: $row['user_office'] ?: '-'); ?></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['name'] ?? $row['user_fullname'] ?? '-'); ?></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['office_name'] ?? $row['user_office'] ?? '-'); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['role']); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['action']); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo date('M d, Y g:i A', strtotime($row['timestamp'])); ?></td>
                                         </tr>
-                                    <?php endwhile; ?>
+                                    <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
                                         <td colspan="7" class="text-center py-12">
@@ -276,13 +292,29 @@ if ($actions_result) {
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
+
                         </table>
                     </div>
                 </div>
 
                 <!-- Pagination Controls -->
-                <div class="flex justify-center my-4" id="pagination-container">
-                    <!-- This will be populated by auditLog.js -->
+                <div class="flex justify-center my-4">
+                    <?php if ($total_pages > 1): ?>
+                        <nav class="inline-flex -space-x-px">
+                            <?php
+                            // Build query string for filters/search
+                            $query_params = $_GET;
+                            foreach (['page_num'] as $unset) unset($query_params[$unset]);
+                            $base_query = http_build_query($query_params);
+                            for ($i = 1; $i <= $total_pages; $i++):
+                                $link = '?' . $base_query . ($base_query ? '&' : '') . 'page_num=' . $i;
+                            ?>
+                                <a href="<?php echo $link; ?>" class="px-3 py-1 border border-gray-300 <?php echo $i == $page ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'; ?> hover:bg-blue-100 mx-1 rounded">
+                                    <?php echo $i; ?>
+                                </a>
+                            <?php endfor; ?>
+                        </nav>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -290,4 +322,5 @@ if ($actions_result) {
 
     <script src="/dictproj1/public/Scripts/superadmin/auditLog.js"></script>
 </body>
+
 </html>

@@ -34,7 +34,8 @@ if (isset($_GET['error'])) {
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="manifest" href="/dictproj1/manifest.json"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <title>Document</title>
+    <link rel="icon" href="/dictproj1/public/assets/images/mainCircle.png" type="image/png">
+    <title>DCIT — Login</title>
 </head>
 <body>
    <form method="POST" action="/dictproj1/index.php?page=login">
@@ -57,8 +58,8 @@ if (isset($_GET['error'])) {
               <div class="relative">
               <input type="password" id="password" name="pNameLogin" class="border border-gray-400 rounded-xl p-2 pl-10 w-[350px] mx-auto focus:outline-blue-800" placeholder="Password" required/>
                  <i data-lucide="lock-keyhole" id="password" class="absolute top-2.5 left-1.5 cursor-pointer w-8 h-5.5 text-blue-900" style="stroke-width:2.5;"></i>
-                <i data-lucide="eye" id="eye" class="absolute top-2 right-2 cursor-pointer w-8 h-7 text-gray-500" style="stroke-width:1.5;"></i>
-                <i data-lucide="eye-off" id="eye2" class="absolute hidden top-2 right-2 cursor-pointer w-8 h-7 text-gray-500" style="stroke-width:1.5;"></i>
+                <i data-lucide="eye-closed" id="eye" class="absolute top-2 right-2 cursor-pointer w-8 h-7 text-gray-500" style="stroke-width:1.5;"></i>
+                <i data-lucide="eye" id="eye2" class="absolute hidden top-2 right-2 cursor-pointer w-8 h-7 text-gray-500" style="stroke-width:1.5;"></i>
                 </div>
               <button class="btn bg-blue-900 font-bold text-white p-2.5 tracking-wide rounded-xl text-lg cursor-pointer mt-4 max-w-xl w-full mx-auto transition-[0.3s] hover:translate-y-[-2px]  hover:bg-blue-800">Submit</button>
             </div>

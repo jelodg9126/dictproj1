@@ -38,6 +38,7 @@
     <link rel="stylesheet" href="/dictproj1/public/assets/css/modal.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/endorsed.css">
+    <link rel="icon" href="/dictproj1/public/assets/images/mainCircle.png" type="image/png">
     <title>Endorsed Documents</title>
 </head>
 <body>

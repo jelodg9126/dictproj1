@@ -82,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/addUser.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="icon" href="/dictproj1/public/assets/images/mainCircle.png" type="image/png">
     <title>Add Users</title>
 </head>
 <body>

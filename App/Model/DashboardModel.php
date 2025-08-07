@@ -1,14 +1,17 @@
 <?php
 
 
-class DashboardModel {
+class DashboardModel
+{
     private $pdo;
 
-    public function __construct($pdo) {
+    public function __construct($pdo)
+    {
         $this->pdo = $pdo;
     }
 
-    public function getPendingCount() {
+    public function getPendingCount()
+    {
         $sql = "SELECT COUNT(*) as pending_count FROM maindoc WHERE status = 'Pending'";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
@@ -16,15 +19,17 @@ class DashboardModel {
         return $row ? $row['pending_count'] : 0;
     }
 
-    public function getSentTodayCount() {
+    public function getSentTodayCount()
+    {
         $sql = "SELECT COUNT(*) as sent_today_count FROM maindoc WHERE DATE(dateAndTime) = CURDATE()";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();   
+        $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? $row['sent_today_count'] : 0;
     }
 
-    public function getOutgoingCount() {
+    public function getOutgoingCount()
+    {
         $sql = "SELECT COUNT(*) as outgoing_count FROM maindoc WHERE fileType = 'outgoing'";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
@@ -32,11 +37,19 @@ class DashboardModel {
         return $row ? $row['outgoing_count'] : 0;
     }
 
-    public function getReceivedCount() {
+    public function getReceivedCount()
+    {
         $sql = "SELECT COUNT(*) as received_count FROM maindoc WHERE status = 'received'";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? $row['received_count'] : 0;
+    }
+
+    public function getUserContactDetails($userId)
+    {
+        $stmt = $this->pdo->prepare("SELECT email, office FROM users WHERE userID = :id");
+        $stmt->execute([':id' => $userId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC); // false if user not found
     }
 }
