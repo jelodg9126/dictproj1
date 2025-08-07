@@ -6,14 +6,12 @@ class AuthModel {
         $this->pdo = $pdo;
     }
 
-    public function dblogin($username, $password) {
-        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE userName = :username AND passWord = :password");
-        $stmt->execute([
-            'username' => $username,    
-            'password' => $password
-        ]);
-        return $stmt;
-    }
+public function dblogin($username) {
+    $stmt = $this->pdo->prepare("SELECT * FROM users WHERE userName = :username");
+    $stmt->execute(['username' => $username]);
+    return $stmt;
+}
+
 
     public function ensureUsertypeColumn() {
         $check = $this->pdo->query("SHOW COLUMNS FROM users LIKE 'usertype'");

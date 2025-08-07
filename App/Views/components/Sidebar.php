@@ -21,7 +21,7 @@ $isProvincial = $userType === 'provincial';
 ?>
 
 <!-- Desktop Sidebar -->
-<div id="sidebar" class="h-screen bg-blue-950 w-[100px] transition-all duration-500 flex flex-col justify-between relative overflow-hidden max-sm:hidden">
+<div id="sidebar" class="h-screen bg-blue-950 w-[100px] transition-all duration-500 flex flex-col justify-between relative rounded-r-xl shadow-[rgba(0,0,6,0.1)_6px_1px_3px] overflow-hidden max-sm:hidden">
 
   <!-- Toggle Button -->
  <button id="toggleSidebar"

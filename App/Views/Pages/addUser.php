@@ -150,9 +150,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Contact No</th>
                                 </tr>
                             </thead>
-                            <tbody id="usersTableBody" class="bg-[rgb(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
-                                <!-- User data will be populated by JavaScript -->
-                            </tbody>
+                           
+    <tbody id="usersTableBody" class="bg-[rgba(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
+         <?php foreach ($userRows as $user): ?>
+      <tr>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['userName']); ?></td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['usertype']); ?></td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['name']); ?></td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['email']); ?></td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['contactno']); ?></td>
+      </tr>
+        <?php endforeach; ?>
+    </tbody>
+
                         </table>
                     </div>
                 </div>
