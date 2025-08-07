@@ -1,57 +1,73 @@
 <?php
-// if (session_status() === PHP_SESSION_NONE) {
-//     session_start();
-// }
-// // Only allow superadmin
-// if (!isset($_SESSION['userAuthLevel']) || strtolower($_SESSION['userAuthLevel']) !== 'superadmin') {
-//     header('Location: /dictproj1/App/Views/Pages/Documents.php');
-//     exit();
-// }
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// Only allow superadmin
+if (!isset($_SESSION['userAuthLevel']) || strtolower($_SESSION['userAuthLevel']) !== 'superadmin') {
+    header('Location: /dictproj1/App/Views/Pages/Documents.php');
+    exit();
+}
 
-// include __DIR__ . '/../../Model/connect.php';
+include __DIR__ . '/../../Model/connect.php';
 
-// // Set current page for sidebar highlighting
-// $current_page = 'addUser';
+// Set current page for sidebar highlighting
+$current_page = 'addUser';
 
-// // Handle form submission
-// $message = '';
-// if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//     $userName = trim($_POST['userName'] ?? '');
-//     $passWord = trim($_POST['passWord'] ?? '');
-//     $usertype = trim($_POST['usertype'] ?? '');
-//     $name = trim($_POST['name'] ?? '');
-//     $email = trim($_POST['email'] ?? '');
-//     $contactno = trim($_POST['contactno'] ?? '');
+// Handle form submission
+$message = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $userName = trim($_POST['userName'] ?? '');
+    $passWord = trim($_POST['passWord'] ?? '');
+    $usertype = trim($_POST['usertype'] ?? '');
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $contactno = trim($_POST['contactno'] ?? '');
 
-//     // Basic validation (add more as needed)
-//     if ($userName && $passWord && $usertype && $name && $email && $contactno) {
-//         // Hash the password before storing
-//         $hashedPassword = password_hash($passWord, PASSWORD_DEFAULT);
-        
-//         $stmt = $conn->prepare("INSERT INTO users (userName, passWord, usertype, name, email, contactno) VALUES (?, ?, ?, ?, ?, ?)");
-//         $stmt->bind_param("ssssss", $userName, $hashedPassword, $usertype, $name, $email, $contactno);
-        
-//         if ($stmt->execute()) {
-//             $message = "User added successfully!";
-//             // Clear form fields on success
-//             $_POST = array();
-//         } else {
-//             $message = "Error: " . $stmt->error;
-//         }
-//         $stmt->close();
-//     } else {
-//         $message = "Error: Please fill in all required fields.";
-//     }
-// }
+    // Basic validation (add more as needed)
+    if ($userName && $passWord && $usertype && $name && $email && $contactno) {
+        // Check if email already exists
+        $checkEmailStmt = $conn->prepare("SELECT email FROM users WHERE BINARY email = ?");
+        $checkEmailStmt->bind_param("s", $email);
+        $checkEmailStmt->execute();
+        $emailResult = $checkEmailStmt->get_result();
 
-// // Fetch all users for display in a table (excluding userID)
-// $userRows = [];
-// $result = $conn->query("SELECT userName, passWord, usertype, name, email, contactno FROM users");
-// if ($result && $result->num_rows > 0) {
-//     while ($row = $result->fetch_assoc()) {
-//         $userRows[] = $row;
-//     }
-// }
+        if ($emailResult->num_rows > 0) {
+            $message = "Error: Email already exists. Please use a different email address.";
+            $checkEmailStmt->close();
+        } else {
+            $checkEmailStmt->close();
+            // Check if username already exists
+            $checkUserStmt = $conn->prepare("SELECT userName FROM users WHERE userName = ?");
+            $checkUserStmt->bind_param("s", $userName);
+            $checkUserStmt->execute();
+            $userResult = $checkUserStmt->get_result();
+
+            if ($userResult->num_rows > 0) {
+                $message = "Error: Username already exists. Please choose a different username.";
+                $checkUserStmt->close();
+            } else {
+                $checkUserStmt->close();
+            // Hash the password before storing
+            $hashedPassword = password_hash($passWord, PASSWORD_DEFAULT);
+            
+            $stmt = $conn->prepare("INSERT INTO users (userName, passWord, usertype, name, email, contactno) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssss", $userName, $hashedPassword, $usertype, $name, $email, $contactno);
+            
+            if ($stmt->execute()) {
+                $message = "User added successfully!";
+                // Clear form fields on success
+                $_POST = array();
+            } else {
+                $message = "Error: " . $stmt->error;
+            }
+                $stmt->close();
+            }
+        }
+    } else {
+        $message = "Error: Please fill in all required fields.";
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,39 +94,71 @@
                         <h1 class="text-3xl font-bold text-indigo-500">Users</h1>
                         <p class="text-gray-300 mt-2">Manage and track all users</p>
                     </div>
-                    <button type="button" class="btn bg-blue-600 text-white px-10 py-3 text-md rounded-lg hover:bg-blue-700 flex items-center gap-2" id="openFormModal">
-                        <i class="fas fa-user-plus"></i> Add User
-                    </button>
+                    <div class="flex items-center gap-3">
+                        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
+                            </svg>
+                            <span id="filterToggleText">Show Filters</span>
+                        </button>
+                        <button type="button" class="btn bg-blue-600 text-white px-10 py-3 text-md rounded-lg hover:bg-blue-700 flex items-center gap-2" id="openFormModal">
+                            <i class="fas fa-user-plus"></i> Add User
+                        </button>
+                    </div>
                 </div>
+
+                <!-- Search and Filter Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6" id="filterSection">
+                    <form id="filterForm">
+                        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="relative flex-1 max-w-md">
+                                    <input
+                                        type="text"
+                                        name="search"
+                                        id="search"
+                                        class="w-full pl-4 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                                        placeholder="Search by name, username, email..."
+                                    />
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <select name="usertype" id="userType" class="border rounded-lg text-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                                        <option value="">All User Types</option>
+                                        <option value="Superadmin">Superadmin</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Provincial">Provincial</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" id="clearFiltersBtn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 text-sm">Clear</button>
+                                <span class="text-sm text-gray-600" id="recordCount"></span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="overflow-x-auto ">
                         <table class="w-full ">
                             <thead class="bg-[rgba(240,240,240,0.51)] backdrop-blur border-b border-gray-200">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Username</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Password (Hashed)</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">User Type</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Full Name</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Email</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Contact No</th>
                                 </tr>
                             </thead>
-                           
-    <tbody id="usersTableBody" class="bg-[rgba(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
-         <?php foreach ($userRows as $user): ?>
-      <tr>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['userName']); ?></td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900"><?php echo htmlspecialchars($user['passWord']); ?></td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['usertype']); ?></td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['name']); ?></td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['email']); ?></td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['contactno']); ?></td>
-      </tr>
-        <?php endforeach; ?>
-    </tbody>
-
+                            <tbody id="usersTableBody" class="bg-[rgb(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
+                                <!-- User data will be populated by JavaScript -->
+                            </tbody>
                         </table>
                     </div>
+                </div>
+                <!-- Pagination Controls -->
+                <div class="flex justify-center my-4" id="pagination-container">
+                    <!-- This will be populated by addUser.js -->
                 </div>
             </div>
         </div>
@@ -128,16 +176,24 @@
                                 <label for="userName">Username <span class="required">*</span></label>
                                 <input type="text" id="userName" name="userName" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
                             </div>
-                    <div class="form-group">
+                            <div class="form-group">
                                 <label for="passWord">Password <span class="required">*</span></label>
-                                <input type="password" id="passWord" name="passWord" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
+                                <div class="relative">
+                                    <input type="password" id="passWord" name="passWord" class="form-control rounded-lg border border-gray-300 px-4 py-2 pr-10 w-full" required>
+                                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
-                    </div>
+                        </div>
                         <div class="form-row mb-2">
-                    <div class="form-group">
+                            <div class="form-group">
                                 <label for="usertype">User Type <span class="required">*</span></label>
                                 <select id="usertype" name="usertype" class="form-control rounded-lg border border-gray-300 px-4 py-2" required>
-                            <option value="">Select user type</option>
+                                    <option value="">Select user type</option>
                                     <option value="Admin">Admin</option>
                             <option value="provincial">Provincial</option>
                         </select>
@@ -165,7 +221,7 @@
         </div>
     </div>
         <script src="/dictproj1/modal.js"></script>
-    <script src="/dictproj1/public/assets/Scripts/addUser.js"></script>
+    <script src="/dictproj1/public/Scripts/superadmin/addUser.js"></script>
 </body>
 </html>
-
+<?php $conn->close(); ?>
