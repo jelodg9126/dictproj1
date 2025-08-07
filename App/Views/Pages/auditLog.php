@@ -169,15 +169,18 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/dictproj1/public/assets/images/mainCircle.png" type="image/png">
     <title>Audit Log</title>
     <link rel="stylesheet" href="/dictproj1/src/input.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/auditLog.css">
 </head>
+
 <body>
-     <div class="app-container">
+    <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
         <div class="flex-1 p-6 min-h-screen overflow-y-auto" id="docu">
             <div class="max-w-7xl mx-auto">
@@ -207,8 +210,7 @@
                                         name="search"
                                         class="filter-input pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="Search users, offices, or actions..."
-                                        value="<?php echo htmlspecialchars($search); ?>"
-                                    />
+                                        value="<?php echo htmlspecialchars($search); ?>" />
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <select
@@ -216,8 +218,13 @@
                                         class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">All Users</option>
                                         <?php foreach ($users_filter as $user): ?>
+<<<<<<< HEAD
                                             <option value="<?php echo htmlspecialchars($user); ?>" 
                                                     <?php echo $users_filter === $user ? 'selected' : ''; ?>>
+=======
+                                            <option value="<?php echo htmlspecialchars($user); ?>"
+                                                <?php echo $users_filter === $user ? 'selected' : ''; ?>>
+>>>>>>> main
                                                 <?php echo htmlspecialchars($user); ?>
                                             </option>
                                         <?php endforeach; ?>
@@ -362,4 +369,5 @@
 
     <script src="/dictproj1/public/Scripts/superadmin/auditLog.js"></script>
 </body>
+
 </html>

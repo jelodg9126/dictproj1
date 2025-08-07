@@ -246,6 +246,7 @@ extract($filters);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -258,9 +259,11 @@ extract($filters);
     <link rel="stylesheet" href="/dictproj1/public/assets/css/style.css">
     <link rel="stylesheet" href="/dictproj1/public/assets/css/outgoing.css">
     <!-- SweetAlert2 CDN -->
+    <link rel="icon" href="/dictproj1/public/assets/images/mainCircle.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Outgoing Documents</title>
 </head>
+
 <body>
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
@@ -299,7 +302,7 @@ extract($filters);
                         <button type="button" class="btn" id="openFormModal">Add New Record</button>
                     </div>
                 </div>
-            
+
                 <!-- Search and Filter Section -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6" id="filterSection" style="display: none;">
                     <form method="GET" action="index.php">
@@ -312,18 +315,15 @@ extract($filters);
                                         name="search"
                                         class="filter-input pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         placeholder="Search documents, sender, or recipient..."
-                                        value="<?= htmlspecialchars($search) ?>"
-
-
-                                    />
+                                        value="<?= htmlspecialchars($search) ?>" />
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <select
                                         name="delivery"
                                         class="filter-input border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                                         <option value="">All Modes</option>
-                                       <option value="Courier" <?= $delivery_filter === 'Courier' ? 'selected' : '' ?>>Courier</option>
-                                       <option value="In-Person" <?= $delivery_filter === 'In-Person' ? 'selected' : ''; ?>>In-Person</option>
+                                        <option value="Courier" <?= $delivery_filter === 'Courier' ? 'selected' : '' ?>>Courier</option>
+                                        <option value="In-Person" <?= $delivery_filter === 'In-Person' ? 'selected' : ''; ?>>In-Person</option>
                                     </select>
                                     <!-- Status filter removed because only 'pending' is available -->
                                 </div>
@@ -373,24 +373,24 @@ extract($filters);
                             </thead>
                             <tbody class="bg-[rgb(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
                                 <?php if (!empty($documents)): ?>
-                                    <?php foreach($documents as $row): ?>
+                                    <?php foreach ($documents as $row): ?>
                                         <?php
-                                            // Always include all expected fields for the modal
-                                            $row_for_data = [
-                                                'officeName' => $row['officeName'] ?? '',
-                                                'doctitle' => $row['doctitle'] ?? '',
-                                                'senderName' => $row['senderName'] ?? '',
-                                                'emailAdd' => $row['emailAdd'] ?? '',
-                                                'modeOfDel' => $row['modeOfDel'] ?? '',
-                                                'courierName' => $row['courierName'] ?? '',
-                                                'status' => $row['status'] ?? '',
-                                                'dateAndTime' => $row['dateAndTime'] ?? '',
-                                                'dateReceived' => $row['dateReceived'] ?? '',
-                                                'transactionID' => $row['transactionID'] ?? '',
-                                                'addressTo' => $row['addressTo'] ?? '',
-                                                'pod' => !empty($row['pod']) ? true : false,
-                                                'receivedBy' => $row['receivedBy'] ?? ''
-                                            ];
+                                        // Always include all expected fields for the modal
+                                        $row_for_data = [
+                                            'officeName' => $row['officeName'] ?? '',
+                                            'doctitle' => $row['doctitle'] ?? '',
+                                            'senderName' => $row['senderName'] ?? '',
+                                            'emailAdd' => $row['emailAdd'] ?? '',
+                                            'modeOfDel' => $row['modeOfDel'] ?? '',
+                                            'courierName' => $row['courierName'] ?? '',
+                                            'status' => $row['status'] ?? '',
+                                            'dateAndTime' => $row['dateAndTime'] ?? '',
+                                            'dateReceived' => $row['dateReceived'] ?? '',
+                                            'transactionID' => $row['transactionID'] ?? '',
+                                            'addressTo' => $row['addressTo'] ?? '',
+                                            'pod' => !empty($row['pod']) ? true : false,
+                                            'receivedBy' => $row['receivedBy'] ?? ''
+                                        ];
                                         ?>
                                         <tr class="hover:bg-gray-50 transition-colors" data-transaction-id="<?php echo htmlspecialchars($row['transactionID']); ?>">
                                             <td class="px-6 py-4 whitespace-nowrap">
@@ -443,7 +443,7 @@ extract($filters);
                             <?php
                             // Build query string for filters/search
                             $query_params = $_GET;
-                            foreach(['page_num'] as $unset) unset($query_params[$unset]);
+                            foreach (['page_num'] as $unset) unset($query_params[$unset]);
                             $base_query = http_build_query($query_params);
                             for ($i = 1; $i <= $total_pages; $i++):
                                 $link = '?' . $base_query . ($base_query ? '&' : '') . 'page_num=' . $i;
@@ -558,12 +558,12 @@ extract($filters);
 
     <!-- Enlarged Signature Lightbox Modal -->
     <div id="signatureLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
-      <img id="enlargedSignature" src="" alt="Enlarged Signature" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+        <img id="enlargedSignature" src="" alt="Enlarged Signature" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
 
     <!-- Add a new lightbox for POD -->
     <div id="podLightbox" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; cursor:pointer;">
-      <img id="enlargedPod" src="" alt="Enlarged POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
+        <img id="enlargedPod" src="" alt="Enlarged POD" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
 
     <!-- POD Preview Modal -->
@@ -582,6 +582,7 @@ extract($filters);
     <script src="/dictproj1/modal.js"></script>
     <script src="/dictproj1/public/Scripts/docs/outgoing.js"></script>
 </body>
+
 </html>
 
 <?php
