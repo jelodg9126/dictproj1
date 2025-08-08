@@ -218,12 +218,12 @@ date_default_timezone_set('Asia/Manila');
 <body>
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
-        <div class="flex-1 p-6 bg-linear-90 from-[#48517f] to-[#322b5f] min-h-screen overflow-y-auto" id="docu">
-            <div class="max-w-7xl mx-auto">
+        <div class="flex-1 p-6 bg-linear-90 from-[#48517f] to-[#322b5f] min-h-screen overflow-y-auto " id="docu">
+            <div class="max-w-[96%] mx-auto">
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
-                        <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
-                        <h1 class="text-3xl font-bold text-indigo-500">Received Documents</h1>
+                                  <i data-lucide="menu" id="burger" class="burg w-7 h-10 hidden text-gray-400 stroke-[3.5] max-sm:block" ></i>
+                        <h1 class="text-3xl font-bold text-indigo-500 pt-4">Received Documents</h1>
                         <p class="text-gray-300 mt-2">View and track all documents that have been received.</p>
                     </div>
                     <div class="flex items-center gap-3">
@@ -433,5 +433,6 @@ date_default_timezone_set('Asia/Manila');
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     <script src="/dictproj1/public/Scripts/docs/received.js"></script>
+       <script src="/dictproj1/public/Scripts/sidebar/mobileSidebar.js"></script>
 </body>
 </html> 

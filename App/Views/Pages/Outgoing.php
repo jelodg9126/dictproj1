@@ -288,8 +288,8 @@ extract($filters);
 
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
-                        <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
-                        <h1 class="text-3xl font-bold text-indigo-500">Outgoing Documents</h1>
+                         <i data-lucide="menu" id="burger" class="burg w-7 h-10 hidden text-gray-400 stroke-[3.5] max-sm:block" ></i>
+                        <h1 class="text-3xl font-bold text-indigo-500 pt-4">Outgoing Documents</h1>
                         <p class="text-gray-300 mt-2">Manage and track all outgoing documents</p>
                     </div>
                     <div class="flex items-center gap-3">
@@ -297,9 +297,13 @@ extract($filters);
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
                             </svg>
-                            <span id="filterToggleText">Show Filters</span>
+                            <span id="filterToggleText" class="max-lg:hidden">Show Filters</span>
                         </button>
-                        <button type="button" class="btn" id="openFormModal">Add New Record</button>
+        
+                        <button type="button" class="btn flex gap-2" id="openFormModal">
+                            <i data-lucide="file-plus-2" id="burger"></i>
+                            <span>New Record</span>
+                        </button>
                     </div>
                 </div>
 
@@ -580,6 +584,7 @@ extract($filters);
     </div>
 
     <script src="/dictproj1/modal.js"></script>
+       <script src="/dictproj1/public/Scripts/sidebar/mobileSidebar.js"></script>
     <script src="/dictproj1/public/Scripts/docs/outgoing.js"></script>
 </body>
 

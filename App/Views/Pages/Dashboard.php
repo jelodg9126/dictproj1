@@ -92,7 +92,7 @@
         <div class="dboard-layout">
             <div class="box1">
                 <div class="box1-wrapper flex justify-between min-w-full items-center max-sm:justify-start">
-                    <div>
+                    <div class="flex">
                         <i data-lucide="menu" id="burger" class="burg w-7 h-10 hidden text-gray-400 stroke-[3.5] max-sm:block"></i>
                         <h1 class="text-4xl font-bold px-3 text-blue-900">Dashboard</h1>
                     </div>
@@ -102,7 +102,7 @@
                     <div class="flex items-center max-w-xs">
 
                         <!-- Left Side: Welcome and Role -->
-                        <div class="flex flex-col leading-tight mr-4">
+                        <div class="flex flex-col leading-tight mr-4 max-lg:invisible">
                             <p class="text-lg font-normal capitalize text-gray-600">Welcome, <?php echo ($data['name']); ?>!</p>
                             <p class="text-gray-500 font-semibold uppercase"><?php echo htmlspecialchars($_SESSION['userAuthLevel']); ?></p>
                         </div>

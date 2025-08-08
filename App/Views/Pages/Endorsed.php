@@ -45,9 +45,10 @@
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
         <div class="flex-1 p-6 min-h-screen overflow-y-auto" id="docu">
-            <div class="max-w-7xl mx-auto">
+            <div class="max-w-[96%] mx-auto">
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
+                        <i data-lucide="menu" id="burger" class="burg w-7 h-10 hidden text-gray-400 stroke-[3.5] max-sm:block" ></i>
                         <h1 class="text-3xl font-bold text-indigo-500">Endorsed Documents</h1>
                         <p class="text-gray-300 mt-2">View all documents that have been endorsed.</p>
                     </div>
@@ -69,7 +70,7 @@
                                 <?php if (!empty($results)): ?>
                                     <?php foreach ($results as $row): ?>
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['officeName'] ?? ''); ?></td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize font-bold"><?php echo htmlspecialchars($row['officeName'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['doctitle'] ?? '-'); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['senderName'] ?? ''); ?></td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($row['endorsedToName'] ?? ''); ?></td>
@@ -161,5 +162,6 @@
       <img id="enlargedEndorsedDocProof" src="" alt="Enlarged Endorsed Document Proof" style="max-width:90vw; max-height:90vh; border:4px solid #fff; border-radius:8px; box-shadow:0 0 20px #000; background:#fff; cursor:default;">
     </div>
     <script src="/dictproj1/public/Scripts/docs/endorsed.js"></script>
+       <script src="/dictproj1/public/Scripts/sidebar/mobileSidebar.js"></script>
 </body>
 </html>

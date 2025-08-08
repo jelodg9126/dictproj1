@@ -1,13 +1,13 @@
 <?php
 
-if (isset($_SESSION['uNameLogin'])) {
-    header("Location: Dashboard.php");
-    exit();
-}
-// Handle error messages
+// if (isset($_SESSION['uNameLogin'])) {
+//     header("Location: Dashboard.php");
+//     exit();
+// }
+session_start();
 $error_message = "";
-if (isset($_GET['error'])) {
-    switch ($_GET['error']) {
+if (isset($_SESSION['error'])) {
+    switch ($_SESSION['error']) {
         case 'invalid_credentials':
             $error_message = "Invalid username or password";
             break;
@@ -20,9 +20,7 @@ if (isset($_GET['error'])) {
         default:
             $error_message = "An error occurred";
     }
-
-  $path = __DIR__;
-  echo $path;
+       unset($_SESSION['error']);
 }
 ?>
 <!DOCTYPE html>

@@ -29,7 +29,7 @@ $isProvincial = $userType === 'provincial';
   <span id="rotateWrapper" class="inline-block transition-transform duration-300">
     <i data-lucide="chevrons-right" class="w-5 h-5"></i>
   </span>
-</button>
+ </button>
   <!-- Logo Section -->
   <div class="relative h-36 w-full flex items-center justify-center">
     <img id="logoCollapsed" src="/dictproj1/public/assets/images/dictWhiteCircle.png"
@@ -109,25 +109,18 @@ $isProvincial = $userType === 'provincial';
       <a id="logout" class="flex gap-3 items-center p-5 mb-1 transition duration-300 hover:bg-blue-800 
         <?php echo ($currentPage === 'logout') ? 'bg-blue-600' : ''; ?>" 
         href="/dictproj1/index.php?page=logout">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-          </path>
-        </svg>
+         <i data-lucide="log-out" class="w-6 h-6 text-white"></i>
         <span class="sidebar-label hidden transition-opacity duration-300">Sign Out</span>
       </a>
     </div>
+    
   </div>
 </div>
 
 <!-- Mobile Sidebar Overlay -->
 <div id="mobileSidebar" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden sm:hidden">
   <div id="mobileSidebarContent" class="fixed left-0 top-0 h-full w-64 bg-blue-950 transform -translate-x-full transition-transform duration-300 ease-in-out">
-    <!-- Close Button -->
-    <button id="closeMobileSidebar" class="absolute top-4 right-4 text-white hover:text-gray-300">
-      <i data-lucide="x" class="w-6 h-6"></i>
-    </button>
-    
+
     <!-- Logo Section -->
     <div class="relative h-36 w-full flex items-center justify-center">
       <img src="/dictproj1/public/assets/images/dictWhite.png"
@@ -137,6 +130,7 @@ $isProvincial = $userType === 'provincial';
     <!-- Navigation Links -->
     <div class="flex flex-col justify-between text-white text-sm font-semibold font-sans h-full">
       <div class="flex flex-col gap-0.5">
+
         <?php if ($isSuperAdmin): ?>
           <!-- Only Add User for SuperAdmin -->
           <a href="/dictproj1/index.php?page=addUser"
@@ -200,21 +194,18 @@ $isProvincial = $userType === 'provincial';
             </div>
           </div>
         <?php endif; ?>
-      </div>
+       </div>
 
-      <!-- Footer -->
-      <div class="text-white">
-        <a id="mobileLogout" class="flex gap-3 items-center p-5 mb-1 transition duration-300 hover:bg-blue-800 
-          <?php echo ($currentPage === 'logout') ? 'bg-blue-600' : ''; ?>" 
-          href="/dictproj1/App/Model/logout.php">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-            </path>
-          </svg>
-          <span>Sign Out</span>
-        </a>
-      </div>
+       <!-- Footer -->
+        <div class="text-white">
+         <a id="mobileLogout" class="flex gap-3 items-center p-5 mb-1 transition duration-300 hover:bg-blue-800 
+           <?php echo ($currentPage === 'logout') ? 'bg-blue-600' : ''; ?>" 
+           href="/dictproj1/index.php?page=logout">
+           <i data-lucide="log-out" class="w-6 h-6 text-white"></i>
+            <span class="">Sign Out</span>
+         </a>
+        </div>
+      
     </div>
   </div>
 </div>

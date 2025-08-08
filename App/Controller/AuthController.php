@@ -1,4 +1,6 @@
 <?php
+
+ob_start();
 if (!defined('MODEL_PATH')) {
     define('MODEL_PATH', __DIR__ . '/../Model/');
 }
@@ -31,8 +33,6 @@ class AuthController extends BaseController
             exit();
         }
 
-
-
         // No need for mysqli_real_escape_string with PDO
         $username = $_POST['uNameLogin'];
         $password = $_POST['pNameLogin'];
@@ -63,24 +63,23 @@ class AuthController extends BaseController
                         $this->redirect("/dictproj1/index.php?page=dashboard");
                 }
             } else {
-                header("Location: /dictproj1/index.php?page=logout&error=invalid_credentials");
-                exit();
+            ob_end_clean();
+             $_SESSION['error'] = "invalid_credentials";
+             $this->redirect("/dictproj1/App/Views/Pages/Login.php");
+
             }
         } else {
-            header("Location: /dictproj1/index.php?page=logout&error=invalid_credentials");
-            exit();
+            ob_end_clean();
+        $_SESSION['error'] = "invalid_credentials";
+             $this->redirect("/dictproj1/App/Views/Pages/Login.php");
         }
     }
 
-    public function logout()
-    {
-
+    public function logout()  {
         if (isset($_SESSION['userID'])) {
             $user_id = $_SESSION['userID'];
-
             $this->AuthModel->getLogoutTime($user_id);
         }
-
         // Unset all session variables
         $_SESSION = array();
         // Destroy the session

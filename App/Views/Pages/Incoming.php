@@ -301,18 +301,20 @@ require HELPER_PATH .'office_helper.php';
                     </script>
                 <?php endif; ?>
 
-                 <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p>
-                <div class="flex items-center justify-between mb-6">
-                    <div class="items-center">
+                 <!-- <p class="text-xl text-gray-300 p-3 font-bold rounded-2xl">Welcome, <?php echo htmlspecialchars($_SESSION['uNameLogin']); ?>!</p> -->
+                <div class="flex items-center justify-between mb-6 pt-4">
+                   <div class="">
+                         <i data-lucide="menu" id="burger" class="burg w-7 h-10 hidden text-gray-400 stroke-[3.5] max-sm:block" ></i>
                         <h1 class="text-3xl font-bold text-indigo-500">Incoming Documents</h1>
-                        <p class="text-gray-300 mt-2">View and track all incoming documents</p>
+                        <p class="text-gray-300">View and track all incoming documents</p>
+                
                     </div>
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 max-sm:mt-10">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
                             </svg>
-                            <span id="filterToggleText">Show Filters</span>
+                            <span id="filterToggleText" class="">Show Filters</span>
                         </button>
                     </div>
                 </div>
@@ -686,6 +688,7 @@ require HELPER_PATH .'office_helper.php';
   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     <script src="/dictproj1/public/Scripts/docs/incoming.js"></script>
+     <script src="/dictproj1/public/Scripts/sidebar/mobileSidebar.js"></script>
     <script src="/dictproj1/public/Scripts/filterToggle.js"></script>
     <script src="/dictproj1/public/Scripts/docs/addSignatureForm.js"></script>
 </body>
