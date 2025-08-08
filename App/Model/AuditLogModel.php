@@ -6,47 +6,59 @@ class AuditLogModel {
         $this->pdo = $pdo;
     }
 
-    public function getAuditLogs($filters, $limit, $offset) {
-        $sql = "SELECT a.*, u.name AS user_fullname, u.office AS user_office 
-                FROM audit_log a 
-                LEFT JOIN users u ON a.user_id = u.userID 
-                WHERE 1";
+    private function _buildQueryParts($filters) {
+        $where_clauses = [];
         $params = [];
 
         if (!empty($filters['search'])) {
             $search_param = "%" . $filters['search'] . "%";
-            $sql .= " AND (a.name LIKE ? OR a.office_name LIKE ? OR a.action LIKE ? OR u.name LIKE ? OR u.office LIKE ?)";
+            $where_clauses[] = "(a.name LIKE ? OR a.office_name LIKE ? OR a.action LIKE ? OR u.name LIKE ? OR u.office LIKE ?)";
             $params = array_merge($params, array_fill(0, 5, $search_param));
         }
 
         if (!empty($filters['user'])) {
-            $sql .= " AND (a.name = ? OR u.name = ?)";
+            $where_clauses[] = "(a.name = ? OR u.name = ?)";
             $params[] = $filters['user'];
             $params[] = $filters['user'];
         }
 
         if (!empty($filters['role'])) {
-            $sql .= " AND a.role = ?";
+            $where_clauses[] = "a.role = ?";
             $params[] = $filters['role'];
         }
 
         if (!empty($filters['action'])) {
-            $sql .= " AND a.action LIKE ?";
+            $where_clauses[] = "a.action LIKE ?";
             $params[] = "%" . $filters['action'] . "%";
         }
 
         if (!empty($filters['date_from'])) {
-            $sql .= " AND DATE(a.timestamp) >= ?";
+            $where_clauses[] = "DATE(a.timestamp) >= ?";
             $params[] = $filters['date_from'];
         }
 
         if (!empty($filters['date_to'])) {
-            $sql .= " AND DATE(a.timestamp) <= ?";
+            $where_clauses[] = "DATE(a.timestamp) <= ?";
             $params[] = $filters['date_to'];
         }
 
-        // LIMIT and OFFSET must NOT be passed as quoted placeholders
-        $sql .= " ORDER BY a.timestamp DESC LIMIT $limit OFFSET $offset";
+        $where_sql = '';
+        if (!empty($where_clauses)) {
+            $where_sql = ' AND ' . implode(' AND ', $where_clauses);
+        }
+
+        return [$where_sql, $params];
+    }
+
+    public function getAuditLogs($filters, $limit, $offset) {
+        list($where_sql, $params) = $this->_buildQueryParts($filters);
+
+        $sql = "SELECT a.*, u.name AS user_fullname, u.office AS user_office 
+                FROM audit_log a 
+                LEFT JOIN users u ON a.user_id = u.userID 
+                WHERE 1" . $where_sql . "
+                ORDER BY a.timestamp DESC 
+                LIMIT $limit OFFSET $offset";
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
@@ -54,43 +66,12 @@ class AuditLogModel {
     }
 
     public function countAuditLogs($filters) {
+        list($where_sql, $params) = $this->_buildQueryParts($filters);
+
         $sql = "SELECT COUNT(*) as total 
                 FROM audit_log a 
                 LEFT JOIN users u ON a.user_id = u.userID 
-                WHERE 1";
-        $params = [];
-
-        if (!empty($filters['search'])) {
-            $search_param = "%" . $filters['search'] . "%";
-            $sql .= " AND (a.name LIKE ? OR a.office_name LIKE ? OR a.action LIKE ? OR u.name LIKE ? OR u.office LIKE ?)";
-            $params = array_merge($params, array_fill(0, 5, $search_param));
-        }
-
-        if (!empty($filters['user'])) {
-            $sql .= " AND (a.name = ? OR u.name = ?)";
-            $params[] = $filters['user'];
-            $params[] = $filters['user'];
-        }
-
-        if (!empty($filters['role'])) {
-            $sql .= " AND a.role = ?";
-            $params[] = $filters['role'];
-        }
-
-        if (!empty($filters['action'])) {
-            $sql .= " AND a.action LIKE ?";
-            $params[] = "%" . $filters['action'] . "%";
-        }
-
-        if (!empty($filters['date_from'])) {
-            $sql .= " AND DATE(a.timestamp) >= ?";
-            $params[] = $filters['date_from'];
-        }
-
-        if (!empty($filters['date_to'])) {
-            $sql .= " AND DATE(a.timestamp) <= ?";
-            $params[] = $filters['date_to'];
-        }
+                WHERE 1" . $where_sql;
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
