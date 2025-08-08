@@ -125,23 +125,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Filter toggle functionality
-    const filterSection = document.getElementById('filterSection');
-    const filterToggle = document.getElementById('filterToggle');
-    const filterToggleText = document.getElementById('filterToggleText');
+    function initFilterToggle() {
+        const filterSection = document.getElementById('filterSection');
+        const filterToggle = document.getElementById('filterToggle');
+        const filterToggleText = document.getElementById('filterToggleText');
 
-    // Set initial state since filters are visible by default
-    filterToggleText.textContent = 'Hide Filters';
-
-    filterToggle.addEventListener('click', function() {
-        const isHidden = filterSection.style.display === 'none';
-        if (isHidden) {
-            filterSection.style.display = 'block';
-            filterToggleText.textContent = 'Hide Filters';
-        } else {
-            filterSection.style.display = 'none';
-            filterToggleText.textContent = 'Show Filters';
+        if (!filterSection || !filterToggle || !filterToggleText) {
+            console.error('Required filter elements not found');
+            return;
         }
-    });
+
+        let filtersVisible = filterSection.classList.contains('hidden') ? false : true;
+        
+        // Update button text based on initial state
+        filterToggleText.textContent = filtersVisible ? 'Hide Filters' : 'Show Filters';
+        
+        filterToggle.addEventListener('click', function() {
+            filtersVisible = !filtersVisible;
+            if (filtersVisible) {
+                filterSection.classList.remove('hidden');
+                filterToggleText.textContent = 'Hide Filters';
+            } else {
+                filterSection.classList.add('hidden');
+                filterToggleText.textContent = 'Show Filters';
+            }
+        });
+    }
+    
+    // Initialize when DOM is fully loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFilterToggle);
+    } else {
+        initFilterToggle();
+    }
 
     let debounceTimeout = null;
     function handleFilterChange() {
