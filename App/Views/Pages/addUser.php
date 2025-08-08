@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- Search and Filter Section -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6" id="filterSection">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6 hidden" id="filterSection">
                     <form id="filterForm">
                         <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                             <div class="flex items-center gap-4 flex-1">
