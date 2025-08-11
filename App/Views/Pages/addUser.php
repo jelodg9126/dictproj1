@@ -172,8 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Contact No</th>
                                 </tr>
                             </thead>
-                           
-    <tbody id="usersTableBody" class="bg-[rgba(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
+                            <tbody id="usersTableBody" class="bg-[rgba(197,197,197,0.1)] backdrop-blur-sm divide-y divide-gray-200">
          <?php foreach ($userRows as $user): ?>
       <tr>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><?php echo htmlspecialchars($user['userName']); ?></td>
@@ -185,11 +184,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endforeach; ?>
     </tbody>
 
+                            </tbody>
                         </table>
                     </div>
-                </div>
-                <!-- Pagination Controls -->
-                <div class="flex justify-center my-4">
+                    <!-- Pagination Controls -->
+                    <div class="bg-white p-4 rounded-b-lg border-t border-gray-200">
+                        <div class="flex justify-center">
                     <?php if ($total_pages > 1): ?>
                         <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                             <?php
@@ -245,8 +245,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     &raquo;
                                 </a>
                             <?php endif; ?>
-                        </nav>
-                    <?php endif; ?>
+                            </nav>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
