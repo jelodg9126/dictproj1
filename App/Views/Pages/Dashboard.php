@@ -102,9 +102,9 @@
                     <div class="flex items-center max-w-xs">
 
                         <!-- Left Side: Welcome and Role -->
-                        <div class="flex flex-col leading-tight mr-4 max-lg:invisible">
+                        <div class="flex flex-col justify leading-tight mr-4 max-lg:invisible">
                             <p class="text-lg font-normal capitalize text-gray-600">Welcome, <?php echo ($data['name']); ?>!</p>
-                            <p class="text-gray-500 font-semibold uppercase"><?php echo htmlspecialchars($_SESSION['userAuthLevel']); ?></p>
+                            <p class="text-gray-500 font-semibold uppercase text-right"><?php echo htmlspecialchars($_SESSION['userAuthLevel']); ?></p>
                         </div>
 
                         <!-- Right Side: Icon -->

@@ -301,8 +301,7 @@ extract($filters);
                         </button>
         
                         <button type="button" class="btn flex gap-2" id="openFormModal">
-                            <i data-lucide="file-plus-2" id="burger"></i>
-                            <span>New Record</span>
+                            <span>Add New Record</span>
                         </button>
                     </div>
                 </div>
