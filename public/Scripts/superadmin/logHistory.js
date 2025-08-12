@@ -1,15 +1,93 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // --- AUTO-REFRESH LOG HISTORY TABLE EVERY 3 SECONDS ---
-    function renderLogRows(data) {
+    let currentPage = 1;
+    let totalPages = 1;
+    let refreshInterval;
+
+    // Function to render pagination controls
+    function renderPagination() {
+        const paginationContainer = document.getElementById('paginationContainer');
+        if (!paginationContainer) return;
+        
+        paginationContainer.innerHTML = '';
+        
+        if (totalPages <= 1) return; // Don't show pagination if only one page
+        
+        // Create pagination HTML
+        let paginationHTML = '';
+        
+        // First/Previous buttons
+        if (currentPage > 1) {
+            paginationHTML += `
+                <button onclick="changePage(1)" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">First</span>
+                    &laquo;
+                </button>
+                <button onclick="changePage(${currentPage - 1})" class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">Previous</span>
+                    &lsaquo;
+                </button>`;
+        }
+        
+        // Page numbers
+        let start = Math.max(1, currentPage - 2);
+        let end = Math.min(totalPages, start + 4);
+        start = Math.max(1, end - 4);
+        
+        for (let i = start; i <= end; i++) {
+            const isActive = i === currentPage;
+            const isFirst = i === 1 && currentPage === 1;
+            const isLast = i === totalPages && currentPage === totalPages;
+            
+            let classes = [
+                'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                isActive ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50',
+                isFirst ? 'rounded-l-md' : '',
+                (i === totalPages && currentPage === totalPages) ? 'rounded-r-md' : ''
+            ].filter(Boolean).join(' ');
+            
+            paginationHTML += `
+                <button onclick="changePage(${i})" class="${classes}" ${isActive ? 'aria-current="page"' : ''}>
+                    ${i}
+                </button>`;
+        }
+        
+        // Next/Last buttons
+        if (currentPage < totalPages) {
+            paginationHTML += `
+                <button onclick="changePage(${currentPage + 1})" class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">Next</span>
+                    &rsaquo;
+                </button>
+                <button onclick="changePage(${totalPages})" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">Last</span>
+                    &raquo;
+                </button>`;
+        }
+        
+        paginationContainer.innerHTML = paginationHTML;
+    }
+
+    // Function to change page
+    window.changePage = function(newPage) {
+        if (newPage < 1 || newPage > totalPages) return;
+        currentPage = newPage;
+        fetchLogHistory();
+    };
+
+    // Function to render log rows
+    function renderLogRows(data, pagination) {
         const tbody = document.querySelector('table.w-full tbody');
         if (!tbody) return;
         tbody.innerHTML = '';
+        
         if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">No log history records found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-500">No log history records found.</td></tr>';
             return;
         }
+        
         data.forEach(function(row) {
             const tr = document.createElement('tr');
+            tr.className = 'hover:bg-gray-50';
             tr.innerHTML = `
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.name || '-'}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${row.office || '-'}</td>
@@ -18,18 +96,36 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             tbody.appendChild(tr);
         });
+        
+        // Update pagination info
+        if (pagination) {
+            totalPages = pagination.total_pages;
+            renderPagination();
+        }
     }
 
+    // Function to fetch log history with pagination
     function fetchLogHistory() {
-        fetch('/dictproj1/modules/get_user_log_history.php')
+        fetch(`/dictproj1/modules/get_user_log_history.php?page=${currentPage}`)
             .then(response => response.json())
             .then(json => {
-                renderLogRows(json.data || []);
+                renderLogRows(json.data || [], json.pagination);
             })
-            .catch(() => {});
+            .catch(error => {
+                console.error('Error fetching log history:', error);
+            });
     }
+    
+    // Initial fetch
     fetchLogHistory();
-    setInterval(fetchLogHistory, 3000);
+    
+    // Set up auto-refresh
+    refreshInterval = setInterval(fetchLogHistory, 3000);
+    
+    // Clean up interval when page is unloaded
+    window.addEventListener('beforeunload', () => {
+        if (refreshInterval) clearInterval(refreshInterval);
+    });
 
     document.querySelectorAll('.view-btn').forEach(function(btn) {
         btn.addEventListener('click', function(e) {

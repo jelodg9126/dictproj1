@@ -37,6 +37,12 @@
                                 <!-- Table rows will be filled by JavaScript -->
                             </tbody>
                         </table>
+                        <!-- Pagination Controls -->
+                        <div class="flex justify-center my-4">
+                            <nav id="paginationContainer" class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                <!-- Pagination will be inserted here by JavaScript -->
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>

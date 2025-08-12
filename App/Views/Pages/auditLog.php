@@ -128,10 +128,9 @@
 
                         </table>
                     </div>
-                </div>
-
-                <!-- Pagination Controls -->
-                                <div class="flex justify-center my-4 pagination-controls">
+                    <!-- Pagination Controls -->
+                    <div class="bg-white p-4 rounded-b-lg border-t border-gray-200">
+                        <div class="flex justify-center">
                     <?php if ($total_pages > 1): ?>
                         <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                             <?php
@@ -187,8 +186,9 @@
                                     &raquo;
                                 </a>
                             <?php endif; ?>
-                        </nav>
-                    <?php endif; ?>
+                            </nav>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
