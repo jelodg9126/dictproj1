@@ -292,16 +292,14 @@ extract($filters);
                         <h1 class="text-3xl font-bold text-indigo-500 pt-4">Outgoing Documents</h1>
                         <p class="text-gray-300 mt-2">Manage and track all outgoing documents</p>
                     </div>
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 max-md:flex-col max-md:items-end max-md:mt-7">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
-                            </svg>
-                            <span id="filterToggleText" class="max-lg:hidden">Show Filters</span>
+                             <i data-lucide="filter" id="filter" class="burg w-4 h-4 text-gray-300 stroke-[3.5] max-sm:block" ></i>
+                            <span id="filterToggleText" class="max-md:hidden">Show Filters</span>
                         </button>
         
-                        <button type="button" class="btn flex gap-2" id="openFormModal">
-                            <span>Add New Record</span>
+                        <button type="button" class="btn " id="openFormModal">
+                            <span class="max-md:hidden">Add New Record</span>
                         </button>
                     </div>
                 </div>
@@ -583,7 +581,7 @@ extract($filters);
     </div>
 
     <script src="/dictproj1/modal.js"></script>
-       <script src="/dictproj1/public/Scripts/sidebar/mobileSidebar.js"></script>
+    <script src="/dictproj1/public/Scripts/sidebar/mobileSidebar.js"></script>
     <script src="/dictproj1/public/Scripts/docs/outgoing.js"></script>
 </body>
 

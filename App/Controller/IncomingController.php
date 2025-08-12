@@ -40,7 +40,8 @@ class IncomingController extends BaseController {
         if (isset($_SESSION['userID'])) {
             $receiverName = $this->model->getReceiverName($_SESSION['userID']);
         }
-
+            
+          extract($filters); 
         require __DIR__ . '/../Views/Pages/Incoming.php';
     }
 

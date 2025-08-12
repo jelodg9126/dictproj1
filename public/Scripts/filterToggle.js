@@ -9,15 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const isVisible = filterContent.style.display !== 'none';
             filterContent.style.display = isVisible ? 'none' : 'block';
             
+         
             const toggleText = filterToggle.querySelector('span:first-child');
             const arrow = filterToggle.querySelector('span:last-child');
             
             if (isVisible) {
                 toggleText.textContent = 'Show Filters';
                 arrow.textContent = '▼';
+                   console.log("clicked!");
             } else {
                 toggleText.textContent = 'Hide Filters';
                 arrow.textContent = '▲';
+                  console.log("clicked!");
             }
         });
     }

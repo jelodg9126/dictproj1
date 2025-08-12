@@ -282,22 +282,6 @@
 
             </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             <div class="box2">
                 <h2 class="text-md font-semibold mb-4 pl-1.5">Total Received</h2>
                 <div class="flex items-center gap-2">

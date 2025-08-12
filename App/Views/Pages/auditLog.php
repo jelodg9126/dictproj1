@@ -18,17 +18,16 @@
     <div class="app-container">
         <?php include __DIR__ . '/../components/Sidebar.php'; ?>
         <div class="flex-1 p-6 min-h-screen overflow-y-auto" id="docu">
-            <div class="max-w-7xl mx-auto">
+            <div class="max-w-[96%] mx-auto">
                 <div class="flex items-center justify-between mb-6">
                     <div class="items-center">
+                          <i data-lucide="menu" id="burger" class="burg w-7 h-10 hidden text-gray-400 stroke-[3.5] max-sm:block" ></i>
                         <h1 class="text-3xl font-bold text-indigo-500">Audit Log</h1>
                         <p class="text-gray-300 mt-2">View all audit log records from the database.</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 flex items-center gap-2" id="filterToggle">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
-                            </svg>
+                            <i data-lucide="filter" id="filter" class="burg w-4 h-3 text-gray-400 stroke-[3.5] max-sm:block" ></i>
                             <span id="filterToggleText">Show Filters</span>
                         </button>
                     </div>
@@ -263,6 +262,7 @@
         });
     });
     </script>
+    <script src="/dictproj1/public/Scripts/sidebar/mobileSidebar.js"></script>
 </body>
 
 </html>

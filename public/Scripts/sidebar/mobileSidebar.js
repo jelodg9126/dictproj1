@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const burgerBtn = document.querySelector('#burger');
     const mobileSidebar = document.querySelector('#mobileSidebar');
     const mobileSidebarContent = document.querySelector('#mobileSidebarContent');
-    // const closeMobileSidebar = document.querySelector('#closeMobileSidebar');
+    const closeMobileSidebar = document.querySelector('#closeMobileSidebar');
     
     // Mobile dropdown elements
     const mobileDocumentsDropdown = document.querySelector('#mobileDocumentsDropdown');

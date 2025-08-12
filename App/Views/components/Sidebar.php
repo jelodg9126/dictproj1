@@ -119,7 +119,7 @@ $isProvincial = $userType === 'provincial';
 
 <!-- Mobile Sidebar Overlay -->
 <div id="mobileSidebar" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden sm:hidden">
-  <div id="mobileSidebarContent" class="fixed left-0 top-0 h-full w-64 bg-blue-950 transform -translate-x-full transition-transform duration-300 ease-in-out">
+  <div id="mobileSidebarContent" class="fixed left-0 top-0 h-full border border-green-300 w-64 bg-blue-950 transform -translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto">
 
     <!-- Logo Section -->
     <div class="relative h-36 w-full flex items-center justify-center">
@@ -163,9 +163,7 @@ $isProvincial = $userType === 'provincial';
               class="flex items-center gap-3 p-5 w-full text-left transition duration-300 hover:bg-blue-800 active:bg-blue-700 active:scale-95 <?php echo (in_array($currentPage, ['documents', 'incoming', 'outgoing', 'received', 'endorsed'])) ? 'bg-blue-800 border-l-4 border-white' : 'border-l-4 border-transparent'; ?>">
               <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
               <span>Documents</span>
-              <svg class="w-4 h-4 ml-auto transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
+               <i data-lucide="chevron-down" class="w-4 h-4 text-white ml-auto transition-transform duration-200"></i>
             </button>
 
             <div id="mobileDocumentsDropdownMenu" class="bg-blue-900 border-l-4 border-white hidden">
@@ -197,7 +195,7 @@ $isProvincial = $userType === 'provincial';
        </div>
 
        <!-- Footer -->
-        <div class="text-white">
+        <div class="text-white border border-yellow-500">
          <a id="mobileLogout" class="flex gap-3 items-center p-5 mb-1 transition duration-300 hover:bg-blue-800 
            <?php echo ($currentPage === 'logout') ? 'bg-blue-600' : ''; ?>" 
            href="/dictproj1/index.php?page=logout">

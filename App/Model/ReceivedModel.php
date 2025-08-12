@@ -25,8 +25,7 @@ class ReceivedModel{
       $search_param = "%" . $filters['search'] . "%";
       $params = array_merge($params, array_fill(0, 5, $search_param)); 
     }
-
-
+    
    if (!empty($filters['office_filter'])) {
       $sql .= " AND officeName = ?";
       $params[] = $filters['office_filter'];
@@ -53,10 +52,7 @@ class ReceivedModel{
       $params[] = $filters['date_to'];
    }
 
-
-
 $sql .= " ORDER BY dateAndTime DESC LIMIT $limit OFFSET $offset";
-
 
 // $params[] = $per_page;
 // $params[] = $offset;
@@ -68,10 +64,11 @@ $sql .= " ORDER BY dateAndTime DESC LIMIT $limit OFFSET $offset";
  }
 
  function getReceivedDocumentsCount($filters){
-
+   $sql = "SELECT COUNT(*) as total FROM maindoc WHERE filetype = 'received'";
+   $params = [];
 
  if (!empty($filters['search'])) {
-    $sql .= " AND (doctitle LIKE ? OR officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
+    $sql = " AND (doctitle LIKE ? OR officeName LIKE ? OR senderName LIKE ? OR emailAdd LIKE ? OR courierName LIKE ?)";
     $search_param = "%" . $filters['search'] . "%";
     $params = array_merge($params, array_fill(0, 5, $search_param)); 
     }
@@ -103,7 +100,6 @@ if (!empty($filters['date_to'])) {
     $params[] = $filters['date_to'];
    }
 
-
  }
 
 //   public function getDistinctOffice($userOffice = '') {
@@ -117,7 +113,6 @@ if (!empty($filters['date_to'])) {
 //             $sql .= " ORDER BY officeName";
 //             $stmt = $this->pdo->query($sql);
 //         }
-
 //         return $stmt->fetchAll(PDO::FETCH_COLUMN);
 //     }
 

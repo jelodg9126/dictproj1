@@ -17,7 +17,7 @@
    gap: 1rem;
    min-height: 100%;
    flex: 1;
-   overflow-y: auto;
+    overflow-y: auto;
  }
 
   .box2, .box3, .box4, .box5, .box6, .box7, .box8, .box9, .box10{
@@ -42,7 +42,6 @@
  }
 
  .box1{
-  border: 18x solid black;
   grid-area: header;
   display: flex;
   align-items: center;
@@ -235,6 +234,7 @@
 
 
 }
+
   @keyframes breathe {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.15); }

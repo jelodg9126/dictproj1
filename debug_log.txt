@@ -1,33 +1,11 @@
-SET: otp=261214, email=reignreyes10@gmail.comCHECK: inputOtp=261211, email=reignreyes10@gmail.com, session=Array
+SET: otp=188613, email=markdg977@gmail.comCHECK: inputOtp=188613, email=markdg977@gmail.com, session=Array
 (
     [uNameLogin] => Alex Santos
     [userID] => 2
-    [login_time] => 1754561554
+    [login_time] => 1754881116
     [userAuthLevel] => Admin
-    [otp] => 261214
-    [otp_email] => reignreyes10@gmail.com
-    [otp_expiry] => 1754562927
+    [otp] => 188613
+    [otp_email] => markdg977@gmail.com
+    [otp_expiry] => 1754894916
 )
-COMPARING: inputOtp=261211 vs storedOtp=261214 | email=reignreyes10@gmail.com vs storedEmail=reignreyes10@gmail.com
-CHECK: inputOtp=qweqw, email=reignreyes10@gmail.com, session=Array
-(
-    [uNameLogin] => Alex Santos
-    [userID] => 2
-    [login_time] => 1754561554
-    [userAuthLevel] => Admin
-    [otp] => 261214
-    [otp_email] => reignreyes10@gmail.com
-    [otp_expiry] => 1754562927
-)
-COMPARING: inputOtp=qweqw vs storedOtp=261214 | email=reignreyes10@gmail.com vs storedEmail=reignreyes10@gmail.com
-CHECK: inputOtp=261214, email=reignreyes10@gmail.com, session=Array
-(
-    [uNameLogin] => Alex Santos
-    [userID] => 2
-    [login_time] => 1754561554
-    [userAuthLevel] => Admin
-    [otp] => 261214
-    [otp_email] => reignreyes10@gmail.com
-    [otp_expiry] => 1754562927
-)
-COMPARING: inputOtp=261214 vs storedOtp=261214 | email=reignreyes10@gmail.com vs storedEmail=reignreyes10@gmail.com
+COMPARING: inputOtp=188613 vs storedOtp=188613 | email=markdg977@gmail.com vs storedEmail=markdg977@gmail.com
