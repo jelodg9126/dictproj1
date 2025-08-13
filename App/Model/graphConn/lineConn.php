@@ -1,33 +1,25 @@
 <?php
 header('Content-Type: application/json');
 
-$conn = new mysqli("localhost", "root", "", "documents");
-
-if ($conn->connect_error) {
-    echo json_encode(["error" => "Connection failed"]);
-    exit();
-}
-
-$sql = "
-    SELECT 
+$sql = "SELECT 
         DATE_FORMAT(dateAndTime, '%Y-%m') as month,
         COUNT(*) as count
-    FROM maindoc
+        FROM maindoc
+        GROUP BY month
+        ORDER BY month ASC ";
 
-    GROUP BY month
-    ORDER BY month ASC
-";
+try{
+     $stmt = $pdo->query($sql);
+     $data = [];
 
-$result = $conn->query($sql);
-$data = [];
-
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $data[$row['month']] = (int)$row['count'];
     }
     echo json_encode($data);
-} else {
-    echo json_encode(["error" => "SQL error"]);
+
+} catch (PDOException $e) {
+    echo json_encode(["error" => "SQL error" . $e->getMessage()]);
+    exit();
 }
 
-$conn->close();
+// $conn->close();

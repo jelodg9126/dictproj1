@@ -25,7 +25,7 @@ const officeDisplayNames = {
 
 async function loadChartData() {
     try {
-        const response = await fetch('/dictproj1/App/Model/graphConn/pieConn.php'); 
+        const response = await fetch('/dictproj1/index.php?page=pieGraph'); 
         const data = await response.json();
 
         if (data.error) {

@@ -68,6 +68,18 @@ switch ($page) {
         include PAGES_PATH . 'logHistory.php';
         break;
 
+    case 'barGraph':
+        require MODEL_PATH . 'graphConn/barConn.php';
+        break;
+    
+    case 'lineGraph':
+        require MODEL_PATH . 'graphConn/lineConn.php';
+        break;  
+        
+    case 'pieGraph':
+        require MODEL_PATH . 'graphConn/pieConn.php';
+        break;  
+
     case 'endorsed':
         if (isset($_SESSION['userAuthLevel']) && strtolower($_SESSION['userAuthLevel']) === 'admin') {
              $endorsedController = new EndorsedController($pdo);

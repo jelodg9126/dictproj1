@@ -1,4 +1,4 @@
-fetch('/dictproj1/App/Model/graphConn/barConn.php')
+fetch('/dictproj1/index.php?page=barGraph')
   .then(response => response.json())
   .then(data => {
     console.log("Fetched data:", data); 

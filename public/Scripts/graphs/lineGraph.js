@@ -1,6 +1,6 @@
 
 
-fetch('/dictproj1/App/Model/graphConn/lineConn.php')
+fetch('/dictproj1/index.php?page=lineGraph')
   .then(response => response.json())
   .then(data => {
     const labels = Object.keys(data);
